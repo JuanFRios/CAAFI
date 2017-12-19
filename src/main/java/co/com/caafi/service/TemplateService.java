@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import co.com.caafi.model.Field;
 import co.com.caafi.model.Template;
 import co.com.caafi.repository.TemplateRepository;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class TemplateService {
@@ -34,11 +35,11 @@ public class TemplateService {
 			for (Field iterable_element : def.getFields()) {
 				if(iterable_element.getType().equals("group")){
 					for (Field iterable_element2 : iterable_element.getGroup()) {
-						iterable_element2.setValue(createRandomCode(12, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+						setValueField(iterable_element2);
 					}
 					
 				}else{
-				iterable_element.setValue(createRandomCode(12, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+					setValueField(iterable_element);
 				}
 			}
 			this.templateRepository.save(def); 
@@ -55,5 +56,18 @@ public class TemplateService {
 	            .map(Object::toString)
 	            .limit(codeLength)
 	            .collect(Collectors.joining());
+	}
+	
+	private void setValueField(Field field) {
+		switch(field.getType()) {
+		case "text":
+			field.setValue(createRandomCode(12, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+			break;
+		case "number":
+			field.setIntValue(ThreadLocalRandom.current().nextInt(1900, 2017 + 1));
+			break;
+		case "select":
+			field.setValue(ThreadLocalRandom.current().nextInt(0, 1 + 1) == 0 ? "A" : "B");
+		}
 	}
 }
