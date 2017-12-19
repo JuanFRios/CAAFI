@@ -12,7 +12,7 @@ import co.com.caafi.model.Template;
 import co.com.caafi.service.TemplateService;
 
 @RestController
-@RequestMapping(path = "/template")
+@RequestMapping(path = "/rest/template")
 public class TemplateResource {
 
 	@Autowired
