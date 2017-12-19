@@ -1,7 +1,10 @@
 package co.com.caafi.model;
 
+import java.util.List;
+
 public class Field {
 	private String name;
+	private String type;
 	private String value;
 	private String label;
 	private String required;
@@ -9,6 +12,32 @@ public class Field {
 	private Integer max;
 	private Integer minLength;
 	private Integer maxLength;
+	private List<Field> group;
+	private Integer requiredNum;
+
+	public List<Field> getGroup() {
+		return group;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setGroup(List<Field> group) {
+		this.group = group;
+	}
+
+	public Integer getRequiredNum() {
+		return requiredNum;
+	}
+
+	public void setRequiredNum(Integer requiredNum) {
+		this.requiredNum = requiredNum;
+	}
 
 	public String getName() {
 		return name;

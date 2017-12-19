@@ -27,4 +27,9 @@ public class TemplateResource {
 	public Template findByName(@PathVariable String name) {
 		return templateResource.findByName(name);
 	}
+	
+	@RequestMapping(path = "/create/{num}", method = RequestMethod.GET)
+	public boolean findByName(@PathVariable Integer num) {
+		return templateResource.create(num);
+	}
 }
