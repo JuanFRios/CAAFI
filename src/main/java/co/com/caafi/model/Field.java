@@ -3,7 +3,7 @@ package co.com.caafi.model;
 import java.util.List;
 
 public class Field {
-	private String name;
+	private String key;
 	private String type;
 	private String value;
 	private String label;
@@ -14,6 +14,7 @@ public class Field {
 	private Integer maxLength;
 	private List<Field> group;
 	private Integer requiredNum;
+	private TemplateOptions templateOptions;
 
 	public List<Field> getGroup() {
 		return group;
@@ -39,12 +40,12 @@ public class Field {
 		this.requiredNum = requiredNum;
 	}
 
-	public String getName() {
-		return name;
+	public String getKey() {
+		return key;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getValue() {
@@ -103,4 +104,11 @@ public class Field {
 		this.maxLength = maxLength;
 	}
 
+	public TemplateOptions getTemplateOptions() {
+		return templateOptions;
+	}
+
+	public void setTemplateOptions(TemplateOptions templateOptions) {
+		this.templateOptions = templateOptions;
+	}
 }

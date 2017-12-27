@@ -4,3 +4,47 @@
 .settings/org.eclipse.core.resources.prefs
 .settings/org.eclipse.jdt.core.prefs
 .settings/org.eclipse.m2e.core.prefs
+
+# for frontend
+
+# compiled output
+frontend/caafi/dist
+frontend/caafi/tmp
+frontend/caafi/out-tsc
+
+# dependencies
+frontend/caafi/node_modules
+
+# IDEs and editors
+frontend/caafi/.idea
+frontend/caafi/.project
+frontend/caafi/.classpath
+frontend/caafi/.c9/
+frontend/caafi/*.launch
+frontend/caafi/.settings/
+frontend/caafi/*.sublime-workspace
+frontend/caafi/.editorconfig
+
+# IDE - VSCode
+frontend/caafi/.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+frontend/caafi/.sass-cache
+frontend/caafi/connect.lock
+frontend/caafi/coverage
+frontend/caafi/libpeerconnection.log
+frontend/caafi/npm-debug.log
+frontend/caafi/testem.log
+frontend/caafi/typings
+
+# e2e
+frontend/caafi/e2e/*.js
+frontend/caafi/e2e/*.map
+
+# System Files
+.DS_Store
+Thumbs.db
