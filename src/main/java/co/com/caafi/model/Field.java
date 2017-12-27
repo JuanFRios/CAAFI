@@ -6,7 +6,6 @@ public class Field {
 	private String name;
 	private String type;
 	private String value;
-	private Integer intValue;
 	private String label;
 	private String required;
 	private Integer min;
@@ -102,14 +101,6 @@ public class Field {
 
 	public void setMaxLength(Integer maxLength) {
 		this.maxLength = maxLength;
-	}
-
-	public Integer getIntValue() {
-		return intValue;
-	}
-
-	public void setIntValue(Integer intValue) {
-		this.intValue = intValue;
 	}
 
 }

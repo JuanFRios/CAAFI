@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class Template {
+public class TemplateValue {
 
 	@Id
 	private String id;
@@ -15,11 +15,10 @@ public class Template {
 	private Integer version;
 	private String description;
 	private List<Field> fields;
-	private Date startDate;
-	private Date endDate;
-	private String role;
+	private User user;
+	private Date create;
 
-	public Template(String name, Integer version, String description, List<Field> fields) {
+	public TemplateValue(String name, Integer version, String description, List<Field> fields) {
 		super();
 		this.name = name;
 		this.version = version;
@@ -67,28 +66,22 @@ public class Template {
 		this.fields = fields;
 	}
 
-	public Date getStartDate() {
-		return startDate;
+	public User getUser() {
+		return user;
 	}
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
-	public Date getEndDate() {
-		return endDate;
+	public Date getCreate() {
+		return create;
 	}
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public void setCreate(Date create) {
+		this.create = create;
 	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
+	
+	
 
 }
