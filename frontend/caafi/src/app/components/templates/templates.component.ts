@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject, Input, ViewChild, ElementRef } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
+import { DataService } from '../../services/data.service';
 import { Template } from '../../common/template';
 import { FormGroup } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
@@ -16,7 +17,10 @@ export class TemplatesComponent implements OnInit {
   formFields: Array<FormlyFieldConfig>;
   formData: Object;
 
-  constructor(private templatesService: TemplatesService) {
+  constructor(
+    private templatesService: TemplatesService,
+    private dataService: DataService
+  ) {
     this.loadForm();
   }
 
@@ -26,7 +30,7 @@ export class TemplatesComponent implements OnInit {
     this.form = new FormGroup({});
     this.templatesService.getByName("2")
       .subscribe(form => {
-        this.formData = {}
+        this.formData = new Object();
 
         this.proccessValidators(form.fields);
         this.formFields = form.fields;
@@ -46,6 +50,14 @@ export class TemplatesComponent implements OnInit {
 
   onSubmit(template) {
     console.log(template);
+  }
+
+  loadData() {
+    this.dataService.getById(1)
+      .subscribe(formData => {
+        this.formData = formData.data;
+      },
+      error => this.errorMessage = error);
   }
 
 }

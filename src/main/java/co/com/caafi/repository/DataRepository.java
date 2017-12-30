@@ -8,7 +8,7 @@ import co.com.caafi.model.template.Data;
 
 public interface DataRepository extends MongoRepository<Data, String> {
 
-	public Data findById(String id);
+	public Data findById(int id);
 
 	public List<Data> findAll();
 

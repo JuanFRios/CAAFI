@@ -13,7 +13,7 @@ public class DataService {
 	@Autowired
 	private DataRepository dataRepository;
 
-	public Data findById(String id) {
+	public Data findById(int id) {
 		return this.dataRepository.findById(id);
 	}
 

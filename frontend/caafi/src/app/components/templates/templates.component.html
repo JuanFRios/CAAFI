@@ -1,7 +1,13 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
   <formly-form [model]="formData" [fields]="formFields">
+    <button mat-raised-button color="primary" type="button" (click)="loadData()">
+      Load Data
+    </button>
     <button mat-raised-button color="primary" type="submit">
       Submit
     </button>
   </formly-form>
 </form>
+<div *ngIf="errorMessage" class="error">
+  <p *ngFor="let error of errMess">{{error}}</p>
+</div>
