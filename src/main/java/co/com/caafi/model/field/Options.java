@@ -1,15 +1,22 @@
-package co.com.caafi.model;
+package co.com.caafi.model.field;
 
-public class TemplateOptions {
+import java.util.List;
+
+import co.com.caafi.model.types.select.Option;
+
+public class Options {
+	private String type;
 	private String label;
 	private String placeholder;
 	private boolean required;
+	private List<Option> options; // for selects types
 	
-	public TemplateOptions(String label, String placeholder, boolean required) {
-		super();
-		this.label = label;
-		this.placeholder = placeholder;
-		this.required = required;
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getLabel() {
@@ -34,6 +41,14 @@ public class TemplateOptions {
 
 	public void setRequired(boolean required) {
 		this.required = required;
+	}
+
+	public List<Option> getOptions() {
+		return options;
+	}
+
+	public void setOptions(List<Option> options) {
+		this.options = options;
 	}
 	
 }

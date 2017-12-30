@@ -13,8 +13,8 @@ export class TemplatesComponent implements OnInit {
 
   errorMessage: string;
   form: FormGroup;
-  templateFields: Array<FormlyFieldConfig>;
-  template: Template;
+  formFields: Array<FormlyFieldConfig>;
+  formData: Object;
 
   constructor(private templatesService: TemplatesService) {
     this.loadForm();
@@ -25,14 +25,26 @@ export class TemplatesComponent implements OnInit {
   loadForm() {
     this.form = new FormGroup({});
     this.templatesService.getByName("2")
-      .subscribe(template => {
-        this.template = new Template();
-        this.templateFields = template.fields;
+      .subscribe(form => {
+        this.formData = {}
+
+        this.proccessValidators(form.fields);
+        this.formFields = form.fields;
       },
       error => this.errorMessage = error);
   }
 
-  submit(template) {
+  proccessValidators(fields) {
+    for(var i = 0; i < fields.length; i++) {
+      if(fields[i].validators != undefined) {
+        for(var validator in fields[i].validators) {
+          fields[i].validators[validator] = eval(fields[i].validators[validator]);
+        }
+      }
+    }
+  }
+
+  onSubmit(template) {
     console.log(template);
   }
 

@@ -1,5 +1,7 @@
-<form [formGroup]="form" (ngSubmit)="submit(template)">
-  <formly-form [model]="template" [fields]="templateFields">
-    <button type="submit" class="btn btn-default">Submit</button>
+<form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
+  <formly-form [model]="formData" [fields]="formFields">
+    <button mat-raised-button color="primary" type="submit">
+      Submit
+    </button>
   </formly-form>
 </form>

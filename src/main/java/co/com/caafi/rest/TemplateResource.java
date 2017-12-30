@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.com.caafi.model.Template;
+import co.com.caafi.model.template.Template;
 import co.com.caafi.service.TemplateService;
 
 @RestController
@@ -17,16 +17,16 @@ import co.com.caafi.service.TemplateService;
 public class TemplateResource {
 
 	@Autowired
-	private TemplateService templateResource;
+	private TemplateService templateService;
 
 	@RequestMapping(path = "/all/", method = RequestMethod.GET)
 	public List<Template> get() {
-		return templateResource.findAll();
+		return templateService.findAll();
 	}
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/byname/{name}", method = RequestMethod.GET)
 	public Template findByName(@PathVariable String name) {
-		return templateResource.findByName(name);
+		return templateService.findByName(name);
 	}
 }

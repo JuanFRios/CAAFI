@@ -1,10 +1,12 @@
-package co.com.caafi.model;
+package co.com.caafi.model.template;
 
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import co.com.caafi.model.field.Field;
 
 @Document
 public class Template {

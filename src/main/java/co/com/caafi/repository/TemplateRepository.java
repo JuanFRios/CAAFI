@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import co.com.caafi.model.Template;
+import co.com.caafi.model.template.Template;
 
 public interface TemplateRepository extends MongoRepository<Template, String> {
 
