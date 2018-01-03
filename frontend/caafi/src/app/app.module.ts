@@ -30,16 +30,18 @@ import { AppComponent } from './app.component';
     BrowserModule,
     ReactiveFormsModule,
     FormlyModule.forRoot({
-      types: [{
-        name: 'datepicker',
-        component: DatepickerTypeComponent,
-        defaultOptions: {
-          defaultValue: new Date(),
-          templateOptions: {
-            datepickerOptions: {},
-          },
-        },
-      }]
+      types: [
+        {
+          name: 'datepicker',
+          component: DatepickerTypeComponent,
+          defaultOptions: {
+            defaultValue: new Date(),
+            templateOptions: {
+              datepickerOptions: {}
+            }
+          }
+        }
+      ]
     }),
     FormlyMaterialModule,
     BrowserAnimationsModule,
