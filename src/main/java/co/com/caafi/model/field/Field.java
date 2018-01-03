@@ -14,8 +14,7 @@ public class Field {
 	private Validators validators;
 	private String className;
 	private List<Field> fieldGroup;
-	
-	private List<Field> group;
+	private FieldArray fieldArray;
 
 	public String getKey() {
 		return key;
@@ -65,14 +64,6 @@ public class Field {
 		this.validators = validators;
 	}
 
-	public void setGroup(List<Field> group) {
-		this.group = group;
-	}
-	
-	public List<Field> getGroup() {
-		return group;
-	}
-
 	public String getClassName() {
 		return className;
 	}
@@ -87,5 +78,13 @@ public class Field {
 
 	public void setFieldGroup(List<Field> fieldGroup) {
 		this.fieldGroup = fieldGroup;
+	}
+
+	public FieldArray getFieldArray() {
+		return fieldArray;
+	}
+
+	public void setFieldArray(FieldArray fieldArray) {
+		this.fieldArray = fieldArray;
 	}
 }

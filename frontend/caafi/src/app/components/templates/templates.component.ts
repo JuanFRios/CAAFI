@@ -1,9 +1,10 @@
-import { Component, OnInit, Inject, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, Input, ViewChild, ElementRef } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
 import { DataService } from '../../services/data.service';
 import { Template } from '../../common/template';
 import { FormGroup } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-templates',
@@ -12,6 +13,8 @@ import { FormlyFieldConfig } from '@ngx-formly/core';
 })
 export class TemplatesComponent implements OnInit {
 
+  id: string;
+  private sub: any;
   errorMessage: string;
   form: FormGroup;
   formFields: Array<FormlyFieldConfig>;
@@ -19,16 +22,21 @@ export class TemplatesComponent implements OnInit {
 
   constructor(
     private templatesService: TemplatesService,
-    private dataService: DataService
-  ) {
-    this.loadForm();
-  }
+    private dataService: DataService,
+    private route: ActivatedRoute
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.sub = this.route.params.subscribe(params => {
+       this.id = params['id'];
+
+       this.loadForm();
+    });
+  }
 
   loadForm() {
     this.form = new FormGroup({});
-    this.templatesService.getByName("3")
+    this.templatesService.getByName(this.id)
       .subscribe(form => {
         this.formData = new Object();
 
@@ -58,6 +66,10 @@ export class TemplatesComponent implements OnInit {
         this.formData = formData.data;
       },
       error => this.errorMessage = error);
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 
 }

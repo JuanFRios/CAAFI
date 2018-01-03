@@ -7,3 +7,16 @@
   background: lightgrey;
   margin: 20px;
 }
+
+.repeatSection {
+  padding: 20px;
+  display: block;
+  margin: 20px;
+  border: 1px solid black;
+}
+  .repeatSection .fieldRepeat {
+    padding: 10px;
+    display: block;
+    background: lightgrey;
+    margin: 10px 0;
+  }

@@ -10,6 +10,7 @@ public class Options {
 	private String placeholder;
 	private boolean required;
 	private List<Option> options; // for selects types
+	private String btnText;
 	
 	public String getType() {
 		return type;
@@ -49,6 +50,14 @@ public class Options {
 
 	public void setOptions(List<Option> options) {
 		this.options = options;
+	}
+
+	public String getBtnText() {
+		return btnText;
+	}
+
+	public void setBtnText(String btnText) {
+		this.btnText = btnText;
 	}
 	
 }
