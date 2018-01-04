@@ -8,6 +8,13 @@
     </button>
   </formly-form>
 </form>
+<div [hidden]="!cargando">
+  <mat-spinner></mat-spinner>
+  <h4>Guardando...</h4>
+</div>
 <div *ngIf="errorMessage" class="error">
-  <p *ngFor="let error of errMess">{{error}}</p>
+  <p *ngFor="let error of errorMessage">{{error}}</p>
+</div>
+<div *ngIf="exito" class="exito">
+  <p>El formulario fue guardado con éxito</p>
 </div>

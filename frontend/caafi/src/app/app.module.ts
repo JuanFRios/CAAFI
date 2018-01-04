@@ -9,7 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { DatepickerTypeComponent } from './components/types/datepicker/datepicker.component';
-import { RepeatTypeComponent } from './components/types/repeat-section/repeat-section.type';
+import { RepeatTypeComponent } from './components/types/repeat-section/repeat-section.component';
 
 import { AppRoutingModule } from './app-routing/app-routing.module';
 

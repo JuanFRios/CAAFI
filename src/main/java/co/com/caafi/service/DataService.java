@@ -24,4 +24,8 @@ public class DataService {
 	public List<Data> findByTemplate(String template) {
 		return this.dataRepository.findByTemplate(template);
 	}
+	
+	public Data save(Data data) {
+		return this.dataRepository.save(data);
+	}
 }
