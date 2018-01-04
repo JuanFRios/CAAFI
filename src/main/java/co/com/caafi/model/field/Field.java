@@ -9,7 +9,7 @@ public class Field {
 	private String key;
 	private String type;
 	private String defaultValue;
-	private Options templateOptions;
+	private TemplateOption templateOptions;
 	private Validation validation;
 	private Validators validators;
 	private String className;
@@ -40,11 +40,11 @@ public class Field {
 		this.defaultValue = defaultValue;
 	}
 
-	public Options getTemplateOptions() {
+	public TemplateOption getTemplateOptions() {
 		return templateOptions;
 	}
 
-	public void setTemplateOptions(Options templateOptions) {
+	public void setTemplateOptions(TemplateOption templateOptions) {
 		this.templateOptions = templateOptions;
 	}
 

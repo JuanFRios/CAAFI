@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule } from '@ngx-formly/core';
@@ -16,6 +17,9 @@ import { RestangularModule, Restangular } from 'ngx-restangular';
 import { RestangularConfigFactory } from './common/restConfig';
 
 import { TemplatesComponent } from './components/templates/templates.component';
+import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
+
 import { TemplatesService } from './services/templates.service';
 import { DataService } from './services/data.service';
 
@@ -24,6 +28,8 @@ import { AppComponent } from './app.component';
 @NgModule({
   declarations: [
     AppComponent,
+    HeaderComponent,
+    FooterComponent,
     TemplatesComponent,
     DatepickerTypeComponent,
     RepeatTypeComponent
@@ -31,6 +37,7 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
     ReactiveFormsModule,
+    FlexLayoutModule,
     FormlyModule.forRoot({
       types: [
         {

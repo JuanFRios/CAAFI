@@ -21,14 +21,6 @@ public class Template {
 	private Date endDate;
 	private String role;
 
-	public Template(String name, Integer version, String description, List<Field> fields) {
-		super();
-		this.name = name;
-		this.version = version;
-		this.description = description;
-		this.fields = fields;
-	}
-
 	public String getId() {
 		return id;
 	}

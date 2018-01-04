@@ -3,14 +3,14 @@ package co.com.caafi.model.field;
 import java.util.List;
 
 public class FieldArray {
-	private Options templateOptions;
+	private TemplateOption templateOptions;
 	private List<Field> fieldGroup;
 	private String fieldGroupClassName;
 	
-	public Options getTemplateOptions() {
+	public TemplateOption getTemplateOptions() {
 		return templateOptions;
 	}
-	public void setTemplateOptions(Options templateOptions) {
+	public void setTemplateOptions(TemplateOption templateOptions) {
 		this.templateOptions = templateOptions;
 	}
 	

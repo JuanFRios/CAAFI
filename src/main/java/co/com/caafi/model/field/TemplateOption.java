@@ -4,14 +4,14 @@ import java.util.List;
 
 import co.com.caafi.model.types.select.Option;
 
-public class Options {
+public class TemplateOption {
 	private String type;
 	private String label;
 	private String placeholder;
 	private boolean required;
 	private List<Option> options; // for selects types
 	private String btnText;
-	
+
 	public String getType() {
 		return type;
 	}
@@ -59,5 +59,5 @@ public class Options {
 	public void setBtnText(String btnText) {
 		this.btnText = btnText;
 	}
-	
+
 }
