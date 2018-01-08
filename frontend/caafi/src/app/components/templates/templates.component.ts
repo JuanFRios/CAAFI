@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, Inject, Input, ViewChild, ElementRef } fr
 import { TemplatesService } from '../../services/templates.service';
 import { DataService } from '../../services/data.service';
 import { Template } from '../../common/template';
+import { Data } from '../../common/data';
 import { FormGroup } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
@@ -15,10 +16,13 @@ export class TemplatesComponent implements OnInit {
 
   id: string;
   private sub: any;
-  errorMessage: string;
+  errorMessage: string[] = [];
+  exito: boolean = false;
+  cargando: boolean = false;
   form: FormGroup;
   formFields: Array<FormlyFieldConfig>;
   formData: Object;
+  private data: Data;
 
   constructor(
     private templatesService: TemplatesService,
@@ -43,7 +47,7 @@ export class TemplatesComponent implements OnInit {
         this.proccessValidators(form.fields);
         this.formFields = form.fields;
       },
-      error => this.errorMessage = error);
+      error => this.errorMessage.push(error));
   }
 
   proccessValidators(fields) {
@@ -57,7 +61,19 @@ export class TemplatesComponent implements OnInit {
   }
 
   onSubmit(template) {
-    console.log(template);
+    this.errorMessage = [];
+    this.exito = false;
+    this.cargando = true;
+
+    this.data = new Data();
+    this.data.data = template;
+    console.log(this.data);
+    this.dataService.save(this.data)
+      .subscribe(res => {
+        this.exito = true;
+        this.cargando = false;
+      },
+      error => this.errorMessage.push(error));
   }
 
   loadData() {

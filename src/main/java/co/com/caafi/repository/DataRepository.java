@@ -13,5 +13,7 @@ public interface DataRepository extends MongoRepository<Data, String> {
 	public List<Data> findAll();
 
 	public List<Data> findByTemplate(String template);
+	
+	public Data save(Data data);
 
 }

@@ -15,7 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/", "/home", "/rest/template/byname/3", "/rest/template/byname/2", "/rest/data/bytemplate/2",  "/rest/data/byid/1")
+		http.authorizeRequests().antMatchers("/", "/home", "/rest/template/byname/3", "/rest/template/byname/2", "/rest/data/**")
 		.permitAll().anyRequest().authenticated().and()
 				.formLogin().loginPage("/login").permitAll().and().logout().permitAll();
 	}
@@ -23,5 +23,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.inMemoryAuthentication().withUser("admin").password("admin").roles("admin");
+	}
+	
+	// Provisional
+	@Configuration
+	public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
+	  @Override
+	  protected void configure(HttpSecurity http) throws Exception {
+	    http.csrf().disable();
+	  }
 	}
 }

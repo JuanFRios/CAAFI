@@ -16,4 +16,8 @@ export class DataService {
     return this.restangular.one('data/byid', id).get();
   }
 
+  save(data: Data): Observable<Data> {
+    return this.restangular.all('data').post(data);
+  }
+
 }

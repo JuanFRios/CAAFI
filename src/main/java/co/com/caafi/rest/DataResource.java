@@ -2,12 +2,17 @@ package co.com.caafi.rest;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
 
 import co.com.caafi.model.template.Data;
 import co.com.caafi.service.DataService;
@@ -34,5 +39,12 @@ public class DataResource {
 	@RequestMapping(path = "/bytemplate/{template}", method = RequestMethod.GET)
 	public List<Data> findByTemplate(@PathVariable String template) {
 		return dataService.findByTemplate(template);
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+	public Data save(@RequestBody @Valid Data data) {
+		return dataService.save(data);
 	}
 }
