@@ -9,8 +9,8 @@ import { Form } from '../../common/form';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatSidenav } from '@angular/material';
-import { MatSidenavModule } from '@angular/material';
+import { MatSidenav,MatToolbarModule } from '@angular/material';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 
 @Component({
@@ -109,11 +109,8 @@ export class TemplatesComponent implements OnInit {
   }
   
   changeDependencies(depent : Dependencie): void {
-//      this.cargandoReportes = true;
       this.activeDependencie = depent;
       this.dependencieforms=depent.forms;
-   
-
 }
 
   ngOnDestroy() {

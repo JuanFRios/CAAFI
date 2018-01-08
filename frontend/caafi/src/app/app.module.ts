@@ -7,9 +7,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import {
   MatButtonModule,
   MatToolbarModule,
-  MatMenuModule,
-  MatSidenavModule
+  MatMenuModule
  } from '@angular/material';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule } from '@ngx-formly/core';
