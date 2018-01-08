@@ -15,8 +15,8 @@
         <span>Módulo de {{ moduloActivo }}</span>
   </button>
   <mat-menu #menu="matMenu">
-      <button mat-menu-item *ngFor="let modulo of lista_modulos" routerLink="{{ modulo.ruta}}" routerLinkActive="active" (click) = "cambiarModuloActivo( modulo.nombre )" >
-        <span> {{ modulo.nombre }} </span>
+      <button mat-menu-item *ngFor="let modulo of lista_modulos" routerLink="{{ modulo.path}}" routerLinkActive="active" (click) = "cambiarModuloActivo( modulo.name )" >
+        <span> {{ modulo.name }} </span>
     </button>
   </mat-menu>
   <a *ngIf="false" mat-button routerLink="/home"><span><img src="./assets/img/logo-caafi.png" height=30 ></span></a>

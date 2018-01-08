@@ -3,6 +3,8 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import {MatSnackBar} from '@angular/material';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatMenuModule} from '@angular/material/menu';
+import { ConfigService } from '../../services/config.service';
+import { Module } from '../../common/module';
 
 @Component({
   selector: 'app-header',
@@ -12,15 +14,16 @@ import {MatMenuModule} from '@angular/material/menu';
 export class HeaderComponent implements OnInit {
 
   moduloActivo : string;
-  lista_modulos = [ {"id":1, "nombre":"Formularios", "ruta":"formularios"},
-  {"id":2, "nombre":"Reportes y Búsqueda", "ruta":"reportes"},
-  {"id":3, "nombre":"Autoevaluación", "ruta":"autoevaluacion"}
-];
+  lista_modulos : Module[];
 
-  constructor() {
+  constructor(private configService: ConfigService) {
    }
 
   ngOnInit() {
+	  this.configService.getByName("LISTA_MODULOS")
+      .subscribe(confi => {
+        this.lista_modulos = confi.value;
+      });
   }
 
   cambiarModuloActivo(moduloSeleccionado : string){
