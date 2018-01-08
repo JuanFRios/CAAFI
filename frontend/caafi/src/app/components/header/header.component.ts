@@ -23,6 +23,7 @@ export class HeaderComponent implements OnInit {
 	  this.configService.getByName("LISTA_MODULOS")
       .subscribe(confi => {
         this.lista_modulos = confi.value;
+        this.moduloActivo =confi.value[0].name;
       });
   }
 
