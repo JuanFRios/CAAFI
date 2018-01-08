@@ -7,7 +7,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import {
   MatButtonModule,
   MatToolbarModule,
-  MatMenuModule
+  MatMenuModule,
+  MatSidenavModule
  } from '@angular/material';
 
 import { ReactiveFormsModule } from '@angular/forms';
@@ -27,6 +28,7 @@ import { FooterComponent } from './components/footer/footer.component';
 
 import { TemplatesService } from './services/templates.service';
 import { DataService } from './services/data.service';
+import { ConfigService } from './services/config.service';
 
 import { AppComponent } from './app.component';
 
@@ -64,12 +66,14 @@ import { AppComponent } from './app.component';
     MatButtonModule,
     MatToolbarModule,
     MatMenuModule,
+    MatSidenavModule,
     AppRoutingModule,
     RestangularModule.forRoot(RestangularConfigFactory)
   ],
   providers: [
       TemplatesService,
-      DataService
+      DataService,
+      ConfigService
   ],
   bootstrap: [AppComponent]
 })

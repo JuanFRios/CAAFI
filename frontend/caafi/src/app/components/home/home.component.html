@@ -1,0 +1,43 @@
+<mat-card class="signin-card">
+<mat-card-header>
+  <mat-card-title class="titulo-card">Inicio de Sesión</mat-card-title>
+  <span class="flex-spacer"></span>
+</mat-card-header>
+
+<form novalidate [formGroup]="formIncioSesion" (ngSubmit)="onSubmit()" [hidden]="cargando" >
+  <mat-card-content>
+    <p>
+      <mat-form-field dividerColor="{{(erroresFormulario.nombre_usuario) ? 'warn' : 'primary'}}">
+        
+        <input matInput formControlName="nombre_usuario"  type="text" name="nombre_usuario" placeholder="Nombre de Usuario" required>
+         <mat-hint>
+            <span [hidden]="!(erroresFormulario.nombre_usuario)">
+                  {{erroresFormulario.nombre_usuario}}</span>
+          </mat-hint>
+      </mat-form-field>
+      <mat-form-field dividerColor="{{(erroresFormulario.clave) ? 'warn' : 'primary'}}">
+        <input matInput formControlName="clave"  type="password" name="nombre_usuario" placeholder="Contraseña" required>
+         <mat-hint>
+            <span [hidden]="!(erroresFormulario.clave)">
+                  {{erroresFormulario.clave}}</span>
+          </mat-hint>
+      </mat-form-field>
+    </p>
+   
+  </mat-card-content>
+  <mat-card-actions>
+    <span class="flex-spacer"></span>
+    <button type="submit" mat-button class="background-primary boton-inicio" [disabled]="formIncioSesion.invalid">Iniciar Sesión</button>
+  </mat-card-actions>
+
+</form>
+
+	<div [hidden]="!cargando">
+		<mat-spinner></mat-spinner>
+		<h4>Iniciando sesión ...</h4>
+	</div>
+	<div *ngIf="errMess" class="error">
+		<p>{{errMess}}</p>
+	</div>
+
+</mat-card>
