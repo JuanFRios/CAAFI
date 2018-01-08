@@ -4,6 +4,11 @@ import { NgModule } from '@angular/core';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import {
+  MatButtonModule,
+  MatToolbarModule,
+  MatMenuModule
+ } from '@angular/material';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule } from '@ngx-formly/core';
@@ -56,6 +61,9 @@ import { AppComponent } from './app.component';
     FormlyMaterialModule,
     BrowserAnimationsModule,
     MaterialModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatMenuModule,
     AppRoutingModule,
     RestangularModule.forRoot(RestangularConfigFactory)
   ],

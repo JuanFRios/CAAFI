@@ -8,20 +8,19 @@
     <h1>CAAFI</h1>
     <p>Comité de Autoevaluación y Acreditación de la Facultad de Ingeniería</p>
   </div>
-
 </div>
-<!-- <mat-toolbar color="primary"> -->
-<!--   <button *ngIf="esSesionIniciada" mat-icon-button [matMenuTriggerFor]="menu"> -->
-<!--         <i class="material-icons">apps</i> -->
-<!--         <span>Módulo de {{ moduloActivo }}</span> -->
-<!--   </button> -->
-<!--   <mat-menu #menu="matMenu"> -->
-<!--       <button mat-menu-item *ngFor="let modulo of lista_modulos" routerLink="{{ modulo.ruta}}" routerLinkActive="active" (click) = "cambiarModuloActivo( modulo.nombre )" > -->
-<!--         <span> {{ modulo.nombre }} </span> -->
-<!--     </button> -->
-<!--   </mat-menu> -->
-<!--   <a *ngIf="!esSesionIniciada" mat-button routerLink="/home"><span><img src="./assets/img/logo-caafi.png" height=30 ></span></a> -->
+<mat-toolbar color="primary">
+  <button  mat-icon-button [matMenuTriggerFor]="menu">
+        <i class="material-icons">apps</i>
+        <span>Módulo de {{ moduloActivo }}</span>
+  </button>
+  <mat-menu #menu="matMenu">
+      <button mat-menu-item *ngFor="let modulo of lista_modulos" routerLink="{{ modulo.ruta}}" routerLinkActive="active" (click) = "cambiarModuloActivo( modulo.nombre )" >
+        <span> {{ modulo.nombre }} </span>
+    </button>
+  </mat-menu>
+  <a  mat-button routerLink="/home"><span><img src="./assets/img/logo-caafi.png" height=30 ></span></a>
 
-<!--   <span class="flex-spacer"></span> -->
-<!--   <a mat-button><span class="fa fa-sign-in fa-lg"></span></a> -->
-<!-- </mat-toolbar> -->
+  <span class="flex-spacer"></span>
+  <a mat-button><span class="fa fa-sign-in fa-lg"></span></a>
+</mat-toolbar>
