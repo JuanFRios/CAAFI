@@ -1,20 +1,69 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
-  <formly-form [model]="formData" [fields]="formFields">
-    <button mat-raised-button color="primary" type="button" (click)="loadData()">
-      Load Data
-    </button>
-    <button mat-raised-button color="primary" type="submit">
-      Submit
-    </button>
-  </formly-form>
-</form>
-<div [hidden]="!cargando">
-  <mat-spinner></mat-spinner>
-  <h4>Guardando...</h4>
+<mat-sidenav-container class="sidenav-sidenav-fab-container">
+<mat-toolbar *ngIf="sidenav" class="toolbar-formularios">
+<span>
+	<button mat-icon-button *ngIf="!sidenav.opened"
+		class="sidenav-fab cerrado" (click)="sidenav.toggle()" color="accent">
+		<span>Formularios</span> <span
+			class="fa fa-chevron-right fa-lg flecha-despliegue"></span>
+	</button>
+
+	<button mat-icon-button *ngIf="sidenav.opened" class="sidenav-fab"
+		(click)="sidenav.toggle()" color="accent">
+		<span class="fa fa-chevron-left fa-lg flecha-despliegue"></span>
+	</button>
+</span> <span> {{ activeForm }}</span> <span class="flex-spacer"></span>
+<span>
+	<button mat-icon-button [matMenuTriggerFor]="menuDependencias"
+		class="boton-dependencias">
+		<i class="material-icons">more_vert</i> <span
+			*ngIf="!activeDependencie"> Seleccione una Unidad de Trabajo</span> <span
+			*ngIf="activeDependencie"> {{ activeDependencie.name }}</span>
+	</button> <mat-menu #menuDependencias="matMenu">
+	<button mat-menu-item *ngFor="let depen of dependencies"
+		(click)="changeDependencies(depen)">
+		<span> {{ depen.name }}</span>
+	</button>
+	</mat-menu>
+</span> </mat-toolbar> <mat-sidenav #sidenav mode="side" opened="true">
+<div class="sidenav-scrolling-content">
+	<p *ngIf="!activeDependencie">Selecciona una Unidad de Trabajo para
+		desplegar los formularios</p>
+	<ul *ngIf="activeDependencie">
+		<a *ngFor="let formulario of dependencieforms"
+			routerLinkActive="active" (click)="loadForm(formulario)">
+			<li>{{ formulario.name }}</li>
+		</a>
+	</ul>
 </div>
-<div *ngIf="errorMessage" class="error">
-  <p *ngFor="let error of errorMessage">{{error}}</p>
+<!--.sidenav-scrolling-content--> </mat-sidenav>
+<div class="container">
+
+	<div [hidden]="!cargandoDependencias">
+		<mat-spinner></mat-spinner>
+		<h4>Cargando dependencias ...</h4>
+	</div>
+	<div *ngIf="errorDependencias" class="error">
+		<p>{{errorDependencias}}</p>
+	</div>
+	<div *ngIf="activeForm">
+		<form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
+			<formly-form [model]="formData" [fields]="formFields">
+			<button mat-raised-button color="primary" type="button"
+				(click)="loadData()">Load Data</button>
+			<button mat-raised-button color="primary" type="submit">
+				Submit</button>
+			</formly-form>
+		</form>
+		<div [hidden]="!cargando">
+			<mat-spinner></mat-spinner>
+			<h4>Guardando...</h4>
+		</div>
+		<div *ngIf="errorMessage" class="error">
+			<p *ngFor="let error of errorMessage">{{error}}</p>
+		</div>
+		<div *ngIf="exito" class="exito">
+			<p>El formulario fue guardado con éxito</p>
+		</div>
+	</div>
 </div>
-<div *ngIf="exito" class="exito">
-  <p>El formulario fue guardado con éxito</p>
-</div>
+</mat-sidenav-container>

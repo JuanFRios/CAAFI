@@ -1,0 +1,38 @@
+.signin-card{
+background-color: #f7f7f7;
+    width: 274px;
+    padding: 40px 40px;
+    margin: 40px auto 25px;
+}
+
+.titulo-card{
+    font-family: 'Open Sans', arial;
+    -webkit-font-smoothing: antialiased;
+    color: #555;
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 20px;
+}
+
+.signin-card .mat-input-container{
+    display: block !important;
+}
+.boton-inicio{
+    border: 1px solid #0a351c;
+    color: #fff;
+    text-shadow: 0 1px rgba(0,0,0,0.1);
+    background-color: #0a351c;
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
+    z-index: 1;
+    position: relative;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.mat-button[disabled][disabled]{
+    background-color: #d2d2d2;
+    border:none;
+
+}

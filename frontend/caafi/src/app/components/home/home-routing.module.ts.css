@@ -1,0 +1,23 @@
+import { NgModule }             from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard }            from '../../servicios/auth-guard.service';
+import { LoginService }          from '../../servicios/login.service';
+import { HomeComponent }       from './home.component';
+
+const loginRoutes: Routes = [
+  { path: 'login', component: HomeComponent }
+];
+
+@NgModule({
+  imports: [
+    RouterModule.forChild(loginRoutes)
+  ],
+  exports: [
+    RouterModule
+  ],
+  providers: [
+    AuthGuard,
+    LoginService
+  ]
+})
+export class HomeRoutingModule { }

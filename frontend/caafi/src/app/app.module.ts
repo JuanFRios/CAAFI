@@ -4,6 +4,12 @@ import { NgModule } from '@angular/core';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import {
+  MatButtonModule,
+  MatToolbarModule,
+  MatMenuModule
+ } from '@angular/material';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule } from '@ngx-formly/core';
@@ -22,6 +28,7 @@ import { FooterComponent } from './components/footer/footer.component';
 
 import { TemplatesService } from './services/templates.service';
 import { DataService } from './services/data.service';
+import { ConfigService } from './services/config.service';
 
 import { AppComponent } from './app.component';
 
@@ -56,12 +63,17 @@ import { AppComponent } from './app.component';
     FormlyMaterialModule,
     BrowserAnimationsModule,
     MaterialModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatMenuModule,
+    MatSidenavModule,
     AppRoutingModule,
     RestangularModule.forRoot(RestangularConfigFactory)
   ],
   providers: [
       TemplatesService,
-      DataService
+      DataService,
+      ConfigService
   ],
   bootstrap: [AppComponent]
 })
