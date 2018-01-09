@@ -16,6 +16,7 @@ public class Field {
 	private List<Field> fieldGroup;
 	private FieldArray fieldArray;
 	private ElementAttributes elementAttributes;
+	private String fieldGroupClassName;
 
 	public String getKey() {
 		return key;
@@ -95,5 +96,13 @@ public class Field {
 
 	public void setElementAttributes(ElementAttributes elementAttributes) {
 		this.elementAttributes = elementAttributes;
+	}
+
+	public String getFieldGroupClassName() {
+		return fieldGroupClassName;
+	}
+
+	public void setFieldGroupClassName(String fieldGroupClassName) {
+		this.fieldGroupClassName = fieldGroupClassName;
 	}
 }

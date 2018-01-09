@@ -41,8 +41,8 @@
   color: #333;
   width: 100%;
 }
-.mat-sidenav h3, .mat-fab, 
-.mat-raised-button, 
+.mat-sidenav h3, .mat-fab,
+.mat-raised-button,
 md-sidenav.mat-sidenav.mat-sidenav-side.mat-sidenav-opened p{
   color: #333 !important;
 }

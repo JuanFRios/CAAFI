@@ -48,8 +48,8 @@
 	<div *ngIf="activeForm">
 		<form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
 			<formly-form [model]="formData" [fields]="formFields">
-			<button mat-raised-button color="primary" type="button"
-				(click)="loadData()">Load Data</button>
+			<!--<button mat-raised-button color="primary" type="button"
+				(click)="loadData()">Load Data</button>-->
 			<button mat-raised-button color="primary" type="submit">
 				Submit</button>
 			</formly-form>
