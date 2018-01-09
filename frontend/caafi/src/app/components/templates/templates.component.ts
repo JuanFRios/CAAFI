@@ -44,17 +44,30 @@ export class TemplatesComponent implements OnInit {
       .subscribe(form => {
         this.formData = new Object();
 
-        this.proccessValidators(form.fields);
+        this.proccessFields(form.fields);
         this.formFields = form.fields;
       },
       error => this.errorMessage.push(error));
   }
 
-  proccessValidators(fields) {
-    for(var i = 0; i < fields.length; i++) {
-      if(fields[i].validators != undefined) {
-        for(var validator in fields[i].validators) {
-          fields[i].validators[validator] = eval(fields[i].validators[validator]);
+  proccessFields(fields) {
+
+    // Proceess Validators
+    this.evalValidatorsFunction(fields, "validators");
+  }
+
+  /**
+   * Map to a javascript function all validators strings
+   */
+  evalValidatorsFunction(fields, key) {
+    for (var i in fields) {
+      if (i != key) {
+        if(typeof fields[i] == "object") {
+          this.evalValidatorsFunction(fields[i], key);
+        }
+      } else {
+        for(var validator in fields[i]) {
+          fields[i][validator] = eval(fields[i][validator]);
         }
       }
     }
