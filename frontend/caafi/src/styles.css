@@ -199,10 +199,10 @@ display: table;
  }
 
  .group {
-  padding: 20px;
+  padding: 16px;
   display: block;
-  background: lightgrey;
-  margin: 20px;
+  background: #f3f3f3;
+  margin-bottom: 16px;
 }
 
 .repeatSection {
