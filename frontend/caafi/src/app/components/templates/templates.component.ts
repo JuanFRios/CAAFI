@@ -57,9 +57,9 @@ export class TemplatesComponent implements OnInit {
 	      },
 	      error => this.errorMessage.push(error));
 	  }
-  
+
   loadForm(form1:Form) {
-	
+
 	this.form = new FormGroup({});
     this.templatesService.getByName(form1.path)
       .subscribe(form => {
@@ -99,18 +99,21 @@ export class TemplatesComponent implements OnInit {
 
   onSubmit(template) {
     this.errorMessage = [];
-    this.exito = false;
-    this.cargando = true;
+    //this.exito = false;
+    //this.cargando = true;
 
     this.data = new Data();
     this.data.data = template;
     console.log(this.data);
+
+    /*
     this.dataService.save(this.data)
       .subscribe(res => {
         this.exito = true;
         this.cargando = false;
       },
       error => this.errorMessage.push(error));
+      */
   }
 
   loadData() {
@@ -120,7 +123,7 @@ export class TemplatesComponent implements OnInit {
       },
       error => this.errorMessage = error);
   }
-  
+
   changeDependencies(depent : Dependencie): void {
       this.activeDependencie = depent;
       this.dependencieforms=depent.forms;
