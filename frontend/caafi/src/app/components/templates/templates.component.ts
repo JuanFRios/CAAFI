@@ -9,8 +9,6 @@ import { Form } from '../../common/form';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatSidenav,MatToolbarModule } from '@angular/material';
-import {MatSidenavModule} from '@angular/material/sidenav';
 
 
 @Component({
@@ -19,7 +17,6 @@ import {MatSidenavModule} from '@angular/material/sidenav';
   styleUrls: ['./templates.component.css']
 })
 export class TemplatesComponent implements OnInit {
-
   id: string;
   private sub: any;
   errorMessage: string[] = [];
@@ -31,9 +28,7 @@ export class TemplatesComponent implements OnInit {
   private data: Data;
   dependencies: Dependencie[];
   activeDependencie: Dependencie;
-  dependencieforms:Form[];
   activeForm:string;
-  @ViewChild('sidenav') sidenav: MatSidenav;
 
   constructor(
     private templatesService: TemplatesService,
@@ -58,8 +53,8 @@ export class TemplatesComponent implements OnInit {
 	      error => this.errorMessage.push(error));
 	  }
   
-  loadForm(form1:Form) {
-	
+  loadForm(form1:Form, depent:Dependencie) {
+	  this.activeDependencie = depent;
 	this.form = new FormGroup({});
     this.templatesService.getByName(form1.path)
       .subscribe(form => {
@@ -120,11 +115,6 @@ export class TemplatesComponent implements OnInit {
       },
       error => this.errorMessage = error);
   }
-  
-  changeDependencies(depent : Dependencie): void {
-      this.activeDependencie = depent;
-      this.dependencieforms=depent.forms;
-}
 
   ngOnDestroy() {
     this.sub.unsubscribe();
