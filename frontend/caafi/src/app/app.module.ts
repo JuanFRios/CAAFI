@@ -16,6 +16,7 @@ import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { DatepickerTypeComponent } from './components/types/datepicker/datepicker.component';
 import { RepeatTypeComponent } from './components/types/repeat-section/repeat-section.component';
+import { FileUploadTypeComponent } from './components/types/file-upload/file-upload.component';
 
 import { AppRoutingModule } from './app-routing/app-routing.module';
 
@@ -39,7 +40,8 @@ import { AppComponent } from './app.component';
     FooterComponent,
     TemplatesComponent,
     DatepickerTypeComponent,
-    RepeatTypeComponent
+    RepeatTypeComponent,
+    FileUploadTypeComponent
   ],
   imports: [
     BrowserModule,
@@ -58,6 +60,7 @@ import { AppComponent } from './app.component';
           }
         },
         { name: 'repeat', component: RepeatTypeComponent },
+        { name: 'file-upload', component: FileUploadTypeComponent }
       ]
     }),
     FormlyMaterialModule,
