@@ -228,8 +228,10 @@ display: table;
   display: -webkit-flex;
   display: flex;
 
+  /*
   -webkit-justify-content: space-around;
   justify-content: space-around;
+  */
   -webkit-flex-flow: row wrap;
   flex-flow: row wrap;
   -webkit-align-items: stretch;
@@ -238,6 +240,7 @@ display: table;
 
 .flex-1 { flex: 1; }
 .flex-1-100 { flex: 1 100%; }
+.flex-50-0 { flex: 50% 0; }
 
 .flex-2 { flex: 2; }
 
