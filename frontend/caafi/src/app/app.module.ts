@@ -26,10 +26,12 @@ import { RestangularConfigFactory } from './common/restConfig';
 import { TemplatesComponent } from './components/templates/templates.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { HomeComponent } from './components/home/home.component';
 
 import { TemplatesService } from './services/templates.service';
 import { DataService } from './services/data.service';
 import { ConfigService } from './services/config.service';
+import { LoginService } from './services/login.service';
 
 import { AppComponent } from './app.component';
 
@@ -39,6 +41,7 @@ import { AppComponent } from './app.component';
     HeaderComponent,
     FooterComponent,
     TemplatesComponent,
+    HomeComponent,
     DatepickerTypeComponent,
     RepeatTypeComponent,
     FileUploadTypeComponent
@@ -76,7 +79,8 @@ import { AppComponent } from './app.component';
   providers: [
       TemplatesService,
       DataService,
-      ConfigService
+      ConfigService,
+      LoginService
   ],
   bootstrap: [AppComponent]
 })

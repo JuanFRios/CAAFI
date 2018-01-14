@@ -1,15 +1,14 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Usuario } from '../../comun/usuario';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   ActivatedRoute,
   Router,
   NavigationExtras
 } from '@angular/router';
+import { LoginData } from '../../common/loginData';
 import { Location } from '@angular/common';
-//import { LoginService } from '../../servicios/login.service';
-//import { EmisorService } from '../../servicios/emisor.service';
-//import { ERRORES_FORMULARIOS, MENSAJES_VALIDACION } from './validacion';
+import { LoginService } from '../../services/login.service';
+import { ERRORES_FORMULARIOS, MENSAJES_VALIDACION } from './validacion';
 
 @Component({
   selector: 'app-home',
@@ -25,14 +24,20 @@ export class HomeComponent implements OnInit {
   mensajesValidacion = MENSAJES_VALIDACION;
   errMess: string;
   cargando = false;
+  data:LoginData;
 
-  constructor(){
-  }
+  constructor(private loginService: LoginService,
+   private location: Location,
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    public router: Router) {
+    this.crearFormulario();}
 
   ngOnInit() {
   }
 
-  crearFormulario(): void {
+
+ crearFormulario(): void {
     this.formIncioSesion = this.fb.group({
       nombre_usuario: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       clave: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
@@ -79,17 +84,17 @@ export class HomeComponent implements OnInit {
 
   onSubmit() {
     this.cargando = true;
-    this.nombre_usuario = this.formIncioSesion.get('nombre_usuario').value;
+ this.nombre_usuario = this.formIncioSesion.get('nombre_usuario').value;
     this.clave = this.formIncioSesion.get('clave').value;
-
-    this.loginServicio.autenticar(this.nombre_usuario, this.clave)
+    
+    console.log(this.nombre_usuario);
+   this.data= new LoginData("admin","123455");
+   
+   console.log(this.data);
+    this.loginService.login(this.data)
       .subscribe(usuario => {
-        this.loginServicio.esSesionIniciada = true;
-        this.loginServicio.usuario = this.mapearUsuarioLogueado(usuario);
-        this.emisorServicio.cambiarModuloActivo("Formularios");
         // Get the redirect URL from our auth service
         // If no redirect has been set, use the default
-        let redirect = this.loginServicio.redirectUrl ? this.loginServicio.redirectUrl : '/formularios';
 
         // Set our navigation extras object
         // that passes on our global query params and fragment
@@ -99,7 +104,7 @@ export class HomeComponent implements OnInit {
         };
 
         // Redirect the user
-        this.router.navigate([redirect], navigationExtras);
+        this.router.navigate(["/formularios"], navigationExtras);
       }, error => {
         if (error.codigoError = 404) {
           this.errMess = "Usuario o contraseña inválidos.";
@@ -111,22 +116,5 @@ export class HomeComponent implements OnInit {
 
   }
 
-  /**
-    * Este método se crea para mapear el usuario obtenido al loguearse.
-    * cuando se crea el usuario lo retorna con información adicional, entonces hay que mapear 
-    * solo los campos de la tabla Usuario
-    */
-  mapearUsuarioLogueado(usuario: Usuario): Usuario {
-    let usuario_logueado = new Usuario();
-    usuario_logueado.id = usuario.id;
-    usuario_logueado.clave = usuario.clave;
-    usuario_logueado.email = usuario.email;
-    usuario_logueado.estado = usuario.estado;
-    usuario_logueado.identificacion = usuario.identificacion;
-    usuario_logueado.idRol = usuario.idRol;
-    usuario_logueado.nombres = usuario.nombres;
-    usuario_logueado.usuario = usuario.usuario;
-    return usuario_logueado;
-  }
 
 }
