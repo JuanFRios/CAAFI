@@ -17,6 +17,7 @@ public class Field {
 	private FieldArray fieldArray;
 	private ElementAttributes elementAttributes;
 	private String fieldGroupClassName;
+	private String sectionName;
 
 	public String getKey() {
 		return key;
@@ -104,5 +105,13 @@ public class Field {
 
 	public void setFieldGroupClassName(String fieldGroupClassName) {
 		this.fieldGroupClassName = fieldGroupClassName;
+	}
+
+	public String getSectionName() {
+		return sectionName;
+	}
+
+	public void setSectionName(String sectionName) {
+		this.sectionName = sectionName;
 	}
 }

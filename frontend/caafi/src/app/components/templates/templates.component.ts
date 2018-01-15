@@ -94,21 +94,19 @@ export class TemplatesComponent implements OnInit {
 
   onSubmit(template) {
     this.errorMessage = [];
-    //this.exito = false;
-    //this.cargando = true;
+    this.exito = false;
+    this.cargando = true;
 
     this.data = new Data();
     this.data.data = template;
     console.log(this.data);
 
-    /*
     this.dataService.save(this.data)
       .subscribe(res => {
         this.exito = true;
         this.cargando = false;
       },
       error => this.errorMessage.push(error));
-      */
   }
 
   loadData() {

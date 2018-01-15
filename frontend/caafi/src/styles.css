@@ -213,7 +213,6 @@ display: table;
 }
 .repeatSection .fieldRepeat {
     padding: 10px;
-    display: block;
     background: lightgrey;
     margin: 10px 0;
   }

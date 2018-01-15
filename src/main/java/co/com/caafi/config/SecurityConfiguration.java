@@ -27,7 +27,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// .loginPage("/login").permitAll().and().logout().permitAll();
 
 		http.authorizeRequests().antMatchers(
-				"/rest/config/byname/**","/rest/template/byname/**").permitAll().antMatchers("/**").hasAuthority("admin").antMatchers("/user/**").hasAuthority("USER")
+				"/rest/config/byname/**","/rest/template/byname/**", "/rest/data/").permitAll().antMatchers("/**").hasAuthority("admin").antMatchers("/user/**").hasAuthority("USER")
 				.anyRequest().authenticated().and().formLogin().and().logout()
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login");
 	}
