@@ -27,7 +27,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// .loginPage("/login").permitAll().and().logout().permitAll();
 
 		http.authorizeRequests().antMatchers(
-				"/rest/config/byname/**","/rest/template/byname/**", "/rest/data/").permitAll().antMatchers("/**").hasAuthority("admin").antMatchers("/user/**").hasAuthority("USER")
+				"/rest/config/byname/**","/rest/template/byname/**", "/rest/data/**").permitAll().antMatchers("/**").hasAuthority("admin").antMatchers("/user/**").hasAuthority("USER")
 				.anyRequest().authenticated().and().formLogin().and().logout()
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login");
 	}
@@ -39,11 +39,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	// Provisional
-//	@Configuration
-//	public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
-//		@Override
-//		protected void configure(HttpSecurity http) throws Exception {
-//			http.csrf().disable();
-//		}
-//	}
+	@Configuration
+	public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			http.csrf().disable();
+		}
+	}
 }
