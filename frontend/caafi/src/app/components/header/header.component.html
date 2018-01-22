@@ -10,11 +10,11 @@
   </div>
 </div>
 <mat-toolbar color="primary">
-  <button  mat-icon-button [matMenuTriggerFor]="menu">
+  <button  mat-icon-button [matMenuTriggerFor]="menu" >
         <i class="material-icons">apps</i>
         <span>Módulo de {{ moduloActivo }}</span>
   </button>
-  <mat-menu #menu="matMenu">
+  <mat-menu #menu="matMenu" >
       <button mat-menu-item *ngFor="let modulo of lista_modulos" routerLink="{{ modulo.path}}" routerLinkActive="active" (click) = "cambiarModuloActivo( modulo.name )" >
         <span> {{ modulo.name }} </span>
     </button>

@@ -1,16 +1,27 @@
 package co.com.caafi.rest;
 
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/login")
+@RequestMapping(path = "rest/account")
 public class Login {
 
-	@RequestMapping(path = "/all", method = RequestMethod.GET)
-	public String get() {
-		return "acceso";
+	@CrossOrigin
+	@RequestMapping(path ="/login", method = RequestMethod.GET)
+	public Map<String, Object> user(Principal principal,HttpSession session) {
+		System.out.println("user logged "+principal);
+		Map<String, Object> res = new HashMap<>(); 
+		res.put("token", session.getId()); 
+		res.put("user", principal); 
+		return res;
 	}
-
 }

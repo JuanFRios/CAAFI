@@ -4,4 +4,7 @@ import { baseURL } from './baseurl';
 export function RestangularConfigFactory (RestangularProvider) {
   RestangularProvider.setBaseUrl(baseURL);
   RestangularProvider.setDefaultHeaders({"Access-Control-Allow-Origin" : "*"});
+  RestangularProvider.setDefaultHttpFields({
+	    withCredentials: true
+	});
 }

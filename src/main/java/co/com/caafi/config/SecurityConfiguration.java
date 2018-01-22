@@ -8,9 +8,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import co.com.caafi.service.CustomUserDetailService;
 
 @Configuration
 @EnableWebSecurity
@@ -18,32 +17,35 @@ import co.com.caafi.service.CustomUserDetailService;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private CustomUserDetailService userDetailsService;
+	CustomAuthenticationProvider customAuthenticationProvider;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		// http.authorizeRequests().antMatchers("/",
-		// "/home").permitAll().anyRequest().authenticated().and().formLogin()
-		// .loginPage("/login").permitAll().and().logout().permitAll();
-
-		http.authorizeRequests().antMatchers(
-				"/rest/config/byname/**","/rest/template/byname/**", "/rest/data/**").permitAll().antMatchers("/**").hasAuthority("admin").antMatchers("/user/**").hasAuthority("USER")
-				.anyRequest().authenticated().and().formLogin().and().logout()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login");
+		
+		http.cors().and()
+		// starts authorizing configurations
+		.authorizeRequests()
+		// ignoring the guest's urls "
+		.antMatchers("/account/register","/rest/account/login","/logout","/rest/config/byname/LISTA_MODULOS").permitAll()
+		// authenticate all remaining URLS
+		.anyRequest().authenticated().and()
+      /* "/logout" will log the user out by invalidating the HTTP Session,
+       * cleaning up any {link rememberMe()} authentication that was configured, */
+		.logout()
+        .permitAll()
+		.logoutRequestMatcher(new AntPathRequestMatcher("/rest/account/logout", "POST"))
+        .and()
+		// enabling the basic authentication
+		.httpBasic().and()
+		// configuring the session on the server
+		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and()
+		// disabling the CSRF - Cross Site Request Forgery
+		.csrf().disable();
 	}
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		System.out.println("Entro a userDetailsService");
-		auth.userDetailsService(userDetailsService);
+		 auth.authenticationProvider(customAuthenticationProvider);
 	}
 
-	// Provisional
-	@Configuration
-	public class RestSecurityConfig extends WebSecurityConfigurerAdapter {
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.csrf().disable();
-		}
-	}
 }

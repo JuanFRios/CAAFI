@@ -86,16 +86,14 @@ export class HomeComponent implements OnInit {
     this.cargando = true;
  this.nombre_usuario = this.formIncioSesion.get('nombre_usuario').value;
     this.clave = this.formIncioSesion.get('clave').value;
-    
-    console.log(this.nombre_usuario);
-   this.data= new LoginData("admin","123455");
+   this.data= new LoginData(this.nombre_usuario,this.clave);
    
    console.log(this.data);
     this.loginService.login(this.data)
       .subscribe(usuario => {
         // Get the redirect URL from our auth service
         // If no redirect has been set, use the default
-
+	console.log(usuario);
         // Set our navigation extras object
         // that passes on our global query params and fragment
         let navigationExtras: NavigationExtras = {
