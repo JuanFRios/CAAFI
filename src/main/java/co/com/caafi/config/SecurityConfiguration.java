@@ -26,7 +26,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// starts authorizing configurations
 		.authorizeRequests()
 		// ignoring the guest's urls "
-		.antMatchers("/account/register","/rest/account/login","/logout","/rest/config/byname/LISTA_MODULOS").permitAll()
+		.antMatchers("/account/register","/rest/account/login","/logout").permitAll()
 		// authenticate all remaining URLS
 		.anyRequest().authenticated().and()
       /* "/logout" will log the user out by invalidating the HTTP Session,
@@ -37,8 +37,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .and()
 		// enabling the basic authentication
 		.httpBasic().and()
-		// configuring the session on the server
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and()
 		// disabling the CSRF - Cross Site Request Forgery
 		.csrf().disable();
 	}
