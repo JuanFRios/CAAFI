@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {MaterialModule} from '../../material.module'
 import {
   ActivatedRoute,
   Router,
@@ -34,6 +35,8 @@ export class HomeComponent implements OnInit {
     this.crearFormulario();}
 
   ngOnInit() {
+	  this.nombre_usuario=""; 
+	  this.clave=""; 
   }
 
 

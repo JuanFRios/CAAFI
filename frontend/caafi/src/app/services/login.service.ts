@@ -24,6 +24,7 @@ authHeader: string;
 	    var base64Credential: string = btoa( data.username+ ':' + data.password);
 	    
 	    headers.append("Authorization", "Basic " + base64Credential);
+	    headers.append("X-Requested-With", "XMLHttpRequest");
 	    let options = new RequestOptions();
 	    options.withCredentials = true
 	    options.headers=headers;
