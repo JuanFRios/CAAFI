@@ -96,11 +96,6 @@ export class HomeComponent implements OnInit {
    console.log(this.data);
     this.loginService.login(this.data)
       .subscribe(usuario => {
-        // Get the redirect URL from our auth service
-        // If no redirect has been set, use the default
-	console.log(usuario);
-        // Set our navigation extras object
-        // that passes on our global query params and fragment
         let navigationExtras: NavigationExtras = {
           queryParamsHandling: 'preserve',
           preserveFragment: true

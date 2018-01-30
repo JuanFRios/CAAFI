@@ -33,8 +33,6 @@ export class LoginService implements CanActivate{
 	  }
   
   login(data: LoginData){
-	  console.log("en servicio");
-	  console.log(data);
 	  let headers = new Headers();
 	    headers.append('Accept', 'application/json')
 	    // creating base64 encoded String from user name and password
@@ -47,8 +45,6 @@ export class LoginService implements CanActivate{
 	    options.headers=headers;
 	   return this.http.get(baseURL+"/account/login" ,   options)
 	      .map((response: Response) => {
-	    	  console.log("response........");
-	    	  console.log(response);
 	      // login successful if there's a jwt token in the response
 	      let user = response.json().user;// the returned user object is a
 												// principal object
