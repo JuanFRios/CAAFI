@@ -10,7 +10,7 @@
   </div>
 </div>
 <mat-toolbar color="primary">
-  <button  mat-icon-button [matMenuTriggerFor]="menu" >
+<div *ngIf="loginService.isLogIn()"><button  mat-icon-button [matMenuTriggerFor]="menu"  >
         <i class="material-icons">apps</i>
         <span>Módulo de {{ moduloActivo }}</span>
   </button>
@@ -18,8 +18,9 @@
       <button mat-menu-item *ngFor="let modulo of lista_modulos" routerLink="{{ modulo.path}}" routerLinkActive="active" (click) = "cambiarModuloActivo( modulo.name )" >
         <span> {{ modulo.name }} </span>
     </button>
-  </mat-menu>
-  <a *ngIf="false" mat-button routerLink="/home"><span><img src="./assets/img/logo-caafi.png" height=30 ></span></a>
+  </mat-menu></div>
+  
+  <a *ngIf="!loginService.isLogIn()" mat-button routerLink="/home"><span><img src="./assets/img/logo-caafi.png" height=30 ></span></a>
 
   <span class="flex-spacer"></span>
   <a mat-button><span class="fa fa-sign-in fa-lg"></span></a>

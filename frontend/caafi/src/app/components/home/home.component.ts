@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit {
   errMess: string;
   cargando = false;
   data:LoginData;
+  
 
   constructor(private loginService: LoginService,
    private location: Location,
@@ -37,6 +38,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
 	  this.nombre_usuario=""; 
 	  this.clave=""; 
+	  
   }
 
 

@@ -4,6 +4,7 @@ import {MatSnackBar} from '@angular/material';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatMenuModule} from '@angular/material/menu';
 import { ConfigService } from '../../services/config.service';
+import { LoginService } from '../../services/login.service';
 import { Module } from '../../common/module';
 
 @Component({
@@ -16,7 +17,8 @@ export class HeaderComponent implements OnInit {
   moduloActivo : string;
   lista_modulos : Module[];
 
-  constructor(private configService: ConfigService) {
+
+  constructor(private configService: ConfigService,private loginService:LoginService) {
    }
 
   ngOnInit() {
