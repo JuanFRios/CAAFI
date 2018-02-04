@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {MaterialModule} from '../../material.module'
+import { MaterialModule } from '../../material.module'
 import {
   ActivatedRoute,
   Router,
@@ -25,24 +25,29 @@ export class HomeComponent implements OnInit {
   mensajesValidacion = MENSAJES_VALIDACION;
   errMess: string;
   cargando = false;
-  data:LoginData;
-  
+  data: LoginData;
+
 
   constructor(private loginService: LoginService,
-   private location: Location,
+    private location: Location,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     public router: Router) {
-    this.crearFormulario();}
+    this.crearFormulario();
+  }
 
   ngOnInit() {
-	  this.nombre_usuario=""; 
-	  this.clave=""; 
-	  
+    this.nombre_usuario = "";
+    this.clave = "";
+    if (this.loginService.isLogIn()) {
+      this.router.navigate(['/formularios']);
+    }
+
+
   }
 
 
- crearFormulario(): void {
+  crearFormulario(): void {
     this.formIncioSesion = this.fb.group({
       nombre_usuario: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       clave: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
@@ -89,11 +94,11 @@ export class HomeComponent implements OnInit {
 
   onSubmit() {
     this.cargando = true;
- this.nombre_usuario = this.formIncioSesion.get('nombre_usuario').value;
+    this.nombre_usuario = this.formIncioSesion.get('nombre_usuario').value;
     this.clave = this.formIncioSesion.get('clave').value;
-   this.data= new LoginData(this.nombre_usuario,this.clave);
-   
-   console.log(this.data);
+    this.data = new LoginData(this.nombre_usuario, this.clave);
+
+    console.log(this.data);
     this.loginService.login(this.data)
       .subscribe(usuario => {
         let navigationExtras: NavigationExtras = {

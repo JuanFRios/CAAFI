@@ -28,44 +28,45 @@ export class TemplatesComponent implements OnInit {
   private data: Data;
   dependencies: Dependencie[];
   activeDependencie: Dependencie;
-  activeForm:string;
+  activeForm: string;
 
   constructor(
     private templatesService: TemplatesService,
     private dataService: DataService,
     private route: ActivatedRoute,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
-       this.id = params['id'];
+      this.id = params['id'];
 
-       this.loadConfig();
+      this.loadConfig();
     });
   }
   loadConfig() {
-	  this.form = new FormGroup({});
-	    this.configService.getByName("dependencias")
-	      .subscribe(form => {
-	        this.dependencies = form.value;
-	      },
-	      error => this.errorMessage.push(error));
-	  }
+    this.form = new FormGroup({});
+    this.configService.getByName("dependencias")
+      .subscribe(form => {
+        this.dependencies = form.value;
+      },
+      error => this.errorMessage.push(error));
+  }
 
-  loadForm(form1:Form, depent:Dependencie) {
-	  this.activeDependencie = depent;
+  loadForm(form1: Form, depent: Dependencie) {
+    this.activeDependencie = depent;
     this.form = new FormGroup({});
     this.templatesService.getByName(form1.path)
       .subscribe(form => {
-    	this.activeForm=form1.name;
+        this.activeForm = form1.name;
         this.formData = new Object();
 
         this.proccessFields(form.fields);
         this.formFields = form.fields;
       },
-      error =>{ this.errorMessage.push(error);
-      this.activeForm=null;
+      error => {
+        this.errorMessage.push(error);
+        this.activeForm = null;
       });
   }
 
@@ -81,11 +82,11 @@ export class TemplatesComponent implements OnInit {
   evalValidatorsFunction(fields, key) {
     for (var i in fields) {
       if (i != key) {
-        if(typeof fields[i] == "object") {
+        if (typeof fields[i] == "object") {
           this.evalValidatorsFunction(fields[i], key);
         }
       } else {
-        for(var validator in fields[i]) {
+        for (var validator in fields[i]) {
           fields[i][validator] = eval(fields[i][validator]);
         }
       }

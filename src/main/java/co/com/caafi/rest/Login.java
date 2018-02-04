@@ -18,10 +18,16 @@ public class Login {
 	@CrossOrigin
 	@RequestMapping(path ="/login", method = RequestMethod.GET)
 	public Map<String, Object> user(Principal principal,HttpSession session) {
-		System.out.println("user logged "+principal);
 		Map<String, Object> res = new HashMap<>(); 
 		res.put("token", session.getId()); 
 		res.put("user", principal); 
 		return res;
 	}
+	
+	@CrossOrigin
+	@RequestMapping(path ="/check", method = RequestMethod.GET)
+	public String checkUser(HttpSession session) {
+		return session.getId();
+	}
+	
 }
