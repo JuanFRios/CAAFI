@@ -21,8 +21,7 @@
   </mat-menu></div>
   
   <a *ngIf="!loginService.isLogIn()" mat-button routerLink="/home"><span><img src="./assets/img/logo-caafi.png" height=30 ></span></a>
-	<a *ngIf="loginService.isLogIn()" mat-button (click) = "logOut()"><span><img src="./assets/img/logout.png" height=30 ></span></a>
-
   <span class="flex-spacer"></span>
-  <a mat-button><span class="fa fa-sign-in fa-lg"></span></a>
+  <a *ngIf="loginService.isLogIn()" mat-button (click) = "logOut()"><span><img src="./assets/img/logout.png" height=30 ></span></a>
+  
 </mat-toolbar>
