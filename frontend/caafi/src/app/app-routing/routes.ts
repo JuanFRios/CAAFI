@@ -5,5 +5,5 @@ import {LoginService as AuthGuard } from '../services/login.service';
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'formularios', component: TemplatesComponent, canActivate:[AuthGuard] },
-  {path: '**', component: TemplatesComponent, canActivate:[AuthGuard]}
+  {path: '**', redirectTo: 'formularios'}
 ];
