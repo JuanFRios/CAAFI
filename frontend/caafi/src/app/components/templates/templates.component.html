@@ -14,13 +14,6 @@
 	</mat-menu> </ng-container> </mat-menu>
 	<div class="container">
 
-		<div [hidden]="!cargandoDependencias">
-			<mat-spinner></mat-spinner>
-			<h4>Cargando dependencias ...</h4>
-		</div>
-		<div *ngIf="errorDependencias" class="error">
-			<p>{{errorDependencias}}</p>
-		</div>
 		<div *ngIf="activeForm">
 			<form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
 				<formly-form [model]="formData" [fields]="formFields">

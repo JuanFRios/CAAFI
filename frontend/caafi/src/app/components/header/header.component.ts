@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
   lista_modulos: Module[];
 
 
-  constructor(private configService: ConfigService, private loginService: LoginService, public router: Router) {
+  constructor(private configService: ConfigService, public loginService: LoginService, public router: Router) {
   }
 
   ngOnInit() {

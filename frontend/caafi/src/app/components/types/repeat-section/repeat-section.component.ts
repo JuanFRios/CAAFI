@@ -9,6 +9,7 @@ import * as clonedeep from 'lodash.clonedeep';
 })
 export class RepeatTypeComponent extends FieldType implements OnInit {
   formControl: FormArray;
+  field:any; 
   fields = [];
 
   constructor(private builder: FormlyFormBuilder) {
