@@ -10,7 +10,7 @@ export function RestangularConfigFactory (RestangularProvider,Restangular) {
  
   RestangularProvider.addErrorInterceptor((response, subject, responseHandler) => {
 	  if (response.status === 401) {
-		  localStorage.removeItem('tokenUser');
+		 // localStorage.removeItem('tokenUser');
 	  }
 	  });
 }

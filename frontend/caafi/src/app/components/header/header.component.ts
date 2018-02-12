@@ -33,6 +33,17 @@ export class HeaderComponent implements OnInit {
         this.lista_modulos = confi.value;
         this.moduloActivo = confi.value[0].name;
       });
+
+    this.loginService.check()
+      .subscribe(usuario => {
+
+      }, error => {
+       if(localStorage.getItem('tokenUser')){ 
+         localStorage.removeItem('tokenUser');
+        this.router.navigate(['/home']);
+      }
+
+      });
   }
 
   cambiarModuloActivo(moduloSeleccionado: string) {

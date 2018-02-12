@@ -39,9 +39,11 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.nombre_usuario = "";
     this.clave = "";
-    if (this.loginService.isLogIn()) {
-      this.router.navigate(['/formularios']);
-    }
+    this.loginService.check()
+      .subscribe(usuario => {
+        this.router.navigate(['/formularios']);
+      });
+
 
 
   }

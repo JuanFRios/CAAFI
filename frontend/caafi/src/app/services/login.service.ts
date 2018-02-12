@@ -52,7 +52,6 @@ export class LoginService implements CanActivate {
 				let user = response.json().user;// the returned user object is a
 				// principal object
 				localStorage.setItem('tokenUser', response.json().token);
-				console.log(response.json().token);
 				if (user) {
 					// store user details in local storage to keep user logged in
 					// between page refreshes
@@ -73,10 +72,11 @@ export class LoginService implements CanActivate {
 	check() {
 		let options = new RequestOptions();
 		options.withCredentials = true
-
+		let headers = new Headers();
+		headers.append("X-Requested-With", "XMLHttpRequest");
+		options.headers = headers;
 		return this.http.get(baseURL + "/account/check", options)
 			.map((response: Response) => {
-				console.log(response);
 			});
 	}
 
