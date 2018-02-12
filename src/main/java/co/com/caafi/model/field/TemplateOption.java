@@ -1,6 +1,7 @@
 package co.com.caafi.model.field;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import co.com.caafi.model.types.select.Option;
 
@@ -11,6 +12,7 @@ public class TemplateOption {
 	private boolean required;
 	private List<Option> options; // for selects types
 	private String btnText;
+	private Pattern pattern;
 
 	public String getType() {
 		return type;
@@ -58,6 +60,14 @@ public class TemplateOption {
 
 	public void setBtnText(String btnText) {
 		this.btnText = btnText;
+	}
+
+	public Pattern getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(Pattern pattern) {
+		this.pattern = pattern;
 	}
 
 }
