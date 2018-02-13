@@ -73,21 +73,22 @@ export class TemplatesComponent implements OnInit {
   proccessFields(fields) {
 
     // Proceess Validators
-    this.evalValidatorsFunction(fields, "validators");
+    this.evalJSFromJSON(fields, ["minLength", "maxLength", "defaultValue"]);
+    console.log(fields);
   }
 
   /**
-   * Map to a javascript function all validators strings
+   * Eval all javascript strings from db
    */
-  evalValidatorsFunction(fields, key) {
+  evalJSFromJSON(fields, keys) {
     for (var i in fields) {
-      if (i != key) {
-        if (typeof fields[i] == "object") {
-          this.evalValidatorsFunction(fields[i], key);
-        }
-      } else {
-        for (var validator in fields[i]) {
-          fields[i][validator] = eval(fields[i][validator]);
+      if (typeof fields[i] == "object") {
+        this.evalJSFromJSON(fields[i], keys);
+      } else if (this.arrayContains(i, keys)) {
+        try {
+          fields[i] = eval(fields[i]);
+        } catch (e) {
+          console.log("El campo " + i + ":" + fields[i] + " no representa una cadena javascript. Error: " + e.message);
         }
       }
     }
@@ -120,6 +121,10 @@ export class TemplatesComponent implements OnInit {
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+  }
+
+  arrayContains(needle, arrhaystack) {
+    return (arrhaystack.indexOf(needle) > -1);
   }
 
 }
