@@ -6,7 +6,7 @@ public class User {
 	private String document;
 	private String name;
 	private String lastName;
-	private String role;
+	private Role role;
 	private String pass;
 	private String userName;
 
@@ -67,11 +67,11 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 
