@@ -16,7 +16,8 @@ import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { DatepickerTypeComponent } from './components/types/datepicker/datepicker.component';
 import { RepeatTypeComponent } from './components/types/repeat-section/repeat-section.component';
-import { FileUploadTypeComponent } from './components/types/file-upload/file-upload.component';
+import { FormlyFieldFile } from './components/types/file-upload/file.component';
+import { FileValueAccessor } from './components/types/file-upload/file-value-accessor';
 
 import { AppRoutingModule } from './app-routing/app-routing.module';
 
@@ -32,6 +33,7 @@ import { TemplatesService } from './services/templates.service';
 import { DataService } from './services/data.service';
 import { ConfigService } from './services/config.service';
 import { LoginService } from './services/login.service';
+import { FileService } from './services/file.service';
 
 import { AppComponent } from './app.component';
 
@@ -44,7 +46,8 @@ import { AppComponent } from './app.component';
     HomeComponent,
     DatepickerTypeComponent,
     RepeatTypeComponent,
-    FileUploadTypeComponent
+    FileValueAccessor,
+    FormlyFieldFile
   ],
   imports: [
     BrowserModule,
@@ -63,7 +66,7 @@ import { AppComponent } from './app.component';
           }
         },
         { name: 'repeat', component: RepeatTypeComponent },
-        { name: 'file-upload', component: FileUploadTypeComponent }
+        { name: 'file', component: FormlyFieldFile }
       ]
     }),
     FormlyMaterialModule,
@@ -80,7 +83,8 @@ import { AppComponent } from './app.component';
       TemplatesService,
       DataService,
       ConfigService,
-      LoginService
+      LoginService,
+      FileService
   ],
   bootstrap: [AppComponent]
 })
