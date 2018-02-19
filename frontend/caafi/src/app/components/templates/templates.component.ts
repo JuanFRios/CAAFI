@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, Inject, Input, ViewChild, ElementRef } fr
 import { TemplatesService } from '../../services/templates.service';
 import { ConfigService } from '../../services/config.service';
 import { DataService } from '../../services/data.service';
+import { FileService } from '../../services/file.service';
 import { Template } from '../../common/template';
 import { Dependencie } from '../../common/dependencie';
 import { Data } from '../../common/data';
@@ -35,6 +36,7 @@ export class TemplatesComponent implements OnInit {
     private dataService: DataService,
     private route: ActivatedRoute,
     private configService: ConfigService,
+    private fileService: FileService,
   ) { }
 
   ngOnInit() {
@@ -74,7 +76,6 @@ export class TemplatesComponent implements OnInit {
 
     // Proceess Validators
     this.evalJSFromJSON(fields, ["minLength", "maxLength", "defaultValue"]);
-    console.log(fields);
   }
 
   /**
@@ -100,11 +101,14 @@ export class TemplatesComponent implements OnInit {
     this.cargando = true;
 
     this.data = new Data();
+    var formsData: FormData[] = this.getFiles(template);
     this.data.data = template;
-    console.log(this.data);
 
     this.dataService.save(this.data)
       .subscribe(res => {
+        for (var i = 0, len = formsData.length; i < len; i++) {
+          this.uploadFile(formsData[i]);
+        }
         this.exito = true;
         this.cargando = false;
       },
@@ -125,6 +129,30 @@ export class TemplatesComponent implements OnInit {
 
   arrayContains(needle, arrhaystack) {
     return (arrhaystack.indexOf(needle) > -1);
+  }
+
+  getFiles(template) {
+    var formsData : FormData[] = [];
+    for (var i in template) {
+      if(template[i][0] && typeof template[i][0].name == "string" && template[i].length > 0) {
+        let file: File = template[i][0];
+        let formData: FormData = new FormData();
+        const fecha_actual = new Date();
+        const ano = fecha_actual.getFullYear();
+        const mes = fecha_actual.getMonth() + 1;
+        const dia = fecha_actual.getDate();
+        const formato_fecha = "_" + ano + "-" + mes + "-" + dia;
+        let nombre_archivo = i + formato_fecha;
+        template[i] = nombre_archivo + ".pdf";
+        formData.append('file', file, nombre_archivo);
+        formsData.push(formData);
+      }
+    }
+    return formsData;
+  }
+
+  uploadFile(file) {
+    this.fileService.upload(file);
   }
 
 }
