@@ -11,6 +11,32 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
 
+const LISTA_IDIOMAS = [
+    {
+        "label" : "Alemán",
+        "value" : "Alemán"
+    },
+    {
+        "label" : "Español",
+        "value" : "Español"
+    },
+    {
+        "label" : "Francés",
+        "value" : "Francés"
+    },
+    {
+        "label" : "Ingles",
+        "value" : "Inglés"
+    },
+    {
+        "label" : "Italiano",
+        "value" : "Italiano"
+    },
+    {
+        "label" : "Portugués",
+        "value" : "Portugués"
+    }
+]
 
 @Component({
   selector: 'app-templates',
@@ -65,6 +91,7 @@ export class TemplatesComponent implements OnInit {
 
         this.proccessFields(form.fields);
         this.formFields = form.fields;
+        console.log(form);
       },
       error => {
         this.errorMessage.push(error);
@@ -75,7 +102,7 @@ export class TemplatesComponent implements OnInit {
   proccessFields(fields) {
 
     // Proceess Validators
-    this.evalJSFromJSON(fields, ["minLength", "maxLength", "defaultValue"]);
+    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB"]);
   }
 
   /**
@@ -87,7 +114,12 @@ export class TemplatesComponent implements OnInit {
         this.evalJSFromJSON(fields[i], keys);
       } else if (this.arrayContains(i, keys)) {
         try {
-          fields[i] = eval(fields[i]);
+          // pendiente refactor en esta parte
+          if(i == "optionsDB") {
+              fields["options"] = eval(fields[i]);
+          } else {
+              fields[i] = eval(fields[i]);
+          }
         } catch (e) {
           console.log("El campo " + i + ":" + fields[i] + " no representa una cadena javascript. Error: " + e.message);
         }
@@ -153,6 +185,10 @@ export class TemplatesComponent implements OnInit {
 
   uploadFile(file) {
     this.fileService.upload(file);
+  }
+
+  getListaIdiomas() {
+    return LISTA_IDIOMAS;
   }
 
 }

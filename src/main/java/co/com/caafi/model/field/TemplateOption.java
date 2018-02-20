@@ -11,8 +11,13 @@ public class TemplateOption {
 	private String placeholder;
 	private boolean required;
 	private List<Option> options; // for selects types
+	private String optionsDB; // method name for load options fromdb
 	private String btnText;
 	private Pattern pattern;
+	private int minLength;
+	private int maxLength;
+	private int min;
+	private int max;
 
 	public String getType() {
 		return type;
@@ -68,6 +73,46 @@ public class TemplateOption {
 
 	public void setPattern(Pattern pattern) {
 		this.pattern = pattern;
+	}
+
+	public int getMinLength() {
+		return minLength;
+	}
+
+	public void setMinLength(int minLength) {
+		this.minLength = minLength;
+	}
+
+	public int getMaxLength() {
+		return maxLength;
+	}
+
+	public void setMaxLength(int maxLength) {
+		this.maxLength = maxLength;
+	}
+
+	public int getMin() {
+		return min;
+	}
+
+	public void setMin(int min) {
+		this.min = min;
+	}
+
+	public int getMax() {
+		return max;
+	}
+
+	public void setMax(int max) {
+		this.max = max;
+	}
+
+	public String getOptionsDB() {
+		return optionsDB;
+	}
+
+	public void setOptionsDB(String optionsDB) {
+		this.optionsDB = optionsDB;
 	}
 
 }
