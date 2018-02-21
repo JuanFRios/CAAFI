@@ -49,6 +49,15 @@ public class UserRepositoryImpl implements UserRepository {
 			wsClient.addParam("usuario", name);
 			wsClient.addParam("clave", password);
 			doc = wsClient.obtenerString(serviceName, token).trim();
+			
+			if(doc==null || "".equals(doc)){
+				SimpleMailMessage message = new SimpleMailMessage();
+				message.setTo("castroscarlos1@gmail.com");
+				message.setSubject("Error Caafi");
+				message.setText("doc retornado por servicio null o vacio");
+				emailSender.send(message);
+				return null;
+			}
 
 			// consulta empleado SIPE
 			List<SIPEEmployee> employeeList;
