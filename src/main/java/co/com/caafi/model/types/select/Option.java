@@ -23,6 +23,4 @@ public class Option {
 	public void setKey(String key) {
 		this.key = key;
 	}
-	
-	
 }

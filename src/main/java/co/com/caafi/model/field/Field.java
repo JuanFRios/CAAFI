@@ -18,6 +18,7 @@ public class Field {
 	private ElementAttributes elementAttributes;
 	private String fieldGroupClassName;
 	private String sectionName;
+	private String template;
 
 	public String getKey() {
 		return key;
@@ -113,5 +114,13 @@ public class Field {
 
 	public void setSectionName(String sectionName) {
 		this.sectionName = sectionName;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
 	}
 }

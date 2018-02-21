@@ -37,6 +37,26 @@ import { FileService } from './services/file.service';
 
 import { AppComponent } from './app.component';
 
+export function minlengthValidationMessage(err, field) {
+  return `El campo ${field.templateOptions.label} debe contener al menos ${field.templateOptions.minLength} caracteres.`;
+}
+
+export function maxlengthValidationMessage(err, field) {
+  return `El campo ${field.templateOptions.label} no puede contener más de ${field.templateOptions.maxLength} caracteres.`;
+}
+
+export function minValidationMessage(err, field) {
+  return `El campo ${field.templateOptions.label} debe ser mayor a ${field.templateOptions.min}`;
+}
+
+export function maxValidationMessage(err, field) {
+  return `El campo ${field.templateOptions.label} debe ser menor a ${field.templateOptions.max}`;
+}
+
+export function required(err, field) {
+  return `El campo ${field.templateOptions.label} es requerido.`;
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -67,6 +87,13 @@ import { AppComponent } from './app.component';
         },
         { name: 'repeat', component: RepeatTypeComponent },
         { name: 'file', component: FormlyFieldFile }
+      ],
+      validationMessages: [
+        { name: 'required', message: required },
+        { name: 'minlength', message: minlengthValidationMessage },
+        { name: 'maxlength', message: maxlengthValidationMessage },
+        { name: 'min', message: minValidationMessage },
+        { name: 'max', message: maxValidationMessage },
       ]
     }),
     FormlyMaterialModule,

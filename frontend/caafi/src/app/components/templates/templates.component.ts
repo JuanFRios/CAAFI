@@ -11,7 +11,6 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
 
-
 @Component({
   selector: 'app-templates',
   templateUrl: './templates.component.html',
@@ -30,6 +29,7 @@ export class TemplatesComponent implements OnInit {
   dependencies: Dependencie[];
   activeDependencie: Dependencie;
   activeForm: string;
+  lists: String[][] = [];
 
   constructor(
     private templatesService: TemplatesService,
@@ -64,7 +64,11 @@ export class TemplatesComponent implements OnInit {
         this.formData = new Object();
 
         this.proccessFields(form.fields);
-        this.formFields = form.fields;
+        if(this.lists.length > 0) {
+          this.getList(this.lists, 0, form.fields);
+        } else {
+            this.formFields = form.fields;
+        }
       },
       error => {
         this.errorMessage.push(error);
@@ -75,19 +79,26 @@ export class TemplatesComponent implements OnInit {
   proccessFields(fields) {
 
     // Proceess Validators
-    this.evalJSFromJSON(fields, ["minLength", "maxLength", "defaultValue"]);
+    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB"], "");
   }
 
   /**
    * Eval all javascript strings from db
    */
-  evalJSFromJSON(fields, keys) {
+  evalJSFromJSON(fields, keys, path) {
     for (var i in fields) {
       if (typeof fields[i] == "object") {
-        this.evalJSFromJSON(fields[i], keys);
+        this.evalJSFromJSON(fields[i], keys, path+"['"+i+"']");
       } else if (this.arrayContains(i, keys)) {
         try {
-          fields[i] = eval(fields[i]);
+          // pendiente refactor en esta parte
+          if(i == "optionsDB") {
+              //fields["options"] = eval(fields[i]);
+              path = path+"['options']";
+              this.lists.push([path, fields[i]]);
+          } else {
+              fields[i] = eval(fields[i]);
+          }
         } catch (e) {
           console.log("El campo " + i + ":" + fields[i] + " no representa una cadena javascript. Error: " + e.message);
         }
@@ -153,6 +164,19 @@ export class TemplatesComponent implements OnInit {
 
   uploadFile(file) {
     this.fileService.upload(file);
+  }
+
+  getList(list, current, fields) {
+    if(list.length > current) {
+      this.configService.getByName(list[current][1])
+      .subscribe(confi => {
+        eval("fields"+list[current][0]+" = "+JSON.stringify(confi.value));
+        current++;
+        this.getList(list, current, fields);
+      });
+    } else {
+      this.formFields = fields;
+    }
   }
 
 }
