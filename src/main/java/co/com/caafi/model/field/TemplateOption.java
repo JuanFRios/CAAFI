@@ -18,6 +18,7 @@ public class TemplateOption {
 	private int maxLength;
 	private int min;
 	private int max;
+	private boolean multiple;
 
 	public String getType() {
 		return type;
@@ -113,6 +114,14 @@ public class TemplateOption {
 
 	public void setOptionsDB(String optionsDB) {
 		this.optionsDB = optionsDB;
+	}
+
+	public boolean isMultiple() {
+		return multiple;
+	}
+
+	public void setMultiple(boolean multiple) {
+		this.multiple = multiple;
 	}
 
 }

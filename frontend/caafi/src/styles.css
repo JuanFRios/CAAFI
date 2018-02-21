@@ -271,3 +271,7 @@ mat-radio-button {
 mat-radio-group ::ng-deep .mat-radio-underline {
   display: none;
 }
+
+.mat-pseudo-checkbox {
+  vertical-align: 13px !important;
+}
