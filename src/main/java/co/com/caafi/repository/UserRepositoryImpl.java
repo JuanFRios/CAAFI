@@ -52,6 +52,7 @@ public class UserRepositoryImpl implements UserRepository {
 
 			// consulta empleado SIPE
 			List<SIPEEmployee> employeeList;
+			wsClient = new OrgSistemasWebServiceClient(publicKey);
 			wsClient.addParam(paramSipeCC, doc);
 			employeeList = wsClient.obtenerBean(serviceNameSipe, token, SIPEEmployee.class);
 			int lastRecordIndex = employeeList.size() - 1;
@@ -67,6 +68,7 @@ public class UserRepositoryImpl implements UserRepository {
 			}
 			//
 			// // consulta estudiante Mares
+			wsClient = new OrgSistemasWebServiceClient(publicKey);
 			wsClient.addParam(paramMARESCC, doc);
 			List<MARESStudent> studentList;
 			studentList = wsClient.obtenerBean(serviceNameMares, token, MARESStudent.class);
