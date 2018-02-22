@@ -63,6 +63,7 @@ export class TemplatesComponent implements OnInit {
         this.activeForm = form1.name;
         this.formData = new Object();
 
+        this.lists = [];
         this.proccessFields(form.fields);
         if(this.lists.length > 0) {
           this.getList(this.lists, 0, form.fields);
