@@ -84,9 +84,8 @@ public class UserRepositoryImpl implements UserRepository {
 				SimpleMailMessage message = new SimpleMailMessage();
 				message.setTo("castroscarlos1@gmail.com");
 				message.setSubject("Error Caafi "+doc);
-				message.setText(e.getMessage());
+				message.setText(e.getMessage()+ " el doc es "+ doc);
 				emailSender.send(message);
-				return null;
 			}
 
 			// }
