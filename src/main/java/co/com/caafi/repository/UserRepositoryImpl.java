@@ -49,8 +49,8 @@ public class UserRepositoryImpl implements UserRepository {
 			wsClient.addParam("usuario", name);
 			wsClient.addParam("clave", password);
 			doc = wsClient.obtenerString(serviceName, token).trim();
-			
-			if(doc==null || "".equals(doc)){
+
+			if (doc == null || "".equals(doc)) {
 				SimpleMailMessage message = new SimpleMailMessage();
 				message.setTo("castroscarlos1@gmail.com");
 				message.setSubject("Error Caafi");
@@ -58,41 +58,79 @@ public class UserRepositoryImpl implements UserRepository {
 				emailSender.send(message);
 				return null;
 			}
+			user = new User();
+			user.setPass(password);
+			user.setName(name);
+			user.setUserName(name);
+			user.setDocument(doc);
+			user.setRole(Role.STUDENT);
+			try {
+				List<SIPEEmployee> employeeList;
+				wsClient = new OrgSistemasWebServiceClient(publicKey);
+				wsClient.addParam(paramSipeCC, "1020398607");
+				employeeList = wsClient.obtenerBean(serviceNameSipe, token, SIPEEmployee.class);
+				int lastRecordIndex = employeeList.size() - 1;
+				if (!employeeList.isEmpty() && employeeList.get(lastRecordIndex) != null) {
+					SIPEEmployee employee = (SIPEEmployee) employeeList.get(lastRecordIndex);
+					User user2 = new User();
+					user2.setPass(password);
+					user2.setName(employee.getNombre());
+					user2.setUserName(name);
+					user2.setDocument(doc);
+					user2.setRole(Role.EMPLOYEE);
+					return user;
+				}
+			} catch (Exception e) {
+				SimpleMailMessage message = new SimpleMailMessage();
+				message.setTo("castroscarlos1@gmail.com");
+				message.setSubject("Error Caafi "+doc);
+				message.setText(e.getMessage());
+				emailSender.send(message);
+				return null;
+			}
 
-			// consulta empleado SIPE
-//			List<SIPEEmployee> employeeList;
-//			wsClient = new OrgSistemasWebServiceClient(publicKey);
-//			wsClient.addParam(paramSipeCC, doc);
-//			employeeList = wsClient.obtenerBean(serviceNameSipe, token, SIPEEmployee.class);
-//			int lastRecordIndex = employeeList.size() - 1;
-//			if (!employeeList.isEmpty() && employeeList.get(lastRecordIndex) != null) {
-//				SIPEEmployee employee = (SIPEEmployee) employeeList.get(lastRecordIndex);
-				user = new User();
-				user.setPass(password);
-				user.setName(name);
-				user.setUserName(name);
-				user.setDocument(doc);
-				user.setRole(Role.EMPLOYEE);
-				return user;
-//			}
-//			//
-//			// // consulta estudiante Mares
-//			wsClient = new OrgSistemasWebServiceClient(publicKey);
-//			wsClient.addParam(paramMARESCC, doc);
-//			List<MARESStudent> studentList;
-//			studentList = wsClient.obtenerBean(serviceNameMares, token, MARESStudent.class);
-//			lastRecordIndex = studentList.size() - 1;
-//			if (!studentList.isEmpty() && studentList.get(lastRecordIndex) != null) {
-//				MARESStudent student = (MARESStudent) studentList.get(lastRecordIndex);
-//				user = new User();
-//				user.setPass(password);
-//				user.setName(student.getNombre());
-//				user.setUserName(name);
-//				user.setDocument(doc);
-//				user.setRole(Role.STUDENT);
-//			}
-//			return user;
-		} catch (OrgSistemasSecurityException | Exception ex) {
+			// }
+			// List<SIPEEmployee> employeeList;
+			// wsClient = new OrgSistemasWebServiceClient(publicKey);
+			// wsClient.addParam(paramSipeCC, doc);
+			// employeeList = wsClient.obtenerBean(serviceNameSipe, token,
+			// SIPEEmployee.class);
+			// int lastRecordIndex = employeeList.size() - 1;
+			// if (!employeeList.isEmpty() && employeeList.get(lastRecordIndex)
+			// != null) {
+			// SIPEEmployee employee = (SIPEEmployee)
+			// employeeList.get(lastRecordIndex);
+//			user = new User();
+//			user.setPass(password);
+//			user.setName(name);
+//			user.setUserName(name);
+//			user.setDocument(doc);
+//			user.setRole(Role.EMPLOYEE);
+			return user;
+			// }
+			// //
+			// // // consulta estudiante Mares
+			// wsClient = new OrgSistemasWebServiceClient(publicKey);
+			// wsClient.addParam(paramMARESCC, doc);
+			// List<MARESStudent> studentList;
+			// studentList = wsClient.obtenerBean(serviceNameMares, token,
+			// MARESStudent.class);
+			// lastRecordIndex = studentList.size() - 1;
+			// if (!studentList.isEmpty() && studentList.get(lastRecordIndex) !=
+			// null) {
+			// MARESStudent student = (MARESStudent)
+			// studentList.get(lastRecordIndex);
+			// user = new User();
+			// user.setPass(password);
+			// user.setName(student.getNombre());
+			// user.setUserName(name);
+			// user.setDocument(doc);
+			// user.setRole(Role.STUDENT);
+			// }
+			// return user;
+		} catch (OrgSistemasSecurityException |
+
+				Exception ex) {
 			SimpleMailMessage message = new SimpleMailMessage();
 			message.setTo("castroscarlos1@gmail.com");
 			message.setSubject("Error Caafi");
