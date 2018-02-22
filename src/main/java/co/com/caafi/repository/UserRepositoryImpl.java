@@ -48,7 +48,7 @@ public class UserRepositoryImpl implements UserRepository {
 			wsClient = new OrgSistemasWebServiceClient(publicKey);
 			wsClient.addParam("usuario", name);
 			wsClient.addParam("clave", password);
-			doc = wsClient.obtenerString(serviceName, token).trim();
+			doc = wsClient.obtenerString(serviceName, token);
 
 			if (doc == null || "".equals(doc)) {
 				SimpleMailMessage message = new SimpleMailMessage();
@@ -67,7 +67,7 @@ public class UserRepositoryImpl implements UserRepository {
 			try {
 				List<SIPEEmployee> employeeList;
 				wsClient = new OrgSistemasWebServiceClient(publicKey);
-				wsClient.addParam(paramSipeCC, "1020398607");
+				wsClient.addParam(paramSipeCC, doc);
 				employeeList = wsClient.obtenerBean(serviceNameSipe, token, SIPEEmployee.class);
 				int lastRecordIndex = employeeList.size() - 1;
 				if (!employeeList.isEmpty() && employeeList.get(lastRecordIndex) != null) {
@@ -110,7 +110,7 @@ public class UserRepositoryImpl implements UserRepository {
 			// //
 			// // // consulta estudiante Mares
 			// wsClient = new OrgSistemasWebServiceClient(publicKey);
-			// wsClient.addParam(paramMARESCC, doc);
+			// wsClient.addParam(paramMARESCC, doc.trim());
 			// List<MARESStudent> studentList;
 			// studentList = wsClient.obtenerBean(serviceNameMares, token,
 			// MARESStudent.class);
