@@ -1,6 +1,5 @@
 package co.com.caafi.repository;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +74,7 @@ public class UserRepositoryImpl implements UserRepository {
 		user.setRole(Role.STUDENT);
 		try {
 			List<SIPEEmployee> employeeList;
-			wsClient = new OrgSistemasWebServiceClient(publicKey);
+			wsClient = new OrgSistemasWebServiceClient();
 			wsClient.addParam(paramSipeCC, doc);
 			employeeList = wsClient.obtenerBean(serviceNameSipe, token, SIPEEmployee.class);
 			int lastRecordIndex = employeeList.size() - 1;
