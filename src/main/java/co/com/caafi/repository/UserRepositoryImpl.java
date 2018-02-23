@@ -47,7 +47,7 @@ public class UserRepositoryImpl implements UserRepository {
 			wsClient = new OrgSistemasWebServiceClient(publicKey);
 			wsClient.addParam("usuario", name);
 			wsClient.addParam("clave", password);
-			doc = wsClient.obtenerString(serviceName, token);
+			doc = wsClient.obtenerString(serviceName, token).trim();
 		} catch (OrgSistemasSecurityException |
 
 				Exception ex) {
