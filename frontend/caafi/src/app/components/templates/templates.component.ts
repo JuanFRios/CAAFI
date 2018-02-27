@@ -48,7 +48,7 @@ export class TemplatesComponent implements OnInit {
   }
   loadConfig() {
     this.form = new FormGroup({});
-    this.configService.getByName("dependencias")
+    this.configService.getTemplateConfig()
       .subscribe(form => {
         this.dependencies = form.value;
       },

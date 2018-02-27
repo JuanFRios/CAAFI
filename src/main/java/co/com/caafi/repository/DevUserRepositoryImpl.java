@@ -21,7 +21,7 @@ public class DevUserRepositoryImpl implements UserRepository {
 		user.setName(name);
 		user.setUserName(name);
 		user.setDocument("1063290384");
-		user.setRole(Role.ADMIN);
+		user.setRole(Role.EMPLOYEE);
 
 		return user;
 
