@@ -30,6 +30,7 @@ export class TemplatesComponent implements OnInit {
   activeDependencie: Dependencie;
   activeForm: string;
   lists: String[][] = [];
+  formName: string;
 
   constructor(
     private templatesService: TemplatesService,
@@ -62,6 +63,7 @@ export class TemplatesComponent implements OnInit {
       .subscribe(form => {
         this.activeForm = form1.name;
         this.formData = new Object();
+        this.formName = form.name;
 
         this.lists = [];
         this.proccessFields(form.fields);
@@ -115,6 +117,8 @@ export class TemplatesComponent implements OnInit {
     this.data = new Data();
     var formsData: FormData[] = this.getFiles(template);
     this.data.data = template;
+    this.data.template = this.formName;
+    this.data.origin = this.activeDependencie.name;
 
     this.dataService.save(this.data)
       .subscribe(res => {

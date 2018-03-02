@@ -5,6 +5,7 @@ import org.bson.types.ObjectId;
 public class Data {
 	private ObjectId id;
 	private String template;
+	private String origin;
 	private Object data;
 
 	public String getTemplate() {
@@ -29,6 +30,14 @@ public class Data {
 
 	public void setId(ObjectId id) {
 		this.id = id;
+	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
 	}
 
 }
