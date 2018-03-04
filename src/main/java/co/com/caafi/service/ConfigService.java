@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import co.com.caafi.model.Config;
 import co.com.caafi.model.ConfigTemplate;
 import co.com.caafi.model.Dependence;
+import co.com.caafi.model.Form;
 import co.com.caafi.model.User;
 import co.com.caafi.repository.ConfigRepository;
 import co.com.caafi.repository.ConfigTemplateRepository;
@@ -27,14 +28,33 @@ public class ConfigService {
 
 	public ConfigTemplate findTemplateConfigByRol(User user) {
 		ConfigTemplate config = this.configTemplateRepository.findByName(DEPENDENCIAS);
-		List<Dependence> result= new ArrayList<>();
+		List<Dependence> result = new ArrayList<>();
 		config.getValue().forEach(x -> {
-			if (user.getRole().name().equals(x.getRole())) {
+			if (hasRole(x.getRole(), user.getRole())) {
+				List<Form> form = new ArrayList<>();
+				x.getForms().forEach(y -> {
+					if (hasRole(y.getRole(), user.getRole())) {
+						form.add(y);
+					}
+				});
+				x.setForms(form);
 				result.add(x);
 			}
 		});
 		config.setValue(result);
 		return config;
+	}
+
+	private boolean hasRole(List<String> resource, List<String> role) {
+		for (String rol : role) {
+			for (String res : resource) {
+				if (res.equals(rol)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 }
