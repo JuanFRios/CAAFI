@@ -14,6 +14,7 @@ frontend/caafi/out-tsc
 
 # dependencies
 frontend/caafi/node_modules
+frontend/caafi/package-lock.json
 
 # IDEs and editors
 frontend/caafi/.idea

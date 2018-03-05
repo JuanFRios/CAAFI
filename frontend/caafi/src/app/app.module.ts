@@ -10,6 +10,7 @@ import {
   MatMenuModule
  } from '@angular/material';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import { LoadingModule } from 'ngx-loading';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule } from '@ngx-formly/core';
@@ -104,6 +105,7 @@ export function required(err, field) {
     MatMenuModule,
     MatSidenavModule,
     AppRoutingModule,
+    LoadingModule,
     RestangularModule.forRoot(RestangularConfigFactory)
   ],
   providers: [
