@@ -1,10 +1,12 @@
 package co.com.caafi.model;
 
+import java.util.List;
+
 public class Dependence {
-	
+
 	private String name;
-	private String role;
-	private Object forms;
+	private List<String> role;
+	private List<Form> forms;
 
 	public String getName() {
 		return name;
@@ -14,19 +16,19 @@ public class Dependence {
 		this.name = name;
 	}
 
-	public String getRole() {
+	public List<String> getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(List<String> role) {
 		this.role = role;
 	}
 
-	public Object getForms() {
+	public List<Form> getForms() {
 		return forms;
 	}
 
-	public void setForms(Object forms) {
+	public void setForms(List<Form> forms) {
 		this.forms = forms;
 	}
 

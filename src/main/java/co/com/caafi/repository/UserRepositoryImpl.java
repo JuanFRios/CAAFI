@@ -1,5 +1,7 @@
 package co.com.caafi.repository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -7,7 +9,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Repository;
 
-import co.com.caafi.model.Role;
 import co.com.caafi.model.SIPEEmployee;
 import co.com.caafi.model.User;
 import co.edu.udea.exception.OrgSistemasSecurityException;
@@ -50,7 +51,7 @@ public class UserRepositoryImpl implements UserRepository {
 		user.setName(name);
 		user.setUserName(name);
 		user.setDocument(doc);
-		user.setRole(Role.STUDENT);
+		user.setRole(new ArrayList<String>(Arrays.asList("STUDENT")));
 		try {
 			List<SIPEEmployee> employeeList;
 			wsClient = new OrgSistemasWebServiceClient();
@@ -59,7 +60,7 @@ public class UserRepositoryImpl implements UserRepository {
 			int lastRecordIndex = employeeList.size() - 1;
 			if (!employeeList.isEmpty() && employeeList.get(lastRecordIndex) != null) {
 				SIPEEmployee employee = employeeList.get(lastRecordIndex);
-				user.setRole(Role.EMPLOYEE);
+				user.setRole(new ArrayList<String>(Arrays.asList("ADMIN")));
 				user.setName(employee.getNombre());
 				return user;
 			}

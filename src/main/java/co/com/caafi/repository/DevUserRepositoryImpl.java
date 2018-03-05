@@ -1,10 +1,12 @@
 package co.com.caafi.repository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Repository;
 
-import co.com.caafi.model.Role;
 import co.com.caafi.model.User;
 
 @Repository
@@ -21,7 +23,7 @@ public class DevUserRepositoryImpl implements UserRepository {
 		user.setName(name);
 		user.setUserName(name);
 		user.setDocument("1063290384");
-		user.setRole(Role.EMPLOYEE);
+		user.setRole(new ArrayList<String>(Arrays.asList("ADMIN")));
 
 		return user;
 

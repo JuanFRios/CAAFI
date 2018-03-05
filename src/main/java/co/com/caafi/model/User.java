@@ -1,12 +1,14 @@
 package co.com.caafi.model;
 
+import java.util.List;
+
 public class User {
 
 	private String docType;
 	private String document;
 	private String name;
 	private String lastName;
-	private Role role;
+	private List<String> role;
 	private String pass;
 	private String userName;
 
@@ -67,11 +69,11 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	public Role getRole() {
+	public List<String> getRole() {
 		return role;
 	}
 
-	public void setRole(Role role) {
+	public void setRole(List<String> role) {
 		this.role = role;
 	}
 
