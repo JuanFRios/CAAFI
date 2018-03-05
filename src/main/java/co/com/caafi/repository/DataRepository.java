@@ -4,16 +4,16 @@ import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import co.com.caafi.model.template.Data;
+import co.com.caafi.model.template.FormData;
 
-public interface DataRepository extends MongoRepository<Data, String> {
+public interface DataRepository extends MongoRepository<FormData, String> {
 
-	public Data findById(int id);
+	public FormData findById(int id);
 
-	public List<Data> findAll();
+	public List<FormData> findAll();
 
-	public List<Data> findByTemplate(String template);
+	public List<FormData> findByTemplate(String template);
 	
-	public Data save(Data data);
+	public FormData save(FormData data);
 
 }

@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 
-import co.com.caafi.model.template.Data;
+import co.com.caafi.model.User;
+import co.com.caafi.model.template.FormData;
 import co.com.caafi.service.DataService;
 
 @RestController
@@ -25,26 +27,26 @@ public class DataResource {
 	private DataService dataService;
 
 	@RequestMapping(path = "/all/", method = RequestMethod.GET)
-	public List<Data> get() {
+	public List<FormData> get() {
 		return dataService.findAll();
 	}
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/byid/{id}", method = RequestMethod.GET)
-	public Data findById(@PathVariable int id) {
+	public FormData findById(@PathVariable int id) {
 		return dataService.findById(id);
 	}
 	
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/bytemplate/{template}", method = RequestMethod.GET)
-	public List<Data> findByTemplate(@PathVariable String template) {
+	public List<FormData> findByTemplate(@PathVariable String template) {
 		return dataService.findByTemplate(template);
 	}
 	
 	@CrossOrigin(origins = "*")
 	@RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-	public Data save(@RequestBody @Valid Data data) {
-		return dataService.save(data);
+	public FormData save(@RequestBody @Valid FormData data,Authentication authentication) {
+		return dataService.save(data,(User) authentication.getPrincipal());
 	}
 }

@@ -1,11 +1,14 @@
 package co.com.caafi.model.template;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-public class Data {
+@Document(collection = "data")
+public class FormData {
 	private ObjectId id;
 	private String template;
 	private String origin;
+	private String creator;
 	private Object data;
 
 	public String getTemplate() {
@@ -38,6 +41,14 @@ public class Data {
 
 	public void setOrigin(String origin) {
 		this.origin = origin;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
 	}
 
 }
