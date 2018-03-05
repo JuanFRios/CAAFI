@@ -10,6 +10,7 @@ import { Form } from '../../common/form';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
+import { FormlyFormOptions } from '@ngx-formly/core';
 
 @Component({
   selector: 'app-templates',
@@ -31,6 +32,9 @@ export class TemplatesComponent implements OnInit {
   activeForm: string;
   lists: String[][] = [];
   formName: string;
+  options: FormlyFormOptions = {};
+  public loading = false;
+
 
   constructor(
     private templatesService: TemplatesService,
@@ -57,6 +61,17 @@ export class TemplatesComponent implements OnInit {
   }
 
   loadForm(form1: Form, depent: Dependencie) {
+
+    this.loading = true;
+    this.errorMessage = [];
+    this.exito = false;
+    this.cargando = false;
+    this.data = new Data();
+
+    if(this.options.resetModel) {
+        this.options.resetModel();
+    };
+
     this.activeDependencie = depent;
     this.form = new FormGroup({});
     this.templatesService.getByName(form1.path)
@@ -71,11 +86,13 @@ export class TemplatesComponent implements OnInit {
           this.getList(this.lists, 0, form.fields);
         } else {
             this.formFields = form.fields;
+            this.loading = false;
         }
       },
       error => {
         this.errorMessage.push(error);
         this.activeForm = null;
+        this.loading = false;
       });
   }
 
@@ -181,6 +198,7 @@ export class TemplatesComponent implements OnInit {
       });
     } else {
       this.formFields = fields;
+      this.loading = false;
     }
   }
 
