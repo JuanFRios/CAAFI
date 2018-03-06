@@ -9,16 +9,16 @@ public class TemplateOption {
 	private String type;
 	private String label;
 	private String placeholder;
-	private boolean required;
+	private Boolean required;
 	private List<Option> options; // for selects types
 	private String optionsDB; // method name for load options fromdb
 	private String btnText;
 	private Pattern pattern;
-	private int minLength;
-	private int maxLength;
-	private int min;
-	private int max;
-	private boolean multiple;
+	private Integer minLength;
+	private Integer maxLength;
+	private Integer min;
+	private Integer max;
+	private Boolean multiple;
 
 	public String getType() {
 		return type;
@@ -44,11 +44,11 @@ public class TemplateOption {
 		this.placeholder = placeholder;
 	}
 
-	public boolean isRequired() {
+	public Boolean isRequired() {
 		return required;
 	}
 
-	public void setRequired(boolean required) {
+	public void setRequired(Boolean required) {
 		this.required = required;
 	}
 
@@ -76,35 +76,35 @@ public class TemplateOption {
 		this.pattern = pattern;
 	}
 
-	public int getMinLength() {
+	public Integer getMinLength() {
 		return minLength;
 	}
 
-	public void setMinLength(int minLength) {
+	public void setMinLength(Integer minLength) {
 		this.minLength = minLength;
 	}
 
-	public int getMaxLength() {
+	public Integer getMaxLength() {
 		return maxLength;
 	}
 
-	public void setMaxLength(int maxLength) {
+	public void setMaxLength(Integer maxLength) {
 		this.maxLength = maxLength;
 	}
 
-	public int getMin() {
+	public Integer getMin() {
 		return min;
 	}
 
-	public void setMin(int min) {
+	public void setMin(Integer min) {
 		this.min = min;
 	}
 
-	public int getMax() {
+	public Integer getMax() {
 		return max;
 	}
 
-	public void setMax(int max) {
+	public void setMax(Integer max) {
 		this.max = max;
 	}
 
@@ -116,11 +116,11 @@ public class TemplateOption {
 		this.optionsDB = optionsDB;
 	}
 
-	public boolean isMultiple() {
+	public Boolean isMultiple() {
 		return multiple;
 	}
 
-	public void setMultiple(boolean multiple) {
+	public void setMultiple(Boolean multiple) {
 		this.multiple = multiple;
 	}
 
