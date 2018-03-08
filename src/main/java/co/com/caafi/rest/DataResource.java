@@ -5,6 +5,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 
 import co.com.caafi.model.User;
 import co.com.caafi.model.template.FormData;
@@ -31,22 +31,27 @@ public class DataResource {
 		return dataService.findAll();
 	}
 
+	@RequestMapping(path = "/byJson/{json}", method = RequestMethod.GET)
+	public List<FormData> getByJson(@PathVariable String json) {
+		return dataService.findByJson(json);
+	}
+
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/byid/{id}", method = RequestMethod.GET)
 	public FormData findById(@PathVariable int id) {
 		return dataService.findById(id);
 	}
-	
+
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/bytemplate/{template}", method = RequestMethod.GET)
 	public List<FormData> findByTemplate(@PathVariable String template) {
 		return dataService.findByTemplate(template);
 	}
-	
+
 	@CrossOrigin(origins = "*")
 	@RequestMapping(method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-	public FormData save(@RequestBody @Valid FormData data,Authentication authentication) {
-		return dataService.save(data,(User) authentication.getPrincipal());
+	@ResponseStatus(HttpStatus.CREATED)
+	public FormData save(@RequestBody @Valid FormData data, Authentication authentication) {
+		return dataService.save(data, (User) authentication.getPrincipal());
 	}
 }
