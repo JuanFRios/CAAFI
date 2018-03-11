@@ -12,8 +12,8 @@ export class ConfigService {
   getByName(name: string): Observable<Config> {
     return this.restangular.one('config/byname', name).get();
   }
-  getTemplateConfig(): Observable<Config> {
-    return this.restangular.one('config//template/role').get();
+  getTemplateConfig(name: string): Observable<Config> {
+    return this.restangular.one('config//template/role', name).get();
   }
 
 }

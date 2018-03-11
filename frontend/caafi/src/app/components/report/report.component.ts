@@ -13,11 +13,11 @@ import { ActivatedRoute } from '@angular/router';
 import { FormlyFormOptions } from '@ngx-formly/core';
 
 @Component({
-  selector: 'app-templates',
-  templateUrl: './templates.component.html',
-  styleUrls: ['./templates.component.css']
+  selector: 'app-report',
+  templateUrl: './report.component.html',
+  styleUrls: ['./report.component.css']
 })
-export class TemplatesComponent implements OnInit {
+export class ReportComponent implements OnInit {
   id: string;
   private sub: any;
   errorMessage: string[] = [];
@@ -53,7 +53,7 @@ export class TemplatesComponent implements OnInit {
   }
   loadConfig() {
     this.form = new FormGroup({});
-    this.configService.getTemplateConfig("dependencias")
+    this.configService.getTemplateConfig("reportes")
       .subscribe(form => {
         this.dependencies = form.value;
       },
@@ -132,16 +132,17 @@ export class TemplatesComponent implements OnInit {
     this.cargando = true;
 
     this.data = new Data();
-    var formsData: FormData[] = this.getFiles(template);
+  //  var formsData: FormData[] = this.getFiles(template);
     this.data.data = template;
-    this.data.template = this.formName;
-    this.data.origin = this.activeDependencie.name;
+   //this.data.template = this.formName;
+   //this.data.origin = this.activeDependencie.name;
 
-    this.dataService.save(this.data)
+    this.dataService.getByJson("{data\.estadoPrograma:'acreditacion'}")
       .subscribe(res => {
-        for (var i = 0, len = formsData.length; i < len; i++) {
-          this.uploadFile(formsData[i]);
-        }
+      //  for (var i = 0, len = formsData.length; i < len; i++) {
+       //   this.uploadFile(formsData[i]);
+       // }
+       console.log(res);
         this.exito = true;
         this.cargando = false;
       },

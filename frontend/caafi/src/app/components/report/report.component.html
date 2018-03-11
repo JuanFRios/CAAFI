@@ -1,0 +1,40 @@
+<div>
+	<button mat-button [matMenuTriggerFor]="main_menu">
+		<i class="material-icons">more_vert</i> <span *ngIf="!activeForm">Seleccione
+			formulario</span> <span *ngIf="activeForm" class="titleform"> {{activeDependencie.name+ " - " +activeForm }}</span>
+	</button>
+
+	<mat-menu #main_menu="matMenu">
+		<ng-container *ngFor="let mainItem of dependencies">
+			<button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
+			<mat-menu #sub_menu="matMenu">
+				<button *ngFor="let subItem of mainItem.forms" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
+			</mat-menu>
+		</ng-container>
+	</mat-menu>
+
+	<div class="container">
+
+		<div *ngIf="activeForm">
+			<form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
+				<formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form">
+				<!--<button mat-raised-button color="primary" type="button"
+				(click)="loadData()">Load Data</button>-->
+				<button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">
+					Consultar</button>
+				</formly-form>
+			</form>
+			<div [hidden]="!cargando">
+				<mat-spinner></mat-spinner>
+				<h4>Consultando...</h4>
+			</div>
+			<div *ngIf="errorMessage" class="error">
+				<p *ngFor="let error of errorMessage">{{error}}</p>
+			</div>
+			<div *ngIf="exito" class="exito">
+				<p>El formulario fue guardado con éxito</p>
+			</div>
+		</div>
+	</div>
+	<ngx-loading [show]="loading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
+</div>

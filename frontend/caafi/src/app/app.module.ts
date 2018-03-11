@@ -26,6 +26,7 @@ import { RestangularModule, Restangular } from 'ngx-restangular';
 import { RestangularConfigFactory } from './common/restConfig';
 
 import { TemplatesComponent } from './components/templates/templates.component';
+import { ReportComponent } from './components/report/report.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HomeComponent } from './components/home/home.component';
@@ -64,6 +65,7 @@ export function required(err, field) {
     HeaderComponent,
     FooterComponent,
     TemplatesComponent,
+    ReportComponent,
     HomeComponent,
     DatepickerTypeComponent,
     RepeatTypeComponent,

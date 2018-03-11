@@ -31,7 +31,8 @@ public class DataResource {
 		return dataService.findAll();
 	}
 
-	@RequestMapping(path = "/byJson/{json}", method = RequestMethod.GET)
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/byJson/{json:.+}", method = RequestMethod.GET)
 	public List<FormData> getByJson(@PathVariable String json) {
 		return dataService.findByJson(json);
 	}

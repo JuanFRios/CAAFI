@@ -12,6 +12,11 @@ export class DataService {
     return this.restangular.all('data').getList();
   }
 
+  getByJson(json: string): Observable<Data[]> {
+    return this.restangular.all('data/byJson/'
+    +json).getList();
+  }
+
   getById(id: number): Observable<Data> {
     return this.restangular.one('data/byid', id).get();
   }

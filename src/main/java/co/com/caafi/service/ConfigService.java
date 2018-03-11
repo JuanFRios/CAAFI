@@ -16,7 +16,6 @@ import co.com.caafi.repository.ConfigTemplateRepository;
 
 @Service
 public class ConfigService {
-	private static final String DEPENDENCIAS = "dependencias";
 	@Autowired
 	private ConfigRepository configRepository;
 	@Autowired
@@ -26,8 +25,8 @@ public class ConfigService {
 		return this.configRepository.findByName(name);
 	}
 
-	public ConfigTemplate findTemplateConfigByRol(User user) {
-		ConfigTemplate config = this.configTemplateRepository.findByName(DEPENDENCIAS);
+	public ConfigTemplate findTemplateConfigByRol(User user,String name) {
+		ConfigTemplate config = this.configTemplateRepository.findByName(name);
 		List<Dependence> result = new ArrayList<>();
 		config.getValue().forEach(x -> {
 			if (hasRole(x.getRole(), user.getRole())) {
