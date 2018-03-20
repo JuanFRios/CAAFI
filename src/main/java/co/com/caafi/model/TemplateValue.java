@@ -2,11 +2,10 @@ package co.com.caafi.model;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import co.com.caafi.model.field.Field;
 
 @Document
 public class TemplateValue {
@@ -16,11 +15,11 @@ public class TemplateValue {
 	private String name;
 	private Integer version;
 	private String description;
-	private List<Field> fields;
+	private List<Map<String, Object>> fields;
 	private User user;
 	private Date create;
 
-	public TemplateValue(String name, Integer version, String description, List<Field> fields) {
+	public TemplateValue(String name, Integer version, String description, List<Map<String, Object>> fields) {
 		super();
 		this.name = name;
 		this.version = version;
@@ -60,11 +59,11 @@ public class TemplateValue {
 		this.description = description;
 	}
 
-	public List<Field> getFields() {
+	public List<Map<String, Object>> getFields() {
 		return fields;
 	}
 
-	public void setFields(List<Field> fields) {
+	public void setFields(List<Map<String, Object>> fields) {
 		this.fields = fields;
 	}
 

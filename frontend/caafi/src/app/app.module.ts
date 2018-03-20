@@ -36,6 +36,7 @@ import { DataService } from './services/data.service';
 import { ConfigService } from './services/config.service';
 import { LoginService } from './services/login.service';
 import { FileService } from './services/file.service';
+import { ListService } from './services/list.service';
 
 import { AppComponent } from './app.component';
 
@@ -115,7 +116,8 @@ export function required(err, field) {
       DataService,
       ConfigService,
       LoginService,
-      FileService
+      FileService,
+      ListService
   ],
   bootstrap: [AppComponent]
 })

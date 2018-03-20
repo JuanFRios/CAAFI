@@ -3,6 +3,7 @@ import { TemplatesService } from '../../services/templates.service';
 import { ConfigService } from '../../services/config.service';
 import { DataService } from '../../services/data.service';
 import { FileService } from '../../services/file.service';
+import { ListService } from '../../services/list.service';
 import { Template } from '../../common/template';
 import { Dependencie } from '../../common/dependencie';
 import { Data } from '../../common/data';
@@ -42,6 +43,7 @@ export class TemplatesComponent implements OnInit {
     private route: ActivatedRoute,
     private configService: ConfigService,
     private fileService: FileService,
+    private listService: ListService,
   ) { }
 
   ngOnInit() {
@@ -99,7 +101,7 @@ export class TemplatesComponent implements OnInit {
   proccessFields(fields) {
 
     // Proceess Validators
-    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB"], "");
+    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB", "options"], "");
   }
 
   /**
@@ -117,6 +119,7 @@ export class TemplatesComponent implements OnInit {
               path = path+"['options']";
               this.lists.push([path, fields[i]]);
           } else {
+            console.log(eval(fields[i]));
               fields[i] = eval(fields[i]);
           }
         } catch (e) {
