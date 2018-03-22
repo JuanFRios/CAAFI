@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, Inject, Input, ViewChild, ElementRef } from '@angular/core';
+//import { DotObject } from 'dot-object';
 import { TemplatesService } from '../../services/templates.service';
 import { ConfigService } from '../../services/config.service';
 import { DataService } from '../../services/data.service';
@@ -11,12 +12,14 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormlyFormOptions } from '@ngx-formly/core';
+import { GtConfig } from 'angular-generic-table';
 
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.css']
 })
+
 export class ReportComponent implements OnInit {
   id: string;
   private sub: any;
@@ -27,6 +30,8 @@ export class ReportComponent implements OnInit {
   formFields: Array<FormlyFieldConfig>;
   formData: Object;
   private data: Data;
+  data2: Array<any>=[];
+  configObject: GtConfig<any>;
   dependencies: Dependencie[];
   activeDependencie: Dependencie;
   activeForm: string;
@@ -34,6 +39,10 @@ export class ReportComponent implements OnInit {
   formName: string;
   options: FormlyFormOptions = {};
   public loading = false;
+  originFormName:string;
+  settings:any;   
+  fields:any;  
+  
 
 
   constructor(
@@ -41,7 +50,7 @@ export class ReportComponent implements OnInit {
     private dataService: DataService,
     private route: ActivatedRoute,
     private configService: ConfigService,
-    private fileService: FileService,
+    private fileService: FileService
   ) { }
 
   ngOnInit() {
@@ -67,7 +76,9 @@ export class ReportComponent implements OnInit {
     this.exito = false;
     this.cargando = false;
     this.data = new Data();
-
+    this.originFormName=form1.template;
+    this.settings=form1.config.settings;
+    this.fields=form1.config.fields;
     if(this.options.resetModel) {
         this.options.resetModel();
     };
@@ -130,18 +141,29 @@ export class ReportComponent implements OnInit {
     this.errorMessage = [];
     this.exito = false;
     this.cargando = true;
-
     this.data = new Data();
   //  var formsData: FormData[] = this.getFiles(template);
     this.data.data = template;
    //this.data.template = this.formName;
    //this.data.origin = this.activeDependencie.name;
-
-    this.dataService.getByJson("{data\.estadoPrograma:'acreditacion'}")
+    this.dataService.getByJson("{data\.estadoPrograma:'acreditacion'}",
+    "{data.ciudad:1,data.registroCalificadoExtension:1,data.estadoPrograma:1}")
+  // var tgt = {};
+  // this.dotProp.dot(this.data, tgt);
+   //console.log('hola mundooooooooo')
+   //console.log(tgt)
+   // this.dataService.getByJson('')
       .subscribe(res => {
       //  for (var i = 0, len = formsData.length; i < len; i++) {
        //   this.uploadFile(formsData[i]);
        // }
+       
+       res.forEach(element =>  {
+        this.data2.push(element.data)
+    });
+       this.configObject={settings:this.settings,
+        data:this.data2,
+        fields:this.fields}
        console.log(res);
         this.exito = true;
         this.cargando = false;
@@ -183,10 +205,6 @@ export class ReportComponent implements OnInit {
       }
     }
     return formsData;
-  }
-
-  uploadFile(file) {
-    this.fileService.upload(file);
   }
 
   getList(list, current, fields) {

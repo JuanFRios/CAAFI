@@ -12,9 +12,9 @@ export class DataService {
     return this.restangular.all('data').getList();
   }
 
-  getByJson(json: string): Observable<Data[]> {
+  getByJson(json: string,fields: string): Observable<any[]> {
     return this.restangular.all('data/byJson/'
-    +json).getList();
+    +json+"/"+fields).getList();
   }
 
   getById(id: number): Observable<Data> {

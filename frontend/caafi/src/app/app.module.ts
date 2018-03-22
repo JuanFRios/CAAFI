@@ -13,6 +13,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import { LoadingModule } from 'ngx-loading';
 
 import { ReactiveFormsModule } from '@angular/forms';
+import { GenericTableModule } from 'angular-generic-table';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { DatepickerTypeComponent } from './components/types/datepicker/datepicker.component';
@@ -54,7 +55,6 @@ export function minValidationMessage(err, field) {
 export function maxValidationMessage(err, field) {
   return `El campo ${field.templateOptions.label} debe ser menor a ${field.templateOptions.max}`;
 }
-
 export function required(err, field) {
   return `El campo ${field.templateOptions.label} es requerido.`;
 }
@@ -76,6 +76,7 @@ export function required(err, field) {
     BrowserModule,
     ReactiveFormsModule,
     FlexLayoutModule,
+    GenericTableModule,
     FormlyModule.forRoot({
       types: [
         {

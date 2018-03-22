@@ -32,10 +32,11 @@ MongoTemplate mongoTemplate;
 		
 	}
 	
-	public List<FormData> findByJson(String template) {
-		BasicQuery query = new BasicQuery(template);
-		return this.mongoTemplate.find(query, FormData.class,"data");
+	public List<Object> findByJson(String template,String fields) {
+		BasicQuery query = new BasicQuery(template,fields);
+		return this.mongoTemplate.find(query, Object.class,"data");
 	}
+	
 
 	public FormData save(FormData data, User user) {
 		data.setCreator(user.getDocument());
