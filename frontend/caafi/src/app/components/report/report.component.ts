@@ -144,9 +144,9 @@ export class ReportComponent implements OnInit {
     this.data = new Data();
   //  var formsData: FormData[] = this.getFiles(template);
     this.data.data = template;
-   //this.data.template = this.formName;
+   this.data.template = this.originFormName;
    //this.data.origin = this.activeDependencie.name;
-    this.dataService.getByJson("{data\.estadoPrograma:'acreditacion'}",
+    this.dataService.getByJson(JSON.stringify(this.data),
     "{data.ciudad:1,data.registroCalificadoExtension:1,data.estadoPrograma:1}")
   // var tgt = {};
   // this.dotProp.dot(this.data, tgt);

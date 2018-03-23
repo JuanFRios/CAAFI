@@ -7,6 +7,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.stereotype.Service;
 
+import com.github.wnameless.json.flattener.JsonFlattener;
+
 import co.com.caafi.model.User;
 import co.com.caafi.model.template.FormData;
 import co.com.caafi.repository.DataRepository;
@@ -33,7 +35,7 @@ MongoTemplate mongoTemplate;
 	}
 	
 	public List<Object> findByJson(String template,String fields) {
-		BasicQuery query = new BasicQuery(template,fields);
+		BasicQuery query = new BasicQuery(JsonFlattener.flatten(template),fields);
 		return this.mongoTemplate.find(query, Object.class,"data");
 	}
 	
