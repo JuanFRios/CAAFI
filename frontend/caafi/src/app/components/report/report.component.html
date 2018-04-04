@@ -31,9 +31,6 @@
 			<div *ngIf="errorMessage" class="error">
 				<p *ngFor="let error of errorMessage">{{error}}</p>
 			</div>
-			<div *ngIf="exito" class="exito">
-				<p>El formulario fue guardado con éxito</p>
-			</div>
 			<div *ngIf="configObject">
 				<generic-table [gtSettings]="configObject.settings" #myTable [gtFields]="configObject.fields" [gtData]="configObject.data"></generic-table>
 				<button mat-raised-button color="primary" (click)="myTable.exportCSV('custom-file-name')">

@@ -30,7 +30,7 @@ export class ReportComponent implements OnInit {
   formFields: Array<FormlyFieldConfig>;
   formData: Object;
   private data: Data;
-  data2: Array<any>=[];
+  data2: Array<any> = [];
   configObject: GtConfig<any>;
   dependencies: Dependencie[];
   activeDependencie: Dependencie;
@@ -39,10 +39,11 @@ export class ReportComponent implements OnInit {
   formName: string;
   options: FormlyFormOptions = {};
   public loading = false;
-  originFormName:string;
-  settings:any;   
-  fields:any;  
-  
+  originFormName: string;
+  settings: any;
+  fields: any;
+  tableResult: any = { data: {} };
+
 
 
   constructor(
@@ -66,7 +67,7 @@ export class ReportComponent implements OnInit {
       .subscribe(form => {
         this.dependencies = form.value;
       },
-      error => this.errorMessage.push(error));
+        error => this.errorMessage.push(error));
   }
 
   loadForm(form1: Form, depent: Dependencie) {
@@ -76,11 +77,11 @@ export class ReportComponent implements OnInit {
     this.exito = false;
     this.cargando = false;
     this.data = new Data();
-    this.originFormName=form1.template;
-    this.settings=form1.config.settings;
-    this.fields=form1.config.fields;
-    if(this.options.resetModel) {
-        this.options.resetModel();
+    this.originFormName = form1.template;
+    this.settings = form1.config.settings;
+    this.fields = form1.config.fields;
+    if (this.options.resetModel) {
+      this.options.resetModel();
     };
 
     this.activeDependencie = depent;
@@ -93,18 +94,18 @@ export class ReportComponent implements OnInit {
 
         this.lists = [];
         this.proccessFields(form.fields);
-        if(this.lists.length > 0) {
+        if (this.lists.length > 0) {
           this.getList(this.lists, 0, form.fields);
         } else {
-            this.formFields = form.fields;
-            this.loading = false;
+          this.formFields = form.fields;
+          this.loading = false;
         }
       },
-      error => {
-        this.errorMessage.push(error);
-        this.activeForm = null;
-        this.loading = false;
-      });
+        error => {
+          this.errorMessage.push(error);
+          this.activeForm = null;
+          this.loading = false;
+        });
   }
 
   proccessFields(fields) {
@@ -119,16 +120,16 @@ export class ReportComponent implements OnInit {
   evalJSFromJSON(fields, keys, path) {
     for (var i in fields) {
       if (typeof fields[i] == "object") {
-        this.evalJSFromJSON(fields[i], keys, path+"['"+i+"']");
+        this.evalJSFromJSON(fields[i], keys, path + "['" + i + "']");
       } else if (this.arrayContains(i, keys)) {
         try {
           // pendiente refactor en esta parte
-          if(i == "optionsDB") {
-              //fields["options"] = eval(fields[i]);
-              path = path+"['options']";
-              this.lists.push([path, fields[i]]);
+          if (i == "optionsDB") {
+            //fields["options"] = eval(fields[i]);
+            path = path + "['options']";
+            this.lists.push([path, fields[i]]);
           } else {
-              fields[i] = eval(fields[i]);
+            fields[i] = eval(fields[i]);
           }
         } catch (e) {
           console.log("El campo " + i + ":" + fields[i] + " no representa una cadena javascript. Error: " + e.message);
@@ -142,33 +143,32 @@ export class ReportComponent implements OnInit {
     this.exito = false;
     this.cargando = true;
     this.data = new Data();
-  //  var formsData: FormData[] = this.getFiles(template);
+    //  var formsData: FormData[] = this.getFiles(template);
     this.data.data = template;
-   this.data.template = this.originFormName;
-   //this.data.origin = this.activeDependencie.name;
-    this.dataService.getByJson(JSON.stringify(this.data),
-    "{data.ciudad:1,data.registroCalificadoExtension:1,data.estadoPrograma:1}")
-  // var tgt = {};
-  // this.dotProp.dot(this.data, tgt);
-   //console.log('hola mundooooooooo')
-   //console.log(tgt)
-   // this.dataService.getByJson('')
-      .subscribe(res => {
-      //  for (var i = 0, len = formsData.length; i < len; i++) {
-       //   this.uploadFile(formsData[i]);
-       // }
-       
-       res.forEach(element =>  {
-        this.data2.push(element.data)
+    this.data.template = this.originFormName;
+
+
+    this.fields.forEach(element => {
+      this.tableResult.data[`${element.objectKey}`] = 1;
     });
-       this.configObject={settings:this.settings,
-        data:this.data2,
-        fields:this.fields}
-       console.log(res);
+    //this.data.origin = this.activeDependencie.name;
+
+    this.dataService.getByJson(JSON.stringify(this.data),
+      JSON.stringify(this.tableResult))
+      .subscribe(res => {
+        res.forEach(element => {
+          this.data2.push(element.data)
+        });
+        this.configObject = {
+          settings: this.settings,
+          data: this.data2,
+          fields: this.fields
+        }
+        console.log(res);
         this.exito = true;
         this.cargando = false;
       },
-      error => this.errorMessage.push(error));
+        error => this.errorMessage.push(error));
   }
 
   loadData() {
@@ -176,7 +176,7 @@ export class ReportComponent implements OnInit {
       .subscribe(formData => {
         this.formData = formData.data;
       },
-      error => this.errorMessage = error);
+        error => this.errorMessage = error);
   }
 
   ngOnDestroy() {
@@ -188,9 +188,9 @@ export class ReportComponent implements OnInit {
   }
 
   getFiles(template) {
-    var formsData : FormData[] = [];
+    var formsData: FormData[] = [];
     for (var i in template) {
-      if(template[i][0] && typeof template[i][0].name == "string" && template[i].length > 0) {
+      if (template[i][0] && typeof template[i][0].name == "string" && template[i].length > 0) {
         let file: File = template[i][0];
         let formData: FormData = new FormData();
         const fecha_actual = new Date();
@@ -208,13 +208,13 @@ export class ReportComponent implements OnInit {
   }
 
   getList(list, current, fields) {
-    if(list.length > current) {
+    if (list.length > current) {
       this.configService.getByName(list[current][1])
-      .subscribe(confi => {
-        eval("fields"+list[current][0]+" = "+JSON.stringify(confi.value));
-        current++;
-        this.getList(list, current, fields);
-      });
+        .subscribe(confi => {
+          eval("fields" + list[current][0] + " = " + JSON.stringify(confi.value));
+          current++;
+          this.getList(list, current, fields);
+        });
     } else {
       this.formFields = fields;
       this.loading = false;
