@@ -35,6 +35,8 @@ MongoTemplate mongoTemplate;
 	}
 	
 	public List<Object> findByJson(String template,String fields) {
+		System.out.println(JsonFlattener.flatten(template));
+		System.out.println(JsonFlattener.flatten(fields));
 		BasicQuery query = new BasicQuery(JsonFlattener.flatten(template),JsonFlattener.flatten(fields));
 		return this.mongoTemplate.find(query, Object.class,"data");
 	}

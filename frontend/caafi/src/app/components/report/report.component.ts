@@ -144,7 +144,9 @@ export class ReportComponent implements OnInit {
     this.cargando = true;
     this.data = new Data();
     //  var formsData: FormData[] = this.getFiles(template);
-    this.data.data = template;
+    if(template.length>0){
+      this.data.data = template;
+    }
     this.data.template = this.originFormName;
 
 
