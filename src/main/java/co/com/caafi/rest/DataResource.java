@@ -26,7 +26,8 @@ public class DataResource {
 	@Autowired
 	private DataService dataService;
 
-	@RequestMapping(path = "/all/", method = RequestMethod.GET)
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "", method = RequestMethod.GET)
 	public List<FormData> get() {
 		return dataService.findAll();
 	}
