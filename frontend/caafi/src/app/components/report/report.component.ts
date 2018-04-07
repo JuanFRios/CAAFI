@@ -70,6 +70,29 @@ export class ReportComponent implements OnInit {
         error => this.errorMessage.push(error));
   }
 
+
+  flatten(data) {
+    var result = {};
+    function recurse(cur, prop) {
+      if (Object(cur) !== cur) {
+        result[prop] = cur;
+      } else if (Array.isArray(cur)) {
+        result[prop] = { $all: cur };
+      } else {
+        var isEmpty = true;
+        for (var p in cur) {
+          isEmpty = false;
+          recurse(cur[p], prop ? prop + "." + p : p);
+        }
+        if (isEmpty && prop)
+          result[prop] = {};
+      }
+    }
+    recurse(data, "");
+    return result;
+  }
+
+
   loadForm(form1: Form, depent: Dependencie) {
 
     this.loading = true;
@@ -148,6 +171,12 @@ export class ReportComponent implements OnInit {
     this.exito = false;
     this.cargando = true;
     this.data = new Data();
+    this.data2 = [];
+    this.configObject = {
+      settings: [],
+      data: [],
+      fields: []
+    }
 
     if (!(Object.keys(template).length === 0)) {
       this.data.data = template;
@@ -165,8 +194,7 @@ export class ReportComponent implements OnInit {
       this.tableResult.data[`${element.objectKey}`] = 1;
     });
     //this.data.origin = this.activeDependencie.name;
-
-    this.dataService.getByJson(JSON.stringify(this.data),
+    this.dataService.getByJson(JSON.stringify(this.flatten(this.data)),
       JSON.stringify(this.tableResult))
       .subscribe(res => {
         res.forEach(element => {
