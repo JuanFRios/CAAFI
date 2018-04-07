@@ -7,7 +7,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import {
   MatButtonModule,
   MatToolbarModule,
-  MatMenuModule
+  MatMenuModule,
+  MatTableModule,
+  MatPaginatorModule
  } from '@angular/material';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { LoadingModule } from 'ngx-loading';
@@ -107,6 +109,8 @@ export function required(err, field) {
     MatButtonModule,
     MatToolbarModule,
     MatMenuModule,
+    MatTableModule,
+    MatPaginatorModule,
     MatSidenavModule,
     AppRoutingModule,
     LoadingModule,

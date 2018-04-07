@@ -12,6 +12,9 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormlyFormOptions } from '@ngx-formly/core';
+import { ModelDataSource } from './model-data-source';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginator } from '@angular/material';
 
 @Component({
   selector: 'app-templates',
@@ -35,6 +38,11 @@ export class TemplatesComponent implements OnInit {
   formName: string;
   options: FormlyFormOptions = {};
   public loading = false;
+
+  dataSource: ModelDataSource | null;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  paginatorSize = 0;
+  displayedColumns = ['template'];
 
 
   constructor(
@@ -96,6 +104,8 @@ export class TemplatesComponent implements OnInit {
         this.activeForm = null;
         this.loading = false;
       });
+
+      this.loadDataTable();
   }
 
   proccessFields(fields) {
@@ -203,6 +213,24 @@ export class TemplatesComponent implements OnInit {
       this.formFields = fields;
       this.loading = false;
     }
+  }
+
+  loadDataTable() {
+    this.dataService.getAll()
+      .subscribe(data => {
+        console.log(data[0].template);
+        this.dataSource = new ModelDataSource(data, this.paginator);
+
+        // Esto se hace para que el paginador esté actualizado con la cantidad de datos filtrados
+        this.dataSource.getDataSize()
+        .debounceTime(150)
+        .distinctUntilChanged()
+        .subscribe( size => {
+          this.paginatorSize = size;
+        });
+
+      },
+      error => this.errorMessage.push(error));
   }
 
 }

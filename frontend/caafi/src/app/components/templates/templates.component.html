@@ -24,6 +24,47 @@
 					Guardar</button>
 				</formly-form>
 			</form>
+
+			<div class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column" fxLayoutAlign.gt-md="space-around center"
+			fxLayoutGap="10px">
+
+			<mat-card fxFlex>
+			 <mat-card-content class="contenedor-tabla">
+			   <div class="mat-container mat-elevation-z8">
+			     <div class="mat-header">
+			       <mat-form-field floatPlaceholder="never" class="input-filtro">
+			         <input matInput #filter placeholder="Filtrar">
+			       </mat-form-field>
+			     </div>
+
+			     <mat-table #table [dataSource]="dataSource" class="mat-table">
+
+			       <!-- Tipo Column -->
+			       <ng-container matColumnDef="template">
+			         <mat-header-cell *matHeaderCellDef class="mat-header-cell"> Template </mat-header-cell>
+			         <mat-cell *matCellDef="let row" class="mat-cell"> {{row.template}} </mat-cell>
+			       </ng-container>
+
+			       <mat-header-row *matHeaderRowDef="displayedColumns" class="mat-header-row"></mat-header-row>
+			       <mat-row *matRowDef="let row; columns: displayedColumns;" class="mat-row"></mat-row>
+			     </mat-table>
+
+
+			   <mat-paginator
+			     #paginator
+			     [length]="paginatorSize"
+			     [pageIndex]="0"
+			     [pageSize]="5"
+			     [pageSizeOptions]="[5, 10, 25, 100]">
+				 </mat-paginator>
+
+			   </div><!-- .md-container -->
+			 </mat-card-content>
+		 </mat-card>
+
+
+			</div>
+
 			<div [hidden]="!cargando">
 				<mat-spinner></mat-spinner>
 				<h4>Guardando...</h4>
