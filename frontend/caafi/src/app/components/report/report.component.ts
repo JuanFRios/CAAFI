@@ -77,6 +77,11 @@ export class ReportComponent implements OnInit {
     this.exito = false;
     this.cargando = false;
     this.data = new Data();
+    this.configObject = {
+      settings: [],
+      data: [],
+      fields: []
+    }
     this.originFormName = form1.template;
     this.settings = form1.config.settings;
     this.fields = form1.config.fields;
@@ -143,14 +148,20 @@ export class ReportComponent implements OnInit {
     this.exito = false;
     this.cargando = true;
     this.data = new Data();
-    //  var formsData: FormData[] = this.getFiles(template);
-    if(template.length>0){
+
+    if (!(Object.keys(template).length === 0)) {
       this.data.data = template;
     }
     this.data.template = this.originFormName;
 
 
     this.fields.forEach(element => {
+      if (!(typeof element.value === "undefined")) {
+        element.value = eval("(" + element.value + ")");
+      }
+      if (!(typeof element.render === "undefined")) {
+        element.render = eval("(" + element.render + ")");
+      }
       this.tableResult.data[`${element.objectKey}`] = 1;
     });
     //this.data.origin = this.activeDependencie.name;
@@ -166,7 +177,6 @@ export class ReportComponent implements OnInit {
           data: this.data2,
           fields: this.fields
         }
-        console.log(res);
         this.exito = true;
         this.cargando = false;
       },
