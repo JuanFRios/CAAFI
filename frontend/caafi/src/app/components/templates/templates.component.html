@@ -25,7 +25,18 @@
 				</formly-form>
 			</form>
 
-			<div class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column" fxLayoutAlign.gt-md="space-around center"
+			<div [hidden]="!cargando">
+				<mat-spinner></mat-spinner>
+				<h4>Guardando...</h4>
+			</div>
+			<div *ngIf="errorMessage" class="error">
+				<p *ngFor="let error of errorMessage">{{error}}</p>
+			</div>
+			<div *ngIf="exito" class="exito">
+				<p>El formulario fue guardado con éxito</p>
+			</div>
+
+			<div id="dataTable" class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column" fxLayoutAlign.gt-md="space-around center"
 			fxLayoutGap="10px">
 
 			<mat-card fxFlex>
@@ -39,10 +50,16 @@
 
 			     <mat-table #table [dataSource]="dataSource" class="mat-table">
 
-			       <!-- Tipo Column -->
-			       <ng-container matColumnDef="template">
-			         <mat-header-cell *matHeaderCellDef class="mat-header-cell"> Template </mat-header-cell>
-			         <mat-cell *matCellDef="let row" class="mat-cell"> {{row.template}} </mat-cell>
+						 <ng-container matColumnDef="edit" id="actionsCell">
+			         <mat-header-cell *matHeaderCellDef class="mat-header-cell">  </mat-header-cell>
+			         <mat-cell *matCellDef="let row" class="mat-cell">
+								 <button mat-raised-button color="primary" type="button" (click)="loadData( row.id )">Editar</button>
+							 </mat-cell>
+			       </ng-container>
+
+			       <ng-container *ngFor="let col of displayedColumnsData" matColumnDef="{{ col }}">
+			         <mat-header-cell *matHeaderCellDef class="mat-header-cell"> {{ displayedColumnsNames[col] }} </mat-header-cell>
+			         <mat-cell *matCellDef="let row" class="mat-cell"> {{row.data[col]}} </mat-cell>
 			       </ng-container>
 
 			       <mat-header-row *matHeaderRowDef="displayedColumns" class="mat-header-row"></mat-header-row>
@@ -65,16 +82,7 @@
 
 			</div>
 
-			<div [hidden]="!cargando">
-				<mat-spinner></mat-spinner>
-				<h4>Guardando...</h4>
-			</div>
-			<div *ngIf="errorMessage" class="error">
-				<p *ngFor="let error of errorMessage">{{error}}</p>
-			</div>
-			<div *ngIf="exito" class="exito">
-				<p>El formulario fue guardado con éxito</p>
-			</div>
+
 		</div>
 	</div>
 	<ngx-loading [show]="loading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>

@@ -40,7 +40,7 @@ public class DataResource {
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/byid/{id}", method = RequestMethod.GET)
-	public FormData findById(@PathVariable int id) {
+	public FormData findById(@PathVariable String id) {
 		return dataService.findById(id);
 	}
 

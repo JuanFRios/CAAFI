@@ -1,16 +1,22 @@
 package co.com.caafi.model.template;
 
-import org.bson.types.ObjectId;
+import java.util.Date;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "data")
 public class FormData {
-	private ObjectId id;
+	private String id;
 	private String template;
 	private String origin;
 	private String creator;
 	private Object data;
+	private Date savedDate;
 
+	public FormData() {
+		this.savedDate = new Date();
+	}
+	
 	public String getTemplate() {
 		return template;
 	}
@@ -27,11 +33,11 @@ public class FormData {
 		this.data = data;
 	}
 
-	public ObjectId getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(ObjectId id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -49,6 +55,14 @@ public class FormData {
 
 	public void setCreator(String creator) {
 		this.creator = creator;
+	}
+
+	public Date getSavedDate() {
+		return savedDate;
+	}
+
+	public void setSavedDate(Date savedDate) {
+		this.savedDate = savedDate;
 	}
 
 }

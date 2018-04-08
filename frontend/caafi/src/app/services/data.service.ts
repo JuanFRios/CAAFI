@@ -12,13 +12,9 @@ export class DataService {
     return this.restangular.all('data').getList();
   }
 
-  /*
-  getAll(sortSintax: string): Observable<Data[]> {
-    return this.restangular.all('data').getList({
-      sortedBy: sortSintax
-    });
+  getAllByTemplate(template: String): Observable<Data[]> {
+    return this.restangular.all('data/bytemplate/'+template).getList();
   }
-  */
 
   getByJson(json: string,fields: string): Observable<any[]> {
     return this.restangular.all('data/byJson/'

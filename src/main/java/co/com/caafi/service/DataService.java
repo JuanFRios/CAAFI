@@ -3,6 +3,7 @@ package co.com.caafi.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class DataService {
 	@Autowired
 MongoTemplate mongoTemplate;
 
-	public FormData findById(int id) {
+	public FormData findById(String id) {
 		return this.dataRepository.findById(id);
 	}
 
@@ -30,7 +31,7 @@ MongoTemplate mongoTemplate;
 	}
 
 	public List<FormData> findByTemplate(String template) {
-		return this.dataRepository.findByTemplate(template);
+		return this.dataRepository.findByTemplate(template, new Sort(Sort.Direction.DESC, "savedDate"));
 		
 	}
 	

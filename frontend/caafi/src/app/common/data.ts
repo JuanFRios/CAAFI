@@ -1,5 +1,5 @@
 export class Data {
-  id: number;
+  id: string;
   template: string;
   origin: string;
   data: Object;

@@ -34,6 +34,7 @@ export class TemplatesComponent implements OnInit {
   dependencies: Dependencie[];
   activeDependencie: Dependencie;
   activeForm: string;
+  activeFormPath: string;
   lists: String[][] = [];
   formName: string;
   options: FormlyFormOptions = {};
@@ -42,8 +43,10 @@ export class TemplatesComponent implements OnInit {
   dataSource: ModelDataSource | null;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   paginatorSize = 0;
-  displayedColumns = ['template'];
-
+  displayedColumns = ["edit"];
+  displayedColumnsData = [];
+  displayedColumnsNames = [];
+  currentId: string = null;
 
   constructor(
     private templatesService: TemplatesService,
@@ -77,6 +80,10 @@ export class TemplatesComponent implements OnInit {
     this.exito = false;
     this.cargando = false;
     this.data = new Data();
+    this.displayedColumns = ["edit"];
+    this.displayedColumnsData = [];
+    this.displayedColumnsNames = [];
+    this.currentId = null;
 
     if(this.options.resetModel) {
         this.options.resetModel();
@@ -87,16 +94,20 @@ export class TemplatesComponent implements OnInit {
     this.templatesService.getByName(form1.path)
       .subscribe(form => {
         this.activeForm = form1.name;
+        this.activeFormPath = form1.path;
         this.formData = new Object();
         this.formName = form.name;
 
         this.lists = [];
+
         this.proccessFields(form.fields);
+
         if(this.lists.length > 0) {
           this.getList(this.lists, 0, form.fields);
         } else {
             this.formFields = form.fields;
             this.loading = false;
+            this.loadDataTable();
         }
       },
       error => {
@@ -104,14 +115,12 @@ export class TemplatesComponent implements OnInit {
         this.activeForm = null;
         this.loading = false;
       });
-
-      this.loadDataTable();
   }
 
   proccessFields(fields) {
 
     // Proceess Validators
-    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB", "options"], "");
+    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB", "options", "key", "label"], "");
   }
 
   /**
@@ -128,8 +137,11 @@ export class TemplatesComponent implements OnInit {
               //fields["options"] = eval(fields[i]);
               path = path+"['options']";
               this.lists.push([path, fields[i]]);
+          } else if (i == "key" && fields.type != "repeat" && !path.includes("fieldArray")) {
+            this.displayedColumns.push(fields[i]);
+            this.displayedColumnsData.push(fields[i]);
+            this.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
           } else {
-            console.log(eval(fields[i]));
               fields[i] = eval(fields[i]);
           }
         } catch (e) {
@@ -140,6 +152,7 @@ export class TemplatesComponent implements OnInit {
   }
 
   onSubmit(template) {
+
     this.errorMessage = [];
     this.exito = false;
     this.cargando = true;
@@ -150,27 +163,35 @@ export class TemplatesComponent implements OnInit {
     this.data.template = this.formName;
     this.data.origin = this.activeDependencie.name;
 
+    if(this.currentId != null) {
+      this.data.id = this.currentId
+    }
+
     this.dataService.save(this.data)
       .subscribe(res => {
         for (var i = 0, len = formsData.length; i < len; i++) {
           this.uploadFile(formsData[i]);
         }
+        this.loadDataTable();
+        this.options.resetModel();
         this.exito = true;
         this.cargando = false;
       },
       error => this.errorMessage.push(error));
   }
 
-  loadData() {
-    this.dataService.getById(1)
+  loadData(id) {
+    this.dataService.getById(id)
       .subscribe(formData => {
-        this.formData = formData.data;
+        this.currentId = formData.id;
+        for (var i in formData.data) {
+          this.form.get(i).patchValue(formData.data[i]);
+        }
       },
       error => this.errorMessage = error);
   }
 
   ngOnDestroy() {
-    this.sub.unsubscribe();
   }
 
   arrayContains(needle, arrhaystack) {
@@ -212,13 +233,13 @@ export class TemplatesComponent implements OnInit {
     } else {
       this.formFields = fields;
       this.loading = false;
+      this.loadDataTable();
     }
   }
 
   loadDataTable() {
-    this.dataService.getAll()
+    this.dataService.getAllByTemplate(this.activeFormPath)
       .subscribe(data => {
-        console.log(data[0].template);
         this.dataSource = new ModelDataSource(data, this.paginator);
 
         // Esto se hace para que el paginador esté actualizado con la cantidad de datos filtrados
