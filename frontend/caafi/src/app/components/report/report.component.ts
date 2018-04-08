@@ -70,6 +70,29 @@ export class ReportComponent implements OnInit {
         error => this.errorMessage.push(error));
   }
 
+
+  flatten(data) {
+    var result = {};
+    function recurse(cur, prop) {
+      if (Object(cur) !== cur) {
+        result[prop] = cur;
+      } else if (Array.isArray(cur)) {
+        result[prop] = { $all: cur };
+      } else {
+        var isEmpty = true;
+        for (var p in cur) {
+          isEmpty = false;
+          recurse(cur[p], prop ? prop + "." + p : p);
+        }
+        if (isEmpty && prop)
+          result[prop] = {};
+      }
+    }
+    recurse(data, "");
+    return result;
+  }
+
+
   loadForm(form1: Form, depent: Dependencie) {
 
     this.loading = true;
@@ -77,6 +100,11 @@ export class ReportComponent implements OnInit {
     this.exito = false;
     this.cargando = false;
     this.data = new Data();
+    this.configObject = {
+      settings: [],
+      data: [],
+      fields: []
+    }
     this.originFormName = form1.template;
     this.settings = form1.config.settings;
     this.fields = form1.config.fields;
@@ -143,19 +171,30 @@ export class ReportComponent implements OnInit {
     this.exito = false;
     this.cargando = true;
     this.data = new Data();
-    //  var formsData: FormData[] = this.getFiles(template);
-    if(template.length>0){
+    this.data2 = [];
+    this.configObject = {
+      settings: [],
+      data: [],
+      fields: []
+    }
+
+    if (!(Object.keys(template).length === 0)) {
       this.data.data = template;
     }
     this.data.template = this.originFormName;
 
 
     this.fields.forEach(element => {
+      if (!(typeof element.value === "undefined")) {
+        element.value = eval("(" + element.value + ")");
+      }
+      if (!(typeof element.render === "undefined")) {
+        element.render = eval("(" + element.render + ")");
+      }
       this.tableResult.data[`${element.objectKey}`] = 1;
     });
     //this.data.origin = this.activeDependencie.name;
-
-    this.dataService.getByJson(JSON.stringify(this.data),
+    this.dataService.getByJson(JSON.stringify(this.flatten(this.data)),
       JSON.stringify(this.tableResult))
       .subscribe(res => {
         res.forEach(element => {
@@ -166,7 +205,6 @@ export class ReportComponent implements OnInit {
           data: this.data2,
           fields: this.fields
         }
-        console.log(res);
         this.exito = true;
         this.cargando = false;
       },

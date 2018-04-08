@@ -31,9 +31,9 @@
 			<div *ngIf="errorMessage" class="error">
 				<p *ngFor="let error of errorMessage">{{error}}</p>
 			</div>
-			<div *ngIf="configObject">
+			<div *ngIf="configObject.data.length >0">
 				<generic-table [gtClasses]="'blueTable'" [gtSettings]="configObject.settings" #myTable [gtFields]="configObject.fields" [gtData]="configObject.data"></generic-table>
-				<button mat-raised-button color="primary" (click)="myTable.exportCSV('custom-file-name')">
+				<button mat-raised-button color="primary" (click)="myTable.exportCSV('reporte.csv')">
 						exportar a CSV</button>
 			</div>
 		</div>
