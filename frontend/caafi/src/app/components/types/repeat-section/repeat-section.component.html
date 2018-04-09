@@ -7,7 +7,7 @@
     [form]="this.formControl.at(i)"
     [ngClass]="field.fieldArray.fieldGroupClassName">
   </formly-form>
-  <button mat-raised-button color="warn" type="button" (click)="remove(i)">Eliminar</button>
+  <button mat-raised-button color="warn" type="button" (click)="remove(i)" class="button-remove-repeat">Eliminar</button>
 </div>
 <div style="margin:30px 0;">
   <button mat-raised-button color="primary" type="button" (click)="add()" id="button-add-{{field.key}}">Agregar</button>

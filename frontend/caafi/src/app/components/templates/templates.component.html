@@ -18,8 +18,7 @@
 		<div *ngIf="activeForm">
 			<form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
 				<formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form">
-				<!--<button mat-raised-button color="primary" type="button"
-				(click)="loadData()">Load Data</button>-->
+				<button mat-raised-button color="primary" type="button" (click)="options.resetModel()">Reset</button>
 				<button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">
 					Guardar</button>
 				</formly-form>

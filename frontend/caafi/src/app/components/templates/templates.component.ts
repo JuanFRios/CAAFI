@@ -8,13 +8,14 @@ import { Template } from '../../common/template';
 import { Dependencie } from '../../common/dependencie';
 import { Data } from '../../common/data';
 import { Form } from '../../common/form';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormlyFormOptions } from '@ngx-formly/core';
 import { ModelDataSource } from './model-data-source';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-templates',
@@ -42,6 +43,7 @@ export class TemplatesComponent implements OnInit {
 
   dataSource: ModelDataSource | null;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('filter') filter: ElementRef;
   paginatorSize = 0;
   displayedColumns = ["edit"];
   displayedColumnsData = [];
@@ -64,6 +66,20 @@ export class TemplatesComponent implements OnInit {
 
       this.loadConfig();
     });
+
+    /*
+    // Se crea un Observable para el input que servirá para realizar el filtro
+    Observable.fromEvent(this.filter.nativeElement, 'keyup')
+    .debounceTime(150)
+    .distinctUntilChanged()
+    .subscribe(() => {
+      if (!this.dataSource) { return; }
+      this.dataSource.filter = this.filter.nativeElement.value;
+      // Movemos el paginador a la página 0
+      this.paginator.pageIndex = 0;
+    });
+    */
+
   }
   loadConfig() {
     this.form = new FormGroup({});
@@ -158,7 +174,7 @@ export class TemplatesComponent implements OnInit {
   onSubmit(template) {
 
     console.log(template);
-/*
+
     this.errorMessage = [];
     this.exito = false;
     this.cargando = true;
@@ -184,33 +200,38 @@ export class TemplatesComponent implements OnInit {
         this.cargando = false;
       },
       error => this.errorMessage.push(error));
-      */
   }
 
   loadData(id) {
+
+    this.options.resetModel();
+
+    let elements: HTMLElement = document.getElementsByClassName("button-remove-repeat") as HTMLElement;
+    let numElems = elements.length;
+    if(numElems > 0) {
+      for(var e = 0; e < numElems; e++) {
+        elements[e].click();
+      }
+    }
+
     this.dataService.getById(id)
       .subscribe(formData => {
         this.currentId = formData.id;
         for (var i in formData.data) {
-          console.log("i", i);
-          console.log(formData.data[i]);
           if(this.repeatSections.includes(i)) {
-            for(var j in formData.data[i]) {
-              let element: HTMLElement = document.getElementById("button-add-"+i) as HTMLElement;
-              element.click();
-              console.log("j", j);
-              console.log(formData.data[i][j]);
-              this.form.get(i).get(j).patchValue(formData.data[i][j]);
-              for(var k in formData.data[i][j]) {
-                console.log("k", k);
-                console.log(formData.data[i][j][k]);
-
-                this.form.get(i).get(j).get(k).patchValue(formData.data[i][j][k]);
-                //this.form.get(i).get(j).get(k).setValue(formData.data[i][j][k]);
+            if(formData.data[i].length > 0) {
+              for(var j in formData.data[i]) {
+                if(!this.form.get(i).get(j)) {
+                  let element: HTMLElement = document.getElementById("button-add-"+i) as HTMLElement;
+                  element.click();
+                }
+                this.form.get(i).get(j).patchValue(formData.data[i][j]);
+                this.formData[i][j] = formData.data[i][j];
               }
             }
           } else {
-              this.form.get(i).patchValue(formData.data[i]);
+            this.form.get(i).patchValue(formData.data[i]);
+            this.formData[i] = formData.data[i];
           }
         }
       },
@@ -227,7 +248,7 @@ export class TemplatesComponent implements OnInit {
   getFiles(template) {
     var formsData : FormData[] = [];
     for (var i in template) {
-      if(template[i][0] && typeof template[i][0].name == "string" && template[i].length > 0) {
+      if(template[i] && template[i][0] && typeof template[i][0].name == "string" && template[i].length > 0) {
         let file: File = template[i][0];
         let formData: FormData = new FormData();
         const fecha_actual = new Date();
@@ -266,9 +287,6 @@ export class TemplatesComponent implements OnInit {
   loadDataTable() {
     this.dataService.getAllByTemplate(this.activeFormPath)
       .subscribe(data => {
-
-        console.log(this.repeatSections);
-        console.log(data);
         this.dataSource = new ModelDataSource(data, this.paginator);
 
         // Esto se hace para que el paginador esté actualizado con la cantidad de datos filtrados
