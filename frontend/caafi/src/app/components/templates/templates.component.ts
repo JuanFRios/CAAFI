@@ -47,6 +47,7 @@ export class TemplatesComponent implements OnInit {
   displayedColumnsData = [];
   displayedColumnsNames = [];
   currentId: string = null;
+  repeatSections = [];
 
   constructor(
     private templatesService: TemplatesService,
@@ -84,6 +85,7 @@ export class TemplatesComponent implements OnInit {
     this.displayedColumnsData = [];
     this.displayedColumnsNames = [];
     this.currentId = null;
+    this.repeatSections = [];
 
     if(this.options.resetModel) {
         this.options.resetModel();
@@ -120,7 +122,7 @@ export class TemplatesComponent implements OnInit {
   proccessFields(fields) {
 
     // Proceess Validators
-    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB", "options", "key", "label"], "");
+    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB", "options", "key", "label", "type"], "");
   }
 
   /**
@@ -141,6 +143,8 @@ export class TemplatesComponent implements OnInit {
             this.displayedColumns.push(fields[i]);
             this.displayedColumnsData.push(fields[i]);
             this.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
+          } else if(i == "type" && fields[i] == "repeat") {
+            this.repeatSections.push(fields["key"]);
           } else {
               fields[i] = eval(fields[i]);
           }
@@ -153,6 +157,8 @@ export class TemplatesComponent implements OnInit {
 
   onSubmit(template) {
 
+    console.log(template);
+/*
     this.errorMessage = [];
     this.exito = false;
     this.cargando = true;
@@ -178,6 +184,7 @@ export class TemplatesComponent implements OnInit {
         this.cargando = false;
       },
       error => this.errorMessage.push(error));
+      */
   }
 
   loadData(id) {
@@ -185,7 +192,26 @@ export class TemplatesComponent implements OnInit {
       .subscribe(formData => {
         this.currentId = formData.id;
         for (var i in formData.data) {
-          this.form.get(i).patchValue(formData.data[i]);
+          console.log("i", i);
+          console.log(formData.data[i]);
+          if(this.repeatSections.includes(i)) {
+            for(var j in formData.data[i]) {
+              let element: HTMLElement = document.getElementById("button-add-"+i) as HTMLElement;
+              element.click();
+              console.log("j", j);
+              console.log(formData.data[i][j]);
+              this.form.get(i).get(j).patchValue(formData.data[i][j]);
+              for(var k in formData.data[i][j]) {
+                console.log("k", k);
+                console.log(formData.data[i][j][k]);
+
+                this.form.get(i).get(j).get(k).patchValue(formData.data[i][j][k]);
+                //this.form.get(i).get(j).get(k).setValue(formData.data[i][j][k]);
+              }
+            }
+          } else {
+              this.form.get(i).patchValue(formData.data[i]);
+          }
         }
       },
       error => this.errorMessage = error);
@@ -240,6 +266,9 @@ export class TemplatesComponent implements OnInit {
   loadDataTable() {
     this.dataService.getAllByTemplate(this.activeFormPath)
       .subscribe(data => {
+
+        console.log(this.repeatSections);
+        console.log(data);
         this.dataSource = new ModelDataSource(data, this.paginator);
 
         // Esto se hace para que el paginador esté actualizado con la cantidad de datos filtrados
