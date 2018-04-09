@@ -206,11 +206,11 @@ export class TemplatesComponent implements OnInit {
 
     this.options.resetModel();
 
-    let elements: HTMLElement = document.getElementsByClassName("button-remove-repeat") as HTMLElement;
+    let elements: HTMLCollection = document.getElementsByClassName("button-remove-repeat") as HTMLCollection;
     let numElems = elements.length;
     if(numElems > 0) {
       for(var e = 0; e < numElems; e++) {
-        elements[e].click();
+        (elements[e] as HTMLElement).click();
       }
     }
 
