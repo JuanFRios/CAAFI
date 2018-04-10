@@ -41,6 +41,9 @@ import { LoginService } from './services/login.service';
 import { FileService } from './services/file.service';
 import { ListService } from './services/list.service';
 
+import { HttpClientModule } from '@angular/common/http';
+import { HttpModule } from '@angular/http';
+
 import { AppComponent } from './app.component';
 
 export function minlengthValidationMessage(err, field) {
@@ -114,6 +117,8 @@ export function required(err, field) {
     MatSidenavModule,
     AppRoutingModule,
     LoadingModule,
+    HttpClientModule,
+    HttpModule,
     RestangularModule.forRoot(RestangularConfigFactory)
   ],
   providers: [
