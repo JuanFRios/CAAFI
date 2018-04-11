@@ -9,7 +9,8 @@ import {
   MatToolbarModule,
   MatMenuModule,
   MatTableModule,
-  MatPaginatorModule
+  MatPaginatorModule,
+  MatTooltipModule
  } from '@angular/material';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { LoadingModule } from 'ngx-loading';
@@ -43,6 +44,7 @@ import { ListService } from './services/list.service';
 
 import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
+import { TooltipWrapperComponent } from './components/wrappers/tooltip/tooltip-wrapper.component';
 
 import { AppComponent } from './app.component';
 
@@ -76,7 +78,8 @@ export function required(err, field) {
     DatepickerTypeComponent,
     RepeatTypeComponent,
     FileValueAccessor,
-    FormlyFieldFile
+    FormlyFieldFile,
+    TooltipWrapperComponent
   ],
   imports: [
     BrowserModule,
@@ -104,7 +107,10 @@ export function required(err, field) {
         { name: 'maxlength', message: maxlengthValidationMessage },
         { name: 'min', message: minValidationMessage },
         { name: 'max', message: maxValidationMessage },
-      ]
+      ],
+      wrappers: [
+        { name: 'tooltip', component: TooltipWrapperComponent },
+      ],
     }),
     FormlyMaterialModule,
     BrowserAnimationsModule,
@@ -116,6 +122,7 @@ export function required(err, field) {
     MatPaginatorModule,
     MatSidenavModule,
     AppRoutingModule,
+    MatTooltipModule,
     LoadingModule,
     HttpClientModule,
     HttpModule,
