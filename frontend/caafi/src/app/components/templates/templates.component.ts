@@ -204,15 +204,7 @@ export class TemplatesComponent implements OnInit {
 
   loadData(id) {
 
-    this.options.resetModel();
-
-    let elements: HTMLCollection = document.getElementsByClassName("button-remove-repeat") as HTMLCollection;
-    let numElems = elements.length;
-    if(numElems > 0) {
-      for(var e = 0; e < numElems; e++) {
-        (elements[e] as HTMLElement).click();
-      }
-    }
+    this.reset();
 
     this.dataService.getById(id)
       .subscribe(formData => {
@@ -299,6 +291,17 @@ export class TemplatesComponent implements OnInit {
 
       },
       error => this.errorMessage.push(error));
+  }
+
+  reset() {
+    let elements: HTMLCollection = document.getElementsByClassName("button-remove-repeat") as HTMLCollection;
+    var numElems = elements.length;
+    while(numElems > 0) {
+      (elements[0] as HTMLElement).click();
+      numElems--;
+    }
+
+    this.options.resetModel();
   }
 
 }

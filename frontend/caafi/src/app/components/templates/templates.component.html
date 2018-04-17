@@ -1,7 +1,7 @@
 <div>
 	<button mat-button [matMenuTriggerFor]="main_menu">
 		<i class="material-icons">more_vert</i> <span *ngIf="!activeForm">Seleccione
-			formulario</span> <span *ngIf="activeForm" class="titleform"> {{activeDependencie.name+ " - " +activeForm }}</span>
+			una dependencia académida o administrativa</span> <span *ngIf="activeForm" class="titleform"> {{activeDependencie.name+ " - " +activeForm }}</span>
 	</button>
 
 	<mat-menu #main_menu="matMenu">
@@ -18,7 +18,7 @@
 		<div *ngIf="activeForm">
 			<form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
 				<formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form">
-				<button mat-raised-button color="primary" type="button" (click)="options.resetModel()">Reset</button>
+				<button mat-raised-button color="primary" type="button" (click)="reset()">Limpiar</button>
 				<button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">
 					Guardar</button>
 				</formly-form>
