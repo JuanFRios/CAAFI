@@ -1,7 +1,9 @@
 <div>
 	<button mat-button [matMenuTriggerFor]="main_menu">
-		<i class="material-icons">more_vert</i> <span *ngIf="!activeForm">Seleccione
-			formulario</span> <span *ngIf="activeForm" class="titleform"> {{activeDependencie.name+ " - " +activeForm }}</span>
+		<i class="material-icons">more_vert</i>
+		<span *ngIf="!activeForm">Seleccione formulario
+		</span>
+		<span *ngIf="activeForm" class="titleform"> {{activeDependencie.name+ " - " +activeForm }}</span>
 	</button>
 
 	<mat-menu #main_menu="matMenu">
@@ -18,10 +20,10 @@
 		<div *ngIf="activeForm">
 			<form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
 				<formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form">
-				<!--<button mat-raised-button color="primary" type="button"
+					<!--<button mat-raised-button color="primary" type="button"
 				(click)="loadData()">Load Data</button>-->
-				<button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">
-					Consultar</button>
+					<button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">
+						Consultar</button>
 				</formly-form>
 			</form>
 			<div [hidden]="!cargando">
@@ -33,10 +35,14 @@
 			</div>
 			<div *ngIf="configObject.data.length >0">
 				<generic-table [gtClasses]="'blueTable'" [gtSettings]="configObject.settings" #myTable [gtFields]="configObject.fields" [gtData]="configObject.data"></generic-table>
-				<button mat-raised-button color="primary" (click)="myTable.exportCSV('reporte.csv')">
-						exportar a CSV</button>
+				<div class="text-center">
+						<gt-table-info class="form-text text-muted mb-2" [genericTable]="myTable"></gt-table-info>
+						<gt-pagination [gtClasses]="'pagination pagination-sm justify-content-center'" [genericTable]="myTable"></gt-pagination>
+						<a  mat-button (click) = "myTable.exportCSV('reporte.csv')">Descargar <span><img src="./assets/img/excel.png" height=30 ></span></a>
+				</div>
+			
 			</div>
 		</div>
+		<ngx-loading [show]="loading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
 	</div>
-	<ngx-loading [show]="loading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
 </div>
