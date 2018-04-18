@@ -1,7 +1,7 @@
 <div>
 	<button mat-button [matMenuTriggerFor]="main_menu">
 		<i class="material-icons">more_vert</i> <span *ngIf="!activeForm">Seleccione
-			una dependencia académida o administrativa</span> <span *ngIf="activeForm" class="titleform"> {{activeDependencie.name+ " - " +activeForm }}</span>
+			una dependencia académica o administrativa</span> <span *ngIf="activeForm" class="titleform"> {{activeDependencie.name+ " - " +activeForm }}</span>
 	</button>
 
 	<mat-menu #main_menu="matMenu">

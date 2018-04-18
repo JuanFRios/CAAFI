@@ -294,6 +294,10 @@ export class TemplatesComponent implements OnInit {
   }
 
   reset() {
+
+    console.log(this.form);
+    console.log(this.form.valid);
+
     let elements: HTMLCollection = document.getElementsByClassName("button-remove-repeat") as HTMLCollection;
     var numElems = elements.length;
     while(numElems > 0) {
