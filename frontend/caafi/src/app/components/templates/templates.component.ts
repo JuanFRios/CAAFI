@@ -109,6 +109,7 @@ export class TemplatesComponent implements OnInit {
 
     this.activeDependencie = depent;
     this.form = new FormGroup({});
+    console.log(this.form);
     this.templatesService.getByName(form1.path)
       .subscribe(form => {
         this.activeForm = form1.name;
@@ -195,7 +196,7 @@ export class TemplatesComponent implements OnInit {
           this.uploadFile(formsData[i]);
         }
         this.loadDataTable();
-        this.options.resetModel();
+        this.reset();
         this.exito = true;
         this.cargando = false;
       },
@@ -297,6 +298,8 @@ export class TemplatesComponent implements OnInit {
 
     console.log(this.form);
     console.log(this.form.valid);
+
+    this.currentId = null;
 
     let elements: HTMLCollection = document.getElementsByClassName("button-remove-repeat") as HTMLCollection;
     var numElems = elements.length;
