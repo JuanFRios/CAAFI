@@ -411,3 +411,7 @@ mat-radio-group ::ng-deep .mat-radio-underline {
     background-color: #fff;
     border: 1px solid #ddd;
 }
+
+span.gt-highlight-search {
+    background: yellow;
+}

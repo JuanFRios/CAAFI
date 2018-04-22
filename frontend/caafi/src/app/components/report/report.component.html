@@ -34,7 +34,8 @@
 				<p *ngFor="let error of errorMessage">{{error}}</p>
 			</div>
 			<div *ngIf="configObject.data.length >0">
-				<generic-table [gtClasses]="'blueTable'" [gtSettings]="configObject.settings" #myTable [gtFields]="configObject.fields" [gtData]="configObject.data"></generic-table>
+					<input class="form-control form-control-sm mr-sm-2 mb-3 mb-sm-0" #search (keyup)="myTable.gtSearch(search.value)" placeholder="buscar en tabla...">
+				<generic-table [gtClasses]="'blueTable'" [gtSettings]="configObject.settings" #myTable [gtFields]="configObject.fields" [gtData]="configObject.data" [gtOptions]="{highlightSearch:true}" ></generic-table>
 				<div class="text-center">
 						<gt-table-info class="form-text text-muted mb-2" [genericTable]="myTable"></gt-table-info>
 						<gt-pagination [gtClasses]="'pagination pagination-sm justify-content-center'" [genericTable]="myTable"></gt-pagination>
