@@ -121,6 +121,8 @@ export class TemplatesComponent implements OnInit {
         this.lists = [];
 
         this.proccessFields(form.fields);
+        
+        console.log('1', this.form.controls);
 
         if(this.lists.length > 0) {
           this.getList(this.lists, 0, form.fields);
@@ -128,6 +130,8 @@ export class TemplatesComponent implements OnInit {
             this.formFields = form.fields;
             this.loading = false;
             this.loadDataTable();
+
+            console.log('2', this.form.controls);
         }
       },
       error => {
@@ -275,6 +279,8 @@ export class TemplatesComponent implements OnInit {
       this.formFields = fields;
       this.loading = false;
       this.loadDataTable();
+
+      console.log('3', this.form.controls);
     }
   }
 
