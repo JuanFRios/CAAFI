@@ -112,7 +112,7 @@ export class TemplatesComponent implements OnInit {
     console.log(this.form);
     console.log(this.form.controls);
     this.templatesService.getByName(form1.path)
-      .subscribe(form => {
+      .subscribe(form2 => {
 
         console.log('1', this.form.controls);
 
@@ -128,20 +128,20 @@ export class TemplatesComponent implements OnInit {
 
         console.log('4', this.form.controls);
 
-        this.formName = form.name;
+        this.formName = form2.name;
 
         console.log('5', this.form.controls);
 
         this.lists = [];
 
-        this.proccessFields(form.fields);
+        this.proccessFields(form2.fields);
         
         console.log('6', this.form.controls);
 
         if(this.lists.length > 0) {
-          this.getList(this.lists, 0, form.fields);
+          this.getList(this.lists, 0, form2.fields);
         } else {
-            this.formFields = form.fields;
+            this.formFields = form2.fields;
             this.loading = false;
             this.loadDataTable();
 
