@@ -60,8 +60,7 @@ export class TemplatesComponent implements OnInit {
     private listService: ListService,
   ) { }
 
-  ngOnInit() {
-    console.log('10', this.form.controls);
+  ngOnInit() {  
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'];
 
