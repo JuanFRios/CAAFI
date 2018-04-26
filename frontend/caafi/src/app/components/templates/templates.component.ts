@@ -109,8 +109,8 @@ export class TemplatesComponent implements OnInit {
 
     this.activeDependencie = depent;
     this.form = new FormGroup({});
-    this.form.controls = {};
     console.log(this.form);
+    console.log(this.form.controls);
     this.templatesService.getByName(form1.path)
       .subscribe(form => {
         this.activeForm = form1.name;
