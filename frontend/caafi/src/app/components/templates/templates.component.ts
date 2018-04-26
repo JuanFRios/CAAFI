@@ -251,7 +251,7 @@ export class TemplatesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    console.log('9', this.form.controls);
+    
   }
 
   arrayContains(needle, arrhaystack) {
