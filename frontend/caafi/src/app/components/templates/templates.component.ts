@@ -113,16 +113,30 @@ export class TemplatesComponent implements OnInit {
     console.log(this.form.controls);
     this.templatesService.getByName(form1.path)
       .subscribe(form => {
+
+        console.log('1', this.form.controls);
+
         this.activeForm = form1.name;
+
+        console.log('2', this.form.controls);
+
         this.activeFormPath = form1.path;
+
+        console.log('3', this.form.controls);
+
         this.formData = new Object();
+
+        console.log('4', this.form.controls);
+
         this.formName = form.name;
+
+        console.log('5', this.form.controls);
 
         this.lists = [];
 
         this.proccessFields(form.fields);
         
-        console.log('1', this.form.controls);
+        console.log('6', this.form.controls);
 
         if(this.lists.length > 0) {
           this.getList(this.lists, 0, form.fields);
@@ -131,7 +145,7 @@ export class TemplatesComponent implements OnInit {
             this.loading = false;
             this.loadDataTable();
 
-            console.log('2', this.form.controls);
+            console.log('7', this.form.controls);
         }
       },
       error => {
@@ -280,7 +294,7 @@ export class TemplatesComponent implements OnInit {
       this.loading = false;
       this.loadDataTable();
 
-      console.log('3', this.form.controls);
+      console.log('8', this.form.controls);
     }
   }
 
