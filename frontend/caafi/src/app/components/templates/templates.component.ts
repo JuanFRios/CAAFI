@@ -61,6 +61,7 @@ export class TemplatesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log('10', this.form.controls);
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'];
 
@@ -251,6 +252,7 @@ export class TemplatesComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    console.log('9', this.form.controls);
   }
 
   arrayContains(needle, arrhaystack) {
