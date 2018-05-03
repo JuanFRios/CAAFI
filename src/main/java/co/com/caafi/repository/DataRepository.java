@@ -15,6 +15,6 @@ public interface DataRepository extends MongoRepository<FormData, String> {
 
 	public List<FormData> findByTemplate(String template, Sort sort);
 	
-	public FormData save(FormData data);
+    public FormData save(FormData data);
 
 }

@@ -16,33 +16,32 @@ import co.com.caafi.repository.DataRepository;
 
 @Service
 public class DataService {
-	@Autowired
-	private DataRepository dataRepository;
-	
-	@Autowired
-MongoTemplate mongoTemplate;
+    @Autowired
+    DataRepository dataRepository;
 
-	public FormData findById(String id) {
-		return this.dataRepository.findById(id);
-	}
+    @Autowired
+    MongoTemplate mongoTemplate;
 
-	public List<FormData> findAll() {
-		return this.dataRepository.findAll();
-	}
+    public FormData findById(String id) {
+        return this.dataRepository.findById(id);
+    }
 
-	public List<FormData> findByTemplate(String template) {
-		return this.dataRepository.findByTemplate(template, new Sort(Sort.Direction.DESC, "savedDate"));
-		
-	}
-	
-	public List<Object> findByJson(String template,String fields) {
-		BasicQuery query = new BasicQuery(template,JsonFlattener.flatten(fields));
-		return this.mongoTemplate.find(query, Object.class,"data");
-	}
-	
+    public List<FormData> findAll() {
+        return this.dataRepository.findAll();
+    }
 
-	public FormData save(FormData data, User user) {
-		data.setCreator(user.getDocument());
-		return this.dataRepository.save(data);
-	}
+    public List<FormData> findByTemplate(String template) {
+        return this.dataRepository.findByTemplate(template, new Sort(Sort.Direction.DESC, "savedDate"));
+
+    }
+
+    public List<Object> findByJson(String template, String fields) {
+        BasicQuery query = new BasicQuery(template, JsonFlattener.flatten(fields));
+        return this.mongoTemplate.find(query, Object.class, "data");
+    }
+
+    public FormData save(FormData data, User user) {
+        data.setCreator(user.getDocument());
+        return this.dataRepository.save(data);
+    }
 }
