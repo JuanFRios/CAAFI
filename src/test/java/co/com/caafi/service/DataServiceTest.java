@@ -62,10 +62,5 @@ public class DataServiceTest {
         assertEquals(1, dataService.findByTemplate("prueba").size());
     }
 
-    @Test
-    public void findByJsonTest() {
-        given(mongoTemplate.find(any(), any())).willReturn(new ArrayList<>(Arrays.asList(new Object())));
-        assertEquals(1, dataService.findByJson("hola", "hola").size());
-    }
 
 }
