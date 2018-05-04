@@ -11,7 +11,7 @@ import co.com.caafi.model.User;
 
 @Repository
 @PropertySource("classpath:udea.properties")
-@Profile("dev")
+@Profile("local")
 public class DevUserRepositoryImpl implements UserRepository {
 
 	public User getUser(String name, String password) {

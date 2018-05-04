@@ -16,7 +16,7 @@ import co.edu.udea.wsClient.OrgSistemasWebServiceClient;
 
 @Repository
 @PropertySource("classpath:udea.properties")
-@Profile("pdn")
+@Profile({"pdn","lab"})
 public class UserRepositoryImpl implements UserRepository {
 
 	@Value("${TOKEN_PDN}")
