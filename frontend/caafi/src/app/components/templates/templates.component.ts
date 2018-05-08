@@ -126,6 +126,7 @@ export class TemplatesComponent implements OnInit {
             this.formFields = form2.fields;
             this.loading = false;
             this.loadDataTable();
+            this.form = new FormGroup({});
         }
       },
       error => {
