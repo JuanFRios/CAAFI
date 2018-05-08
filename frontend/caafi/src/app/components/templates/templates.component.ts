@@ -114,6 +114,7 @@ export class TemplatesComponent implements OnInit {
     this.templatesService.getByName(form1.path)
       .subscribe(form2 => {
 
+        this.form = new FormGroup({});
         console.log('1', this.form.controls);
 
         this.activeForm = form1.name;
