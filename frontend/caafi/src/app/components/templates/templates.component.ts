@@ -107,18 +107,37 @@ export class TemplatesComponent implements OnInit {
         this.options.resetModel();
     };
 
-    this.form = new FormGroup({});
     this.activeDependencie = depent;
+    this.form = new FormGroup({});
+    console.log(this.form);
+    console.log(this.form.controls);
     this.templatesService.getByName(form1.path)
       .subscribe(form2 => {
 
         this.form = new FormGroup({});
+        console.log('1', this.form.controls);
+
         this.activeForm = form1.name;
+
+        console.log('2', this.form.controls);
+
         this.activeFormPath = form1.path;
+
+        console.log('3', this.form.controls);
+
         this.formData = new Object();
+
+        console.log('4', this.form.controls);
+
         this.formName = form2.name;
+
+        console.log('5', this.form.controls);
+
         this.lists = [];
+
         this.proccessFields(form2.fields);
+        
+        console.log('6', this.form.controls);
 
         if(this.lists.length > 0) {
           this.getList(this.lists, 0, form2.fields);
@@ -126,7 +145,8 @@ export class TemplatesComponent implements OnInit {
             this.formFields = form2.fields;
             this.loading = false;
             this.loadDataTable();
-            this.form = new FormGroup({});
+
+            console.log('7', this.form.controls);
         }
       },
       error => {
@@ -173,6 +193,9 @@ export class TemplatesComponent implements OnInit {
   }
 
   onSubmit(template) {
+
+    console.log(template);
+
     this.errorMessage = [];
     this.exito = false;
     this.cargando = true;
@@ -274,6 +297,7 @@ export class TemplatesComponent implements OnInit {
       this.loadDataTable();
 
       this.form = new FormGroup({});
+      console.log('8', this.form.controls);
     }
   }
 
@@ -295,6 +319,9 @@ export class TemplatesComponent implements OnInit {
   }
 
   reset() {
+
+    console.log(this.form);
+    console.log(this.form.valid);
 
     this.currentId = null;
 
