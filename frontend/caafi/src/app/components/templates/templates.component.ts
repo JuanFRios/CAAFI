@@ -296,6 +296,7 @@ export class TemplatesComponent implements OnInit {
       this.loading = false;
       this.loadDataTable();
 
+      this.form = new FormGroup({});
       console.log('8', this.form.controls);
     }
   }
