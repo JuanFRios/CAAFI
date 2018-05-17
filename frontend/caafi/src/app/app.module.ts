@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -83,6 +84,7 @@ export function required(err, field) {
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     ReactiveFormsModule,
     FlexLayoutModule,
     GenericTableModule,

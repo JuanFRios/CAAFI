@@ -9,20 +9,22 @@ import { Dependencie } from '../../common/dependencie';
 import { Data } from '../../common/data';
 import { Form } from '../../common/form';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
-import { FormlyFieldConfig } from '@ngx-formly/core';
+import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormlyFormOptions } from '@ngx-formly/core';
 import { ModelDataSource } from './model-data-source';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs';
+import { takeUntil, startWith, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-templates',
   templateUrl: './templates.component.html',
   styleUrls: ['./templates.component.css']
 })
-export class TemplatesComponent implements OnInit {
+export class TemplatesComponent implements OnInit, OnDestroy {
+  onDestroy$ = new Subject<void>();
   id: string;
   private sub: any;
   errorMessage: string[] = [];
@@ -38,7 +40,12 @@ export class TemplatesComponent implements OnInit {
   activeFormPath: string;
   lists: String[][] = [];
   formName: string;
-  options: FormlyFormOptions = {};
+  //options: FormlyFormOptions = {};
+  options: FormlyFormOptions = {
+    formState : {
+      valorEntidadesFinancierasExternas : 0
+    }
+  };
   public loading = false;
 
   dataSource: ModelDataSource | null;
@@ -109,44 +116,46 @@ export class TemplatesComponent implements OnInit {
 
     this.activeDependencie = depent;
     this.form = new FormGroup({});
-    console.log(this.form);
-    console.log(this.form.controls);
+    //console.log(this.form);
+    //console.log(this.form.controls);
     this.templatesService.getByName(form1.path)
       .subscribe(form2 => {
 
         this.form = new FormGroup({});
-        console.log('1', this.form.controls);
+        //console.log('1', this.form.controls);
 
         this.activeForm = form1.name;
 
-        console.log('2', this.form.controls);
+        //console.log('2', this.form.controls);
 
         this.activeFormPath = form1.path;
 
-        console.log('3', this.form.controls);
+        //console.log('3', this.form.controls);
 
         this.formData = new Object();
 
-        console.log('4', this.form.controls);
+        //console.log('4', this.form.controls);
 
         this.formName = form2.name;
 
-        console.log('5', this.form.controls);
+        //console.log('5', this.form.controls);
 
         this.lists = [];
 
         this.proccessFields(form2.fields);
-        
-        console.log('6', this.form.controls);
+
+        //console.log('6', this.form.controls);
 
         if(this.lists.length > 0) {
-          this.getList(this.lists, 0, form2.fields);
+          this.getList(this.lists, 0, form2.fields, form2.options);
         } else {
             this.formFields = form2.fields;
+            //this.options = form2.options;
             this.loading = false;
             this.loadDataTable();
 
-            console.log('7', this.form.controls);
+            console.log(this.options);
+            //console.log('7', this.form.controls);
         }
       },
       error => {
@@ -159,7 +168,7 @@ export class TemplatesComponent implements OnInit {
   proccessFields(fields) {
 
     // Proceess Validators
-    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB", "options", "key", "label", "type"], "");
+    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB", "options", "key", "label", "type", "templateOptions?disabled", "onInit", "hideExpression"], "");
   }
 
   /**
@@ -182,6 +191,9 @@ export class TemplatesComponent implements OnInit {
             this.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
           } else if(i == "type" && fields[i] == "repeat") {
             this.repeatSections.push(fields["key"]);
+          } else if (i == "templateOptions?disabled") {
+            fields[i.replace("?", ".")] = fields[i];
+            delete fields[i];
           } else {
               fields[i] = eval(fields[i]);
           }
@@ -194,7 +206,7 @@ export class TemplatesComponent implements OnInit {
 
   onSubmit(template) {
 
-    console.log(template);
+    //console.log(template);
 
     this.errorMessage = [];
     this.exito = false;
@@ -251,8 +263,9 @@ export class TemplatesComponent implements OnInit {
       error => this.errorMessage = error);
   }
 
-  ngOnDestroy() {
-    
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   arrayContains(needle, arrhaystack) {
@@ -283,21 +296,24 @@ export class TemplatesComponent implements OnInit {
     this.fileService.upload(file);
   }
 
-  getList(list, current, fields) {
+  getList(list, current, fields, options) {
     if(list.length > current) {
       this.configService.getByName(list[current][1])
       .subscribe(confi => {
         eval("fields"+list[current][0]+" = "+JSON.stringify(confi.value));
         current++;
-        this.getList(list, current, fields);
+        this.getList(list, current, fields, options);
       });
     } else {
       this.formFields = fields;
+      //this.options = options;
       this.loading = false;
       this.loadDataTable();
 
       this.form = new FormGroup({});
-      console.log('8', this.form.controls);
+
+      console.log(this.options);
+      //console.log('8', this.form.controls);
     }
   }
 
@@ -320,8 +336,8 @@ export class TemplatesComponent implements OnInit {
 
   reset() {
 
-    console.log(this.form);
-    console.log(this.form.valid);
+    //console.log(this.form);
+    //console.log(this.form.valid);
 
     this.currentId = null;
 

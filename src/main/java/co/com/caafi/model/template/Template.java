@@ -16,6 +16,7 @@ public class Template {
 	private Integer version;
 	private String description;
 	private List<Map<String, Object>> fields;
+	private Map<String, Object> options;
 	private Date startDate;
 	private Date endDate;
 	private String role;
@@ -82,6 +83,14 @@ public class Template {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public Map<String, Object> getOptions() {
+		return options;
+	}
+
+	public void setOptions(Map<String, Object> options) {
+		this.options = options;
 	}
 
 }

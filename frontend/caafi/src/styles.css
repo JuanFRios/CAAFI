@@ -237,6 +237,7 @@ display: table;
   align-items: stretch;
 }
 
+.flex-0-dot-5 { flex: 0.5 } 
 .flex-1 { flex: 1; }
 .flex-1-100 { flex: 1 100%; }
 .flex-50-0 { flex: 50% 0; }
