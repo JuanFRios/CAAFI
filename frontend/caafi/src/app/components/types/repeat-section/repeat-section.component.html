@@ -9,6 +9,9 @@
   </formly-form>
   <button mat-raised-button color="warn" type="button" (click)="remove(i)" class="button-remove-repeat">Eliminar</button>
 </div>
+<div *ngIf="field.variable">
+  <hr/><div><strong>{{ field.customText }} </strong>{{ options.formState[field.variable] | currency:'COP':'code':'1.2' }}</div>
+</div>
 <div style="margin:30px 0;">
   <button mat-raised-button color="primary" type="button" (click)="add()" id="button-add-{{field.key}}">Agregar</button>
 </div>

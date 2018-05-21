@@ -21,6 +21,7 @@ import { GenericTableModule } from 'angular-generic-table';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { DatepickerTypeComponent } from './components/types/datepicker/datepicker.component';
+import { VariableTypeComponent } from './components/types/variable/variable.component';
 import { RepeatTypeComponent } from './components/types/repeat-section/repeat-section.component';
 import { FormlyFieldFile } from './components/types/file-upload/file.component';
 import { FileValueAccessor } from './components/types/file-upload/file-value-accessor';
@@ -77,6 +78,7 @@ export function required(err, field) {
     ReportComponent,
     HomeComponent,
     DatepickerTypeComponent,
+    VariableTypeComponent,
     RepeatTypeComponent,
     FileValueAccessor,
     FormlyFieldFile,
@@ -101,7 +103,8 @@ export function required(err, field) {
           }
         },
         { name: 'repeat', component: RepeatTypeComponent },
-        { name: 'file', component: FormlyFieldFile }
+        { name: 'file', component: FormlyFieldFile },
+        { name: 'variable', component: VariableTypeComponent }
       ],
       validationMessages: [
         { name: 'required', message: required },

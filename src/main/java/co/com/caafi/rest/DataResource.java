@@ -43,6 +43,12 @@ public class DataResource {
 	public FormData findById(@PathVariable String id) {
 		return dataService.findById(id);
 	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/byid/{id}", method = RequestMethod.DELETE)
+	public void deleteById(@PathVariable String id) {
+		dataService.deleteById(id);
+	}
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/bytemplate/{template}", method = RequestMethod.GET)

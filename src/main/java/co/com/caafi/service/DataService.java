@@ -25,6 +25,10 @@ public class DataService {
     public FormData findById(String id) {
         return this.dataRepository.findById(id);
     }
+    
+    public void deleteById(String id) {
+        this.dataRepository.delete(id);
+    }
 
     public List<FormData> findAll() {
         return this.dataRepository.findAll();

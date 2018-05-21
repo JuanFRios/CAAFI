@@ -3,7 +3,7 @@
 		<i class="material-icons">more_vert</i> <span *ngIf="!activeForm">Seleccione
 			una dependencia académica o administrativa</span> <span *ngIf="activeForm" class="titleform"> {{activeDependencie.name+ " - " +activeForm }}</span>
 	</button>
-
+	
 	<mat-menu #main_menu="matMenu">
 		<ng-container *ngFor="let mainItem of dependencies">
 			<button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
@@ -50,11 +50,18 @@
 			     <mat-table #table [dataSource]="dataSource" class="mat-table">
 
 						 <ng-container matColumnDef="edit" id="actionsCell">
-			         <mat-header-cell *matHeaderCellDef class="mat-header-cell">  </mat-header-cell>
-			         <mat-cell *matCellDef="let row" class="mat-cell">
+			         <mat-header-cell *matHeaderCellDef class="mat-header-cell action">  </mat-header-cell>
+			         <mat-cell *matCellDef="let row" class="mat-cell action">
 								 <button mat-raised-button color="primary" type="button" (click)="loadData( row.id )">Editar</button>
 							 </mat-cell>
-			       </ng-container>
+						 </ng-container>
+						 
+						 <ng-container matColumnDef="delete" id="actionsCell">
+							<mat-header-cell *matHeaderCellDef class="mat-header-cell action">  </mat-header-cell>
+							<mat-cell *matCellDef="let row" class="mat-cell action">
+							 <button mat-raised-button color="primary" type="button" (click)="deleteData( row.id )">Eliminar</button>
+						 </mat-cell>
+						</ng-container>
 
 			       <ng-container *ngFor="let col of displayedColumnsData" matColumnDef="{{ col }}">
 			         <mat-header-cell *matHeaderCellDef class="mat-header-cell"> {{ displayedColumnsNames[col] }} </mat-header-cell>

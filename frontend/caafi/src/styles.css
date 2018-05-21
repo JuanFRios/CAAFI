@@ -416,3 +416,10 @@ mat-radio-group ::ng-deep .mat-radio-underline {
 span.gt-highlight-search {
     background: yellow;
 }
+
+.mat-menu-panel {
+    max-height: calc(100vh - 178px) !important;
+}
+body {
+    margin: 0;
+}

@@ -93,12 +93,26 @@ background-color: transparent;
 }
 
 /* Template Data Tabe */
-#dataTable .mat-header-row, .mat-row {
+#dataTable .mat-header-row, #dataTable .mat-row {
   width: 300vw;
+}
+#dataTable .mat-header-cell.action, #dataTable .mat-cell.action {
+  flex: none;
+  width: 100px;
 }
 #dataTable .mat-table {
   overflow-x: scroll;
 }
 #dataTable .mat-card {
   width: 100%;
+}
+
+.cdk-overlay-pane {
+  position: absolute;
+  top: 100px;
+  left: 150px;
+}
+.mat-menu-panel {
+  overflow: auto;
+  max-height: calc(100vh - 48px);
 }

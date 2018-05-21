@@ -16,7 +16,7 @@ public class Template {
 	private Integer version;
 	private String description;
 	private List<Map<String, Object>> fields;
-	private Map<String, Object> options;
+	private Map<String, Object> variables;
 	private Date startDate;
 	private Date endDate;
 	private String role;
@@ -85,12 +85,12 @@ public class Template {
 		this.role = role;
 	}
 
-	public Map<String, Object> getOptions() {
-		return options;
+	public Map<String, Object> getVariables() {
+		return variables;
 	}
 
-	public void setOptions(Map<String, Object> options) {
-		this.options = options;
+	public void setVariables(Map<String, Object> variables) {
+		this.variables = variables;
 	}
 
 }

@@ -15,8 +15,9 @@ import { ModelDataSource } from './model-data-source';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 import { takeUntil, startWith, tap } from 'rxjs/operators';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-templates',
@@ -40,19 +41,25 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   activeFormPath: string;
   lists: String[][] = [];
   formName: string;
-  //options: FormlyFormOptions = {};
+  options: FormlyFormOptions = {};
+  variables: Object = {};
+  takeUntil = takeUntil;
+  startWith = startWith;
+  tap = tap;
+  /*
   options: FormlyFormOptions = {
     formState : {
       valorEntidadesFinancierasExternas : 0
     }
   };
+  */
   public loading = false;
 
   dataSource: ModelDataSource | null;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('filter') filter: ElementRef;
   paginatorSize = 0;
-  displayedColumns = ["edit"];
+  displayedColumns = ["edit", "delete"];
   displayedColumnsData = [];
   displayedColumnsNames = [];
   currentId: string = null;
@@ -65,6 +72,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     private configService: ConfigService,
     private fileService: FileService,
     private listService: ListService,
+    private cdRef: ChangeDetectorRef
   ) { }
 
   ngOnInit() {  
@@ -104,7 +112,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.exito = false;
     this.cargando = false;
     this.data = new Data();
-    this.displayedColumns = ["edit"];
+    this.displayedColumns = ["edit", "delete"];
     this.displayedColumnsData = [];
     this.displayedColumnsNames = [];
     this.currentId = null;
@@ -120,6 +128,9 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     //console.log(this.form.controls);
     this.templatesService.getByName(form1.path)
       .subscribe(form2 => {
+        
+        this.variables = form2.variables;
+        console.log(this.variables);
 
         this.form = new FormGroup({});
         //console.log('1', this.form.controls);
@@ -146,15 +157,13 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
         //console.log('6', this.form.controls);
 
+        console.log(form2);
         if(this.lists.length > 0) {
-          this.getList(this.lists, 0, form2.fields, form2.options);
+          this.getList(this.lists, 0, form2.fields);
         } else {
             this.formFields = form2.fields;
-            //this.options = form2.options;
             this.loading = false;
             this.loadDataTable();
-
-            console.log(this.options);
             //console.log('7', this.form.controls);
         }
       },
@@ -168,7 +177,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   proccessFields(fields) {
 
     // Proceess Validators
-    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB", "options", "key", "label", "type", "templateOptions?disabled", "onInit", "hideExpression"], "");
+    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB","key", "label", "type", "templateOptions?disabled", "onInit", "onDestroy", "hideExpression", "variable"], "");
   }
 
   /**
@@ -194,6 +203,12 @@ export class TemplatesComponent implements OnInit, OnDestroy {
           } else if (i == "templateOptions?disabled") {
             fields[i.replace("?", ".")] = fields[i];
             delete fields[i];
+          } else if (i === 'variable') {
+            if (!this.options['formState']) {
+              this.options['formState'] = {};
+            }
+            this.options['formState'][fields[i]] = 0;
+            console.log(this.options['formState']);
           } else {
               fields[i] = eval(fields[i]);
           }
@@ -263,6 +278,18 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       error => this.errorMessage = error);
   }
 
+  deleteData(id) {
+    if (confirm('¿Está seguro que desea borrar el registro?')) {
+      this.dataService.delete(id)
+      .subscribe(
+        data  => {
+          this.loadDataTable();
+        },
+        error => this.errorMessage = error
+      );
+    }
+  }
+
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
@@ -296,24 +323,22 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.fileService.upload(file);
   }
 
-  getList(list, current, fields, options) {
+  getList(list, current, fields) {
     if(list.length > current) {
       this.configService.getByName(list[current][1])
       .subscribe(confi => {
         eval("fields"+list[current][0]+" = "+JSON.stringify(confi.value));
         current++;
-        this.getList(list, current, fields, options);
+        this.getList(list, current, fields);
       });
     } else {
       this.formFields = fields;
-      //this.options = options;
       this.loading = false;
       this.loadDataTable();
 
       this.form = new FormGroup({});
-
-      console.log(this.options);
       //console.log('8', this.form.controls);
+      
     }
   }
 
@@ -349,6 +374,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     }
 
     this.options.resetModel();
+
   }
 
 }

@@ -4,6 +4,6 @@ export class Template {
   id: string;
   name: string;
   version: number;
-  options: FormlyFormOptions;
+  variables: Object;
   fields: Array<FormlyFieldConfig>;
 }

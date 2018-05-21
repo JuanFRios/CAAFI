@@ -29,4 +29,8 @@ export class DataService {
     return this.restangular.all('data').post(data);
   }
 
+  delete(id: number): Observable<Data> {
+    return this.restangular.one('data/byid', id).remove();
+  }
+
 }
