@@ -104,7 +104,16 @@ export function required(err, field) {
         },
         { name: 'repeat', component: RepeatTypeComponent },
         { name: 'file', component: FormlyFieldFile },
-        { name: 'variable', component: VariableTypeComponent }
+        {
+          name: 'variable',
+          component: VariableTypeComponent,
+          defaultOptions: {
+            defaultValue: '',
+            templateOptions: {
+              variableOptions: {}
+            }
+          }
+        }
       ],
       validationMessages: [
         { name: 'required', message: required },
