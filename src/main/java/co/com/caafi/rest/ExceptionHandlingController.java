@@ -24,6 +24,7 @@ public class ExceptionHandlingController {
 	public ExceptionHandlingController() {
 
 		logger = LoggerFactory.getLogger(getClass());
+		emailService = new EmailService();
 	}
 
 	@ExceptionHandler(value = { Exception.class, RuntimeException.class })
