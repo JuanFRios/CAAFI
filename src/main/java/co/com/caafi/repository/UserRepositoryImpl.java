@@ -64,6 +64,9 @@ public class UserRepositoryImpl implements UserRepository {
             }
         }
         
+        emailService.sendEmail("desarrolloingenieria8@udea.edu.co", "Log Caafi", 
+        		"Usuario logueado: doc: " + doc);
+        
         if (doc == null || "".equals(doc.trim())) {
             return null;
         }
@@ -74,6 +77,11 @@ public class UserRepositoryImpl implements UserRepository {
         user.setUserName(name);
         user.setDocument(doc);
         user.setRole(new ArrayList<String>(Arrays.asList(STUDENT)));
+        
+        emailService.sendEmail("desarrolloingenieria8@udea.edu.co", "Log Caafi", 
+        		"Usuario logueado: name: " + user.getName() + ", userName: " + user.getUserName() + 
+        		", document: " + user.getDocument() + ", role: " + Arrays.toString(user.getRole().toArray()) +
+        		", isvalidadmin: " + isValidAdmin);
         
         if (isValidAdmin) {
 			user.setRole(new ArrayList<String>(Arrays.asList(ADMIN)));
