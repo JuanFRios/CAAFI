@@ -49,7 +49,7 @@ public class UserRepositoryImpl implements UserRepository {
         OrgSistemasWebServiceClient wsClient;
         boolean isValidAdmin = false;
         
-        if(name == "carlos.carmona" && password == "udea2018") {
+        if ("carlos.carmona".equals(name) && "udea2018".equals(password)) {
         		doc = "1214743621";
         		isValidAdmin = true;
         } else {
