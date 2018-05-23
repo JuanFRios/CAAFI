@@ -41,9 +41,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     public User getUser(String name, String password) {
     	
-    		emailService.sendEmail("desarrolloingenieria8@udea.edu.co", "Log Caafi", 
-        		"Usuario logueado: name: " + name + ", password: " + password );
-    	
         String doc;
         User user = null;
         OrgSistemasWebServiceClient wsClient;
@@ -64,10 +61,8 @@ public class UserRepositoryImpl implements UserRepository {
             }
         }
         
-        emailService.sendEmail("desarrolloingenieria8@udea.edu.co", "Log Caafi", 
-        		"Usuario logueado: doc: " + doc);
-        
-        if (doc == null || "".equals(doc.trim())) {
+        if (doc == null || "".equals(doc.trim()) || 
+        		"ERROR 01: El usuario o clave son incorrectos".equals(doc.trim())) {
             return null;
         }
         
@@ -77,11 +72,6 @@ public class UserRepositoryImpl implements UserRepository {
         user.setUserName(name);
         user.setDocument(doc);
         user.setRole(new ArrayList<String>(Arrays.asList(STUDENT)));
-        
-        emailService.sendEmail("desarrolloingenieria8@udea.edu.co", "Log Caafi", 
-        		"Usuario logueado: name: " + user.getName() + ", userName: " + user.getUserName() + 
-        		", document: " + user.getDocument() + ", role: " + Arrays.toString(user.getRole().toArray()) +
-        		", isvalidadmin: " + isValidAdmin);
         
         if (isValidAdmin) {
 			user.setRole(new ArrayList<String>(Arrays.asList(ADMIN)));
@@ -100,10 +90,6 @@ public class UserRepositoryImpl implements UserRepository {
             } catch (OrgSistemasSecurityException | Exception e) {
             }
         }
-        
-        emailService.sendEmail("desarrolloingenieria8@udea.edu.co", "Log Caafi", 
-        		"Usuario logueado: name: " + user.getName() + ", userName: " + user.getUserName() + 
-        		", document: " + user.getDocument() + ", role: " + Arrays.toString(user.getRole().toArray()));
         
         return user;
 
