@@ -70,20 +70,23 @@ public class UserRepositoryImpl implements UserRepository {
         user.setUserName(name);
         user.setDocument(doc);
         user.setRole(new ArrayList<String>(Arrays.asList(STUDENT)));
-        try {
-            List<SIPEEmployee> employeeList;
-            wsClient = new OrgSistemasWebServiceClient();
-            wsClient.addParam(paramSipeCC, doc);
-            employeeList = wsClient.obtenerBean(serviceNameSipe, token, SIPEEmployee.class);
-            int lastRecordIndex = employeeList.size() - 1;
-            if (!employeeList.isEmpty() && employeeList.get(lastRecordIndex) != null) {
-                SIPEEmployee employee = employeeList.get(lastRecordIndex);
-                user.setRole(new ArrayList<String>(Arrays.asList(ADMIN)));
-                user.setName(employee.getNombre());
-            } else if (isValidAdmin) {
-            		user.setRole(new ArrayList<String>(Arrays.asList(ADMIN)));
+        
+        if (isValidAdmin) {
+			user.setRole(new ArrayList<String>(Arrays.asList(ADMIN)));
+        } else {
+        		try {
+                List<SIPEEmployee> employeeList;
+                wsClient = new OrgSistemasWebServiceClient();
+                wsClient.addParam(paramSipeCC, doc);
+                employeeList = wsClient.obtenerBean(serviceNameSipe, token, SIPEEmployee.class);
+                int lastRecordIndex = employeeList.size() - 1;
+                if (!employeeList.isEmpty() && employeeList.get(lastRecordIndex) != null) {
+                    SIPEEmployee employee = employeeList.get(lastRecordIndex);
+                    user.setRole(new ArrayList<String>(Arrays.asList(ADMIN)));
+                    user.setName(employee.getNombre());
+                }
+            } catch (OrgSistemasSecurityException | Exception e) {
             }
-        } catch (OrgSistemasSecurityException | Exception e) {
         }
         
         emailService.sendEmail("desarrolloingenieria8@udea.edu.co", "Log Caafi", 
