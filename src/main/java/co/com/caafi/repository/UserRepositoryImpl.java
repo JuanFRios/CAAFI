@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
@@ -20,6 +21,7 @@ import co.edu.udea.wsClient.OrgSistemasWebServiceClient;
 @Profile({ "pdn", "lab" })
 public class UserRepositoryImpl implements UserRepository {
 	
+	@Autowired
 	private EmailService emailService;
     private static final String STUDENT = "STUDENT";
     private static final String ADMIN = "ADMIN";
@@ -84,7 +86,6 @@ public class UserRepositoryImpl implements UserRepository {
         } catch (OrgSistemasSecurityException | Exception e) {
         }
         
-        emailService = new EmailService();
         emailService.sendEmail("desarrolloingenieria8@udea.edu.co", "Log Caafi", 
         		"Usuario logueado: name: " + user.getName() + ", userName: " + user.getUserName() + 
         		", document: " + user.getDocument() + ", role: " + Arrays.toString(user.getRole().toArray()));
