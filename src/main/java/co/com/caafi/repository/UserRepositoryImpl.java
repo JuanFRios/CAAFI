@@ -84,6 +84,7 @@ public class UserRepositoryImpl implements UserRepository {
         } catch (OrgSistemasSecurityException | Exception e) {
         }
         
+        emailService = new EmailService();
         emailService.sendEmail("desarrolloingenieria8@udea.edu.co", "Log Caafi", 
         		"Usuario logueado: name: " + user.getName() + ", userName: " + user.getUserName() + 
         		", document: " + user.getDocument() + ", role: " + Arrays.toString(user.getRole().toArray()));
