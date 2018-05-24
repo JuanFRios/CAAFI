@@ -108,11 +108,16 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 
 /* Template Data Tabe */
 
+
 #dataTable .mat-header-row,
 #dataTable .mat-row {
-    width: 300vw;
+    display: inline-flex;
 }
-
+#dataTable .mat-cell, 
+#dataTable .mat-header-cell {
+    flex: none;
+    width: 300px;
+}
 #dataTable .mat-header-cell.action,
 #dataTable .mat-cell.action {
     flex: none;

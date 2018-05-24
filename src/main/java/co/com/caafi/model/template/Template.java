@@ -20,6 +20,7 @@ public class Template {
 	private Date startDate;
 	private Date endDate;
 	private String role;
+	private List<String> table;
 
 	public String getId() {
 		return id;
@@ -91,6 +92,14 @@ public class Template {
 
 	public void setVariables(Map<String, Object> variables) {
 		this.variables = variables;
+	}
+
+	public List<String> getTable() {
+		return table;
+	}
+
+	public void setTable(List<String> table) {
+		this.table = table;
 	}
 
 }

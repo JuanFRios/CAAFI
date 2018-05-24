@@ -46,6 +46,8 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   takeUntil = takeUntil;
   startWith = startWith;
   tap = tap;
+  tableColumns: String[];
+
   /*
   options: FormlyFormOptions = {
     formState : {
@@ -153,6 +155,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
         this.lists = [];
 
+        this.tableColumns = form2.table;
         this.proccessFields(form2.fields);
 
         //console.log('6', this.form.controls);
@@ -195,9 +198,11 @@ export class TemplatesComponent implements OnInit, OnDestroy {
               path = path+"['options']";
               this.lists.push([path, fields[i]]);
           } else if (i == "key" && fields.type != "repeat" && !path.includes("fieldArray")) {
-            this.displayedColumns.push(fields[i]);
-            this.displayedColumnsData.push(fields[i]);
-            this.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
+            if (!this.tableColumns || this.tableColumns.includes(fields[i])) {
+              this.displayedColumns.push(fields[i]);
+              this.displayedColumnsData.push(fields[i]);
+              this.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
+            }
           } else if(i == "type" && fields[i] == "repeat") {
             this.repeatSections.push(fields["key"]);
           } else if (i == "templateOptions?disabled") {

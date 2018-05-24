@@ -6,4 +6,5 @@ export class Template {
   version: number;
   variables: Object;
   fields: Array<FormlyFieldConfig>;
+  table: String[];
 }
