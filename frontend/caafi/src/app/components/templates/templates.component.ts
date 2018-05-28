@@ -436,7 +436,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
           }
         } else if (this.repeatSections.includes(i)) {
           let dataRepeat = '';
-          for (const j = 0; j < data[i].length; j++ ) {
+          for (let j = 0; j < data[i].length; j++ ) {
             dataRepeat += '{ ';
             for (const k in data[i][j]) {
               if (typeof data[i][j][k] === 'object') {
