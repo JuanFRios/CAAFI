@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import co.com.caafi.model.Config;
 import co.com.caafi.model.ConfigTemplate;
-import co.com.caafi.model.Dependence;
+import co.com.caafi.model.Dependency;
 import co.com.caafi.model.Form;
 import co.com.caafi.model.User;
 import co.com.caafi.repository.ConfigRepository;
@@ -59,11 +59,11 @@ public class ConfigServiceTest {
         Form form2 = new Form();
         form2.setRole(Arrays.asList("student"));
 
-        Dependence dep1 = new Dependence();
+        Dependency dep1 = new Dependency();
         dep1.setRole(Arrays.asList("admin", "super"));
         dep1.setName("tiene permisos admin");
         dep1.setForms(Arrays.asList(form1, form2));
-        Dependence dep2 = new Dependence();
+        Dependency dep2 = new Dependency();
         dep2.setRole(Arrays.asList("student"));
 
         tem.setValue(Arrays.asList(dep1, dep2));

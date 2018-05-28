@@ -58,8 +58,8 @@ public class DataServiceTest {
         form.setId("12345");
         form.setTemplate("form1");
         form.setData(new Object());
-        given(dataRepository.findByTemplate(anyString(), any())).willReturn(new ArrayList<>(Arrays.asList(form)));
-        assertEquals(1, dataService.findByTemplate("prueba").size());
+        given(dataRepository.findByTemplateAndOriginAndDeleted(anyString(), anyString(), false, any())).willReturn(new ArrayList<>(Arrays.asList(form)));
+        assertEquals(1, dataService.findByTemplate("prueba", "prueba").size());
     }
 
 

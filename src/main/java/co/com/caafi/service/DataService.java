@@ -26,16 +26,19 @@ public class DataService {
         return this.dataRepository.findById(id);
     }
     
-    public void deleteById(String id) {
-        this.dataRepository.delete(id);
+    public void deleteById(String id, User user) {
+    		FormData data = this.dataRepository.findById(id);
+    		data.setDeleted(true);
+    		data.setEliminator(user.getDocument());		
+        this.dataRepository.save(data);
     }
 
     public List<FormData> findAll() {
         return this.dataRepository.findAll();
     }
 
-    public List<FormData> findByTemplate(String template) {
-        return this.dataRepository.findByTemplate(template, new Sort(Sort.Direction.DESC, "savedDate"));
+    public List<FormData> findByTemplate(String template, String dependency) {
+        return this.dataRepository.findByTemplateAndOriginAndDeleted(template, dependency, false, new Sort(Sort.Direction.DESC, "savedDate"));
 
     }
 

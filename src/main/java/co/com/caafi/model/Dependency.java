@@ -2,7 +2,7 @@ package co.com.caafi.model;
 
 import java.util.List;
 
-public class Dependence {
+public class Dependency {
 
 	private String name;
 	private List<String> role;

@@ -5,7 +5,7 @@ import { ConfigService } from '../../services/config.service';
 import { DataService } from '../../services/data.service';
 import { FileService } from '../../services/file.service';
 import { Template } from '../../common/template';
-import { Dependencie } from '../../common/dependencie';
+import { Dependency } from '../../common/dependency';
 import { Data } from '../../common/data';
 import { Form } from '../../common/form';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -32,8 +32,8 @@ export class ReportComponent implements OnInit {
   private data: Data;
   data2: Array<any> = [];
   configObject: GtConfig<any>;
-  dependencies: Dependencie[];
-  activeDependencie: Dependencie;
+  dependencies: Dependency[];
+  activeDependency: Dependency;
   activeForm: string;
   lists: String[][] = [];
   formName: string;
@@ -93,7 +93,7 @@ export class ReportComponent implements OnInit {
   }
 
 
-  loadForm(form1: Form, depent: Dependencie) {
+  loadForm(form1: Form, depent: Dependency) {
 
     this.loading = true;
     this.errorMessage = [];
@@ -112,7 +112,7 @@ export class ReportComponent implements OnInit {
       this.options.resetModel();
     };
 
-    this.activeDependencie = depent;
+    this.activeDependency = depent;
     this.form = new FormGroup({});
     this.templatesService.getByName(form1.path)
       .subscribe(form => {

@@ -5,7 +5,7 @@ import { DataService } from '../../services/data.service';
 import { FileService } from '../../services/file.service';
 import { ListService } from '../../services/list.service';
 import { Template } from '../../common/template';
-import { Dependencie } from '../../common/dependencie';
+import { Dependency } from '../../common/dependency';
 import { Data } from '../../common/data';
 import { Form } from '../../common/form';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
@@ -18,6 +18,8 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { takeUntil, startWith, tap } from 'rxjs/operators';
 import { ChangeDetectorRef } from '@angular/core';
+import { LoginService } from '../../services/login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-templates',
@@ -35,8 +37,8 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   formFields: Array<FormlyFieldConfig>;
   formData: Object;
   private data: Data;
-  dependencies: Dependencie[];
-  activeDependencie: Dependencie;
+  dependencies: Dependency[];
+  activeDependency: Dependency;
   activeForm: string;
   activeFormPath: string;
   lists: String[][] = [];
@@ -56,16 +58,20 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   };
   */
   public loading = false;
+  public loadingTable = false;
 
   dataSource: ModelDataSource | null;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('filter') filter: ElementRef;
   paginatorSize = 0;
-  displayedColumns = ["edit", "delete"];
+  displayedColumns = ["copy", "edit", "delete"];
   displayedColumnsData = [];
   displayedColumnsNames = [];
   currentId: string = null;
   repeatSections = [];
+  namesRepeats = {};
+  dates = [];
+  booleans = [];
 
   constructor(
     private templatesService: TemplatesService,
@@ -74,7 +80,9 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     private configService: ConfigService,
     private fileService: FileService,
     private listService: ListService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private loginService: LoginService,
+    public router: Router
   ) { }
 
   ngOnInit() {  
@@ -107,27 +115,32 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       error => this.errorMessage.push(error));
   }
 
-  loadForm(form1: Form, depent: Dependencie) {
+  loadForm(form1: Form, depent: Dependency) {
 
     this.loading = true;
     this.errorMessage = [];
     this.exito = false;
     this.cargando = false;
     this.data = new Data();
-    this.displayedColumns = ["edit", "delete"];
+    this.displayedColumns = ["copy", "edit", "delete"];
     this.displayedColumnsData = [];
     this.displayedColumnsNames = [];
     this.currentId = null;
     this.repeatSections = [];
+    this.namesRepeats = {};
+    this.dates = [];
+    this.booleans = [];
 
-    if(this.options.resetModel) {
+    if (this.options.resetModel) {
         this.options.resetModel();
-    };
+    }
 
-    this.activeDependencie = depent;
+    this.activeDependency = depent;
+    console.log("dependency", this.activeDependency);
     this.form = new FormGroup({});
     //console.log(this.form);
     //console.log(this.form.controls);
+
     this.templatesService.getByName(form1.path)
       .subscribe(form2 => {
         
@@ -197,14 +210,24 @@ export class TemplatesComponent implements OnInit, OnDestroy {
               //fields["options"] = eval(fields[i]);
               path = path+"['options']";
               this.lists.push([path, fields[i]]);
-          } else if (i == "key" && fields.type != "repeat" && !path.includes("fieldArray")) {
+          } else if (i === 'key' && !path.includes('fieldArray')) {
             if (!this.tableColumns || this.tableColumns.includes(fields[i])) {
               this.displayedColumns.push(fields[i]);
               this.displayedColumnsData.push(fields[i]);
-              this.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
+              if (fields['type'] === 'repeat') {
+                this.displayedColumnsNames[fields[i]] = fields.sectionName;
+                this.repeatSections.push(fields[i]);
+                for (const j of fields['fieldArray']['fieldGroup']) {
+                  this.namesRepeats[j.key] = j.templateOptions.label;
+                }
+              } else {
+                this.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
+              }
             }
-          } else if(i == "type" && fields[i] == "repeat") {
-            this.repeatSections.push(fields["key"]);
+          } else if (i === 'type' && fields[i] === 'datepicker') {
+            this.dates.push(fields['key']);
+          } else if (i === 'type' && fields[i] === 'checkbox') {
+            this.booleans.push(fields['key']);
           } else if (i == "templateOptions?disabled") {
             fields[i.replace("?", ".")] = fields[i];
             delete fields[i];
@@ -231,12 +254,13 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.errorMessage = [];
     this.exito = false;
     this.cargando = true;
+    this.loading = true;
 
     this.data = new Data();
     var formsData: FormData[] = this.getFiles(template);
     this.data.data = template;
     this.data.template = this.formName;
-    this.data.origin = this.activeDependencie.name;
+    this.data.origin = this.activeDependency.name;
 
     if(this.currentId != null) {
       this.data.id = this.currentId
@@ -251,19 +275,29 @@ export class TemplatesComponent implements OnInit, OnDestroy {
         this.reset();
         this.exito = true;
         this.cargando = false;
+        this.loading = false;
       },
-      error => this.errorMessage.push(error));
+      error => {
+        this.errorMessage.push(error);
+        this.loading = false;
+      });
   }
 
-  loadData(id) {
-
+  loadData(id, isCopy) {
+    this.loading = true;
     this.reset();
 
     this.dataService.getById(id)
       .subscribe(formData => {
-        this.currentId = formData.id;
+        if (!isCopy) {
+          this.currentId = formData.id;
+        } else {
+          this.currentId = null;
+        }
         for (var i in formData.data) {
+          console.log("i",i);
           if(this.repeatSections.includes(i)) {
+            console.log("includes", i);
             if(formData.data[i].length > 0) {
               for(var j in formData.data[i]) {
                 if(!this.form.get(i).get(j)) {
@@ -275,22 +309,31 @@ export class TemplatesComponent implements OnInit, OnDestroy {
               }
             }
           } else {
+            console.log("get", this.form.get(i));
             this.form.get(i).patchValue(formData.data[i]);
             this.formData[i] = formData.data[i];
           }
         }
+        this.loading = false;
       },
-      error => this.errorMessage = error);
+      error => {
+        this.errorMessage = error;
+        this.loading = false;
+      });
   }
 
   deleteData(id) {
     if (confirm('¿Está seguro que desea borrar el registro?')) {
+      this.loadingTable = true;
       this.dataService.delete(id)
       .subscribe(
         data  => {
           this.loadDataTable();
         },
-        error => this.errorMessage = error
+        error => {
+          this.errorMessage = error;
+          this.loadingTable = false;
+        }
       );
     }
   }
@@ -348,8 +391,14 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   }
 
   loadDataTable() {
-    this.dataService.getAllByTemplate(this.activeFormPath)
+    this.loadingTable = true;
+    console.log("dependency", this.activeDependency);
+    this.dataService.getAllByTemplateAndDependency(this.activeFormPath, this.activeDependency.name)
       .subscribe(data => {
+
+        this.processData(data);
+        console.log(data);
+
         this.dataSource = new ModelDataSource(data, this.paginator);
 
         // Esto se hace para que el paginador esté actualizado con la cantidad de datos filtrados
@@ -359,16 +408,58 @@ export class TemplatesComponent implements OnInit, OnDestroy {
         .subscribe( size => {
           this.paginatorSize = size;
         });
-
+        this.loadingTable = false;
       },
-      error => this.errorMessage.push(error));
+      error => {
+        this.errorMessage.push(error);
+        this.loadingTable = false;
+      });
+  }
+
+  processData(data) {
+    for (const i in data) {
+      if (typeof data[i] === 'object' && !this.repeatSections.includes(i)) {
+        this.processData(data[i]);
+      } else {
+        if (this.dates.includes(i)) {
+          const options: Intl.DateTimeFormatOptions = {
+            year: 'numeric', month: '2-digit', day: '2-digit'
+          };
+          const date: Date = new Date(data[i]);
+          console.log(date);
+          data[i] = date.toLocaleDateString('ja-JP', options);
+        } else if (this.booleans.includes(i)) {
+          if (data[i]) {
+            data[i] = 'Si';
+          } else {
+            data[i] = 'No';
+          }
+        } else if (this.repeatSections.includes(i)) {
+          let dataRepeat = '';
+          for (const j = 0; j < data[i].length; j++ ) {
+            dataRepeat += '{ ';
+            for (const k in data[i][j]) {
+              if (typeof data[i][j][k] === 'object') {
+                dataRepeat += this.namesRepeats[k] + ': ' + data[i][j][k].toString() + ', ';
+              } else {
+                dataRepeat += this.namesRepeats[k] + ': ' + data[i][j][k] + ', ';
+              }
+            }
+            dataRepeat = dataRepeat.slice(0, -2) + ' }, <br><br>';
+          }
+          data[i] = dataRepeat.slice(0, -10);
+        }
+      }
+    }
+  }
+
+  resetConfirmation() {
+    if (confirm('Esta acción limpiará el formulario. ¿Desea continuar?')) {
+      this.reset();
+    }
   }
 
   reset() {
-
-    //console.log(this.form);
-    //console.log(this.form.valid);
-
     this.currentId = null;
 
     let elements: HTMLCollection = document.getElementsByClassName("button-remove-repeat") as HTMLCollection;
@@ -379,7 +470,6 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     }
 
     this.options.resetModel();
-
   }
 
 }

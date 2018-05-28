@@ -10,11 +10,14 @@ public class FormData {
 	private String template;
 	private String origin;
 	private String creator;
+	private boolean deleted;
+	private String eliminator;
 	private Object data;
 	private Date savedDate;
 
 	public FormData() {
 		this.savedDate = new Date();
+		this.deleted = false;
 	}
 	
 	public String getTemplate() {
@@ -63,6 +66,22 @@ public class FormData {
 
 	public void setSavedDate(Date savedDate) {
 		this.savedDate = savedDate;
+	}
+
+	public String getEliminator() {
+		return eliminator;
+	}
+
+	public void setEliminator(String eliminator) {
+		this.eliminator = eliminator;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }

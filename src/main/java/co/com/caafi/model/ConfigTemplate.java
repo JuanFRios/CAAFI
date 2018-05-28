@@ -11,7 +11,7 @@ public class ConfigTemplate {
 	@Id
 	private String id;
 	private String name;
-	private List<Dependence> value;
+	private List<Dependency> value;
 
 	public String getId() {
 		return id;
@@ -29,11 +29,11 @@ public class ConfigTemplate {
 		this.name = name;
 	}
 
-	public List<Dependence> getValue() {
+	public List<Dependency> getValue() {
 		return value;
 	}
 
-	public void setValue(List<Dependence> value) {
+	public void setValue(List<Dependency> value) {
 		this.value = value;
 	}
 

@@ -46,14 +46,15 @@ public class DataResource {
 	
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/byid/{id}", method = RequestMethod.DELETE)
-	public void deleteById(@PathVariable String id) {
-		dataService.deleteById(id);
+	@ResponseStatus(HttpStatus.OK)
+	public void deleteById(@PathVariable String id, Authentication authentication) {
+		dataService.deleteById(id, (User) authentication.getPrincipal());
 	}
 
 	@CrossOrigin(origins = "*")
-	@RequestMapping(path = "/bytemplate/{template}", method = RequestMethod.GET)
-	public List<FormData> findByTemplate(@PathVariable String template) {
-		return dataService.findByTemplate(template);
+	@RequestMapping(path = "/bytemplateanddependency/{dependency}/{template}", method = RequestMethod.GET)
+	public List<FormData> findByTemplate(@PathVariable String template, @PathVariable String dependency) {
+		return dataService.findByTemplate(template, dependency);
 	}
 
 	@CrossOrigin(origins = "*")

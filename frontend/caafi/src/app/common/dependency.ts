@@ -1,6 +1,6 @@
 import { Form } from './form';
 
-export class Dependencie{
+export class Dependency {
     name: string;
 	forms: Form[];
     

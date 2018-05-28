@@ -13,7 +13,7 @@ public interface DataRepository extends MongoRepository<FormData, String> {
 
 	public List<FormData> findAll();
 
-	public List<FormData> findByTemplate(String template, Sort sort);
+	public List<FormData> findByTemplateAndOriginAndDeleted(String template, String origin, boolean deleted, Sort sort);
 	
     public FormData save(FormData data);
 

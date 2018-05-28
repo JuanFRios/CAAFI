@@ -16,6 +16,10 @@ export class DataService {
     return this.restangular.all('data/bytemplate/'+template).getList();
   }
 
+  getAllByTemplateAndDependency(template: string, dependency: string): Observable<Data[]> {
+    return this.restangular.one('data/bytemplateanddependency/' + dependency + '/' + template).get();
+  }
+
   getByJson(json: string,fields: string): Observable<any[]> {
     return this.restangular.all('data/byJson/'
     +json+"/"+fields).getList();
