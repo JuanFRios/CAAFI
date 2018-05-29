@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyBoolean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,7 +59,7 @@ public class DataServiceTest {
         form.setId("12345");
         form.setTemplate("form1");
         form.setData(new Object());
-        given(dataRepository.findByTemplateAndOriginAndDeleted(anyString(), anyString(), false, any())).willReturn(new ArrayList<>(Arrays.asList(form)));
+        given(dataRepository.findByTemplateAndOriginAndDeleted(anyString(), anyString(), anyBoolean(), any())).willReturn(new ArrayList<>(Arrays.asList(form)));
         assertEquals(1, dataService.findByTemplate("prueba", "prueba").size());
     }
 
