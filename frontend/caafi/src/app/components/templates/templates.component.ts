@@ -294,24 +294,25 @@ export class TemplatesComponent implements OnInit, OnDestroy {
         } else {
           this.currentId = null;
         }
-        for (var i in formData.data) {
-          console.log("i",i);
-          if(this.repeatSections.includes(i)) {
-            console.log("includes", i);
-            if(formData.data[i].length > 0) {
-              for(var j in formData.data[i]) {
-                if(!this.form.get(i).get(j)) {
-                  let element: HTMLElement = document.getElementById("button-add-"+i) as HTMLElement;
-                  element.click();
+        for (const i in formData.data) {
+          if (formData.data[i] != null) {
+            if (this.repeatSections.includes(i)) {
+              for (const j in formData.data[i]) {
+                if (formData.data[i][j] != null) {
+                  if (!this.form.get(i).get(j)) {
+                    const element: HTMLElement = document.getElementById('button-add-' + i) as HTMLElement;
+                    element.click();
+                  }
+                  this.form.get(i).get(j).patchValue(formData.data[i][j]);
+                  this.formData[i][j] = formData.data[i][j];
                 }
-                this.form.get(i).get(j).patchValue(formData.data[i][j]);
-                this.formData[i][j] = formData.data[i][j];
+              }
+            } else {
+              if (this.form.get(i)) {
+                this.form.get(i).patchValue(formData.data[i]);
+                this.formData[i] = formData.data[i];
               }
             }
-          } else {
-            console.log("get", this.form.get(i));
-            this.form.get(i).patchValue(formData.data[i]);
-            this.formData[i] = formData.data[i];
           }
         }
         this.loading = false;
