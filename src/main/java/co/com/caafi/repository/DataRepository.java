@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import co.com.caafi.model.template.FormData;
 
@@ -16,5 +17,8 @@ public interface DataRepository extends MongoRepository<FormData, String> {
 	public List<FormData> findByTemplateAndOriginAndDeleted(String template, String origin, boolean deleted, Sort sort);
 	
     public FormData save(FormData data);
+    
+    @Query("{ template: ?0, $where:'JSON.stringify(this).indexOf( ?1 )!=-1' }")
+    public List<FormData> findCustomByTemplate(String template, String dependency);
 
 }

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.github.wnameless.json.flattener.JsonFlattener;
@@ -38,7 +40,16 @@ public class DataService {
     }
 
     public List<FormData> findByTemplate(String template, String dependency) {
-        return this.dataRepository.findByTemplateAndOriginAndDeleted(template, dependency, false, new Sort(Sort.Direction.DESC, "savedDate"));
+    	
+    		/*
+    		Query query = new Query();
+    		query.addCriteria(Criteria.where("template").is(template));
+        return this.mongoTemplate.find(query, FormData.class);
+        */
+        
+    		return this.dataRepository.findCustomByTemplate(template, dependency);
+        
+    		//return this.dataRepository.findByTemplateAndOriginAndDeleted(template, dependency, false, new Sort(Sort.Direction.DESC, "savedDate"));
 
     }
 
