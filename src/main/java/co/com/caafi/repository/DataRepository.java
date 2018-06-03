@@ -19,6 +19,6 @@ public interface DataRepository extends MongoRepository<FormData, String> {
     public FormData save(FormData data);
     
     @Query("{ template: ?0, $where:'JSON.stringify(this).indexOf( ?1 )!=-1' }")
-    public List<FormData> findCustomByTemplate(String template, String dependency);
+    public List<FormData> findCustomByTemplate(String template, String dependency, Sort sort);
 
 }

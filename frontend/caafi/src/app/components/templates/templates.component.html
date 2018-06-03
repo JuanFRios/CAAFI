@@ -1,4 +1,5 @@
 <div>
+
 	<button mat-button [matMenuTriggerFor]="main_menu">
 		<i class="material-icons">more_vert</i> <span *ngIf="!activeForm">Seleccione
 			una dependencia académica o administrativa</span> <span *ngIf="activeForm" class="titleform"> {{activeDependency.name+ " - " +activeForm }}</span>
@@ -43,12 +44,13 @@
 
 				<ngx-loading [show]="loadingTable" [config]="{ fullScreenBackdrop: false }"></ngx-loading>
 
-			   <div class="mat-container mat-elevation-z8">
-			     <div class="mat-header">
-			       <mat-form-field floatPlaceholder="never" class="input-filtro">
-			         <input matInput #filter placeholder="Filtrar">
-			       </mat-form-field>
-			     </div>
+			   <div class="mat-container mat-elevation-z8">			
+					 
+					 <div class="table-header">
+							<mat-form-field>
+								<input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtro">
+							</mat-form-field>
+						</div>
 
 			     <mat-table #table [dataSource]="dataSource" class="mat-table" matSort>
 
@@ -73,23 +75,36 @@
 						 </mat-cell>
 						</ng-container>
 
+						<ng-container *ngFor="let col of displayedColumnsData" matColumnDef="{{ col }}">
+							<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-header-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}"> {{ displayedColumnsNames[col] }} </mat-header-cell>
+							<mat-cell *matCellDef="let row" class="mat-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}" [innerHtml]="row[col]"></mat-cell>
+						</ng-container>
+
+						<!--
 			       <ng-container *ngFor="let col of displayedColumnsData" matColumnDef="{{ col }}">
 			         <mat-header-cell *matHeaderCellDef class="mat-header-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}" mat-sort-header> {{ displayedColumnsNames[col] }} </mat-header-cell>
 			         <mat-cell *matCellDef="let row" class="mat-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}" [innerHtml]="row.data[col]"></mat-cell>
-			       </ng-container>
+						 </ng-container>
+						 -->
 
 			       <mat-header-row *matHeaderRowDef="displayedColumns" class="mat-header-row"></mat-header-row>
 			       <mat-row *matRowDef="let row; columns: displayedColumns;" class="mat-row"></mat-row>
-			     </mat-table>
+					 </mat-table>
+					 
+					 <mat-paginator #paginator
+                 [pageSize]="5"
+                 [pageSizeOptions]="[5, 10, 20]"
+                 [showFirstLastButtons]="true">
+  				</mat-paginator>
 
-
+					 <!--
 			   <mat-paginator
 			     #paginator
 			     [length]="paginatorSize"
 			     [pageIndex]="0"
 			     [pageSize]="5"
 			     [pageSizeOptions]="[5, 10, 25, 100]">
-				 </mat-paginator>
+				 </mat-paginator> -->
 
 			   </div><!-- .md-container -->
 			 </mat-card-content>

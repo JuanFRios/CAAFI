@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
 import { ConfigService } from '../../services/config.service';
 import { DataService } from '../../services/data.service';
@@ -13,7 +13,7 @@ import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
 import { ModelDataSource } from './model-data-source';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginator } from '@angular/material';
+import { MatSort, MatPaginator, MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { takeUntil, startWith, tap } from 'rxjs/operators';
@@ -26,7 +26,8 @@ import { Router } from '@angular/router';
   templateUrl: './templates.component.html',
   styleUrls: ['./templates.component.css']
 })
-export class TemplatesComponent implements OnInit, OnDestroy {
+export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
+
   onDestroy$ = new Subject<void>();
   id: string;
   private sub: any;
@@ -60,9 +61,10 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   public loading = false;
   public loadingTable = false;
 
-  dataSource: ModelDataSource | null;
+  dataSource; //ModelDataSource | null;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('filter') filter: ElementRef;
+  @ViewChild(MatSort) sort: MatSort;
   paginatorSize = 0;
   displayedColumns = ["copy", "edit", "delete"];
   displayedColumnsData = [];
@@ -85,7 +87,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     public router: Router
   ) { }
 
-  ngOnInit() {  
+  ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'];
 
@@ -106,6 +108,12 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     */
 
   }
+
+  ngAfterViewInit() {
+    //this.dataSource.paginator = this.paginator;
+    //this.dataSource.sort = this.sort;
+  }
+
   loadConfig() {
     //this.form = new FormGroup({});
     this.configService.getTemplateConfig("dependencias")
@@ -179,7 +187,9 @@ export class TemplatesComponent implements OnInit, OnDestroy {
         } else {
             this.formFields = form2.fields;
             this.loading = false;
+            
             this.loadDataTable();
+
             //console.log('7', this.form.controls);
         }
       },
@@ -262,8 +272,8 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.data.template = this.formName;
     this.data.origin = this.activeDependency.name;
 
-    if(this.currentId != null) {
-      this.data.id = this.currentId
+    if (this.currentId != null) {
+      this.data.id = this.currentId;
     }
 
     this.dataService.save(this.data)
@@ -383,6 +393,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     } else {
       this.formFields = fields;
       this.loading = false;
+
       this.loadDataTable();
 
       this.form = new FormGroup({});
@@ -397,18 +408,28 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.dataService.getAllByTemplateAndDependency(this.activeFormPath, this.activeDependency.name)
       .subscribe(data => {
 
-        this.processData(data);
-        console.log(data);
+        console.log('data', data);
+        const proccessedData: Object[] = [];
+        this.processData(data, proccessedData, null);
 
-        this.dataSource = new ModelDataSource(data, this.paginator);
+        console.log('columns', this.displayedColumnsData);
+        console.log('proccessed data', proccessedData);
+
+        this.dataSource = new MatTableDataSource(proccessedData);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        //this.dataSource = new ModelDataSource(data, this.paginator);
 
         // Esto se hace para que el paginador esté actualizado con la cantidad de datos filtrados
+        /*
         this.dataSource.getDataSize()
         .debounceTime(150)
         .distinctUntilChanged()
         .subscribe( size => {
           this.paginatorSize = size;
         });
+        */
+
         this.loadingTable = false;
       },
       error => {
@@ -417,10 +438,17 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       });
   }
 
-  processData(data) {
+  processData(data, proccessedData, dataId) {
     for (const i in data) {
       if (typeof data[i] === 'object' && !this.repeatSections.includes(i)) {
-        this.processData(data[i]);
+        if (data[i] != null && data[i].id) {
+          dataId = data[i].id;
+        }
+        this.processData(data[i], proccessedData, dataId);
+        if (data[i] != null && data[i].constructor.name === 'Object' && !data[i]['data']) {
+          data[i]['id'] = dataId;
+          proccessedData.push(data[i]);
+        }
       } else {
         if (this.dates.includes(i)) {
           const options: Intl.DateTimeFormatOptions = {
@@ -471,6 +499,12 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     }
 
     this.options.resetModel();
+  }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
   }
 
 }

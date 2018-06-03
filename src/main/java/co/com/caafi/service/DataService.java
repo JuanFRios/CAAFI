@@ -47,7 +47,7 @@ public class DataService {
         return this.mongoTemplate.find(query, FormData.class);
         */
         
-    		return this.dataRepository.findCustomByTemplate(template, dependency);
+    		return this.dataRepository.findCustomByTemplate(template, dependency, new Sort(Sort.Direction.DESC, "savedDate"));
         
     		//return this.dataRepository.findByTemplateAndOriginAndDeleted(template, dependency, false, new Sort(Sort.Direction.DESC, "savedDate"));
 

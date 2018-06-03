@@ -11,7 +11,8 @@ import {
   MatMenuModule,
   MatTableModule,
   MatPaginatorModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatSortModule
  } from '@angular/material';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { LoadingModule } from 'ngx-loading';
@@ -135,6 +136,7 @@ export function required(err, field) {
     MatTableModule,
     MatPaginatorModule,
     MatSidenavModule,
+    MatSortModule,
     AppRoutingModule,
     MatTooltipModule,
     LoadingModule,

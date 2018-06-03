@@ -108,7 +108,6 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 
 /* Template Data Tabe */
 
-
 #dataTable .mat-header-row,
 #dataTable .mat-row {
     display: inline-flex;
@@ -117,6 +116,7 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 #dataTable .mat-header-cell {
     flex: none;
     width: 300px;
+    text-align: left;
 }
 #dataTable .mat-cell.repeat, 
 #dataTable .mat-header-cell.repeat {
@@ -144,6 +144,20 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 }
 #dataTable .contenedor-tabla.mat-card-content {
     position: relative;
+}
+#dataTable .table-header {
+    min-height: 64px;
+    padding: 8px 24px 0;
+    background-color: #FAFAFA;
+}
+#dataTable .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+    margin: 0;
+}
+#dataTable .mat-table {
+    overflow: auto;
+    max-height: 500px;
 }
 
 .cdk-overlay-pane {
