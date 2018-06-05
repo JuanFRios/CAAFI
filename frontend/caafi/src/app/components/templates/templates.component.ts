@@ -16,10 +16,13 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSort, MatPaginator, MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { takeUntil, startWith, tap } from 'rxjs/operators';
+import { takeUntil, startWith, tap, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { ChangeDetectorRef } from '@angular/core';
 import { LoginService } from '../../services/login.service';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
+import { merge } from 'rxjs/observable/merge';
+import { fromEvent } from 'rxjs/observable/fromEvent';
 
 @Component({
   selector: 'app-templates',
@@ -61,10 +64,12 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
   public loading = false;
   public loadingTable = false;
 
-  dataSource; //ModelDataSource | null;
+  //dataSource; //ModelDataSource | null;
+  model: Data;
+  dataSource: ModelDataSource;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild('filter') filter: ElementRef;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('filter') filter: ElementRef;
   paginatorSize = 0;
   displayedColumns = ["copy", "edit", "delete"];
   displayedColumnsData = [];
@@ -74,6 +79,9 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
   namesRepeats = {};
   dates = [];
   booleans = [];
+  tapPaginator: Subscription;
+  sortChange: Subscription;
+  filterEvent: Subscription;
 
   constructor(
     private templatesService: TemplatesService,
@@ -89,8 +97,8 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
+      console.log('params', params);
       this.id = params['id'];
-
       this.loadConfig();
     });
 
@@ -107,11 +115,28 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     */
 
+   this.dataSource = new ModelDataSource(this.dataService);
   }
 
   ngAfterViewInit() {
     //this.dataSource.paginator = this.paginator;
     //this.dataSource.sort = this.sort;
+  }
+
+  loadDataPage() {
+    console.log('sort', this.sort);
+    console.log('filter', this.filter);
+
+    this.dataService.count(this.activeFormPath, this.activeDependency.name, this.filter.nativeElement.value)
+      .subscribe(countData => {
+        console.log('countData loadDataPage', countData);
+        this.model = countData;
+      },
+      error => this.errorMessage.push(error));
+
+    this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
+      this.filter.nativeElement.value, this.sort.active, this.sort.direction, this.paginator.pageIndex, this.paginator.pageSize,
+      this.repeatSections, this.dates, this.booleans, this.namesRepeats);
   }
 
   loadConfig() {
@@ -188,7 +213,30 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
             this.formFields = form2.fields;
             this.loading = false;
             
-            this.loadDataTable();
+            //this.loadDataTable();
+            this.dataService.count(this.activeFormPath, this.activeDependency.name)
+            .subscribe(countData => {
+              console.log('countData', countData);
+              this.model = countData;
+            },
+            error => this.errorMessage.push(error));
+
+            this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
+              '', '', '', 0, 5, this.repeatSections, this.dates, this.booleans, this.namesRepeats);
+            
+            if (this.tapPaginator) {
+              console.log('tapPaginator1', this.tapPaginator);
+              this.tapPaginator.unsubscribe();
+              console.log('tapPaginator2', this.tapPaginator);
+            }
+            this.paginator.pageIndex = 0;
+            console.log('tapPaginator3', this.tapPaginator);
+            this.tapPaginator = this.paginator.page
+            .pipe(
+                tap(() => this.loadDataPage())
+            )
+            .subscribe();
+            console.log('tapPaginator4', this.tapPaginator);
 
             //console.log('7', this.form.controls);
         }
@@ -394,7 +442,62 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
       this.formFields = fields;
       this.loading = false;
 
-      this.loadDataTable();
+      //this.loadDataTable();
+      this.dataService.count(this.activeFormPath, this.activeDependency.name, '')
+      .subscribe(countData => {
+        console.log('countData', countData);
+        this.model = countData;
+      },
+      error => this.errorMessage.push(error));
+
+        this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
+        '', '', '', 0, 5, this.repeatSections, this.dates, this.booleans, this.namesRepeats)
+        .then( dataRetorno => {
+          console.log('dataRetorno', dataRetorno);
+        });
+        
+      
+      if (this.sortChange) {
+        console.log('sortChange1', this.sortChange);
+        this.sortChange.unsubscribe();
+        console.log('sortChange2', this.sortChange);
+      }
+      console.log('sortChange3', this.sortChange);
+      this.sortChange = this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+      console.log('sortChange4', this.sortChange);
+      
+      if (this.tapPaginator) {
+        console.log('tapPaginator1', this.tapPaginator);
+        this.tapPaginator.unsubscribe();
+        console.log('tapPaginator2', this.tapPaginator);
+      }
+      this.paginator.pageIndex = 0;
+      console.log('tapPaginator3', this.tapPaginator);
+      this.tapPaginator = merge(this.sort.sortChange, this.paginator.page)
+      .pipe(
+          tap(() => this.loadDataPage())
+      )
+      .subscribe();
+      console.log('tapPaginator4', this.tapPaginator);
+
+      // server-side search
+      if (this.filterEvent) {
+        console.log('filterEvent1', this.filterEvent);
+        this.filterEvent.unsubscribe();
+        console.log('filterEvent2', this.filterEvent);
+      }
+      console.log('filterEvent3', this.filterEvent);
+      this.filterEvent = fromEvent(this.filter.nativeElement, 'keyup')
+      .pipe(
+          debounceTime(150),
+          distinctUntilChanged(),
+          tap(() => {
+              this.paginator.pageIndex = 0;
+              this.loadDataPage();
+          })
+      )
+      .subscribe();
+      console.log('filterEvent4', this.filterEvent);
 
       this.form = new FormGroup({});
       //console.log('8', this.form.controls);
@@ -405,6 +508,8 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
   loadDataTable() {
     this.loadingTable = true;
     console.log("dependency", this.activeDependency);
+
+    /*
     this.dataService.getAllByTemplateAndDependency(this.activeFormPath, this.activeDependency.name)
       .subscribe(data => {
 
@@ -428,14 +533,13 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
         .subscribe( size => {
           this.paginatorSize = size;
         });
-        */
 
         this.loadingTable = false;
       },
       error => {
         this.errorMessage.push(error);
         this.loadingTable = false;
-      });
+      });*/
   }
 
   processData(data, proccessedData, dataId) {
@@ -501,10 +605,11 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.resetModel();
   }
 
+  /*
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.dataSource.filter = filterValue;
-  }
+  }*/
 
 }

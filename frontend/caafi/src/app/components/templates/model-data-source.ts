@@ -1,70 +1,95 @@
-import { Output,EventEmitter } from '@angular/core';
-import { DataSource } from '@angular/cdk/collections';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/observable/of';
+import {CollectionViewer, DataSource} from '@angular/cdk/collections';
 import { Data } from '../../common/data';
-import { MatPaginator } from '@angular/material';
-/**
-* Fuente de datos para proporcionar qué datos se deben presentar en la tabla. El observable proporcionado
-* en connect debe emitir exactamente los datos que debe generar la tabla. Si los datos son
-* alterados, el observable debe emitir ese nuevo conjunto de datos en la secuencia.
-*/
-export class ModelDataSource extends DataSource<any> {
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { DataService } from '../../services/data.service';
+import { Observable } from 'rxjs/Observable';
+import { catchError } from 'rxjs/operators/catchError';
+import { of } from 'rxjs/observable/of';
+import { finalize } from 'rxjs/operators/finalize';
 
-    _filterChange = new BehaviorSubject('');
-    get filter(): string { return this._filterChange.value; }
-    set filter(filter: string) { this._filterChange.next(filter); }
+export class ModelDataSource extends DataSource<Object> {
 
-    _size: number;
-    @Output() _dataEmisorSize: EventEmitter<number> = new EventEmitter();
+  private dataSubject = new BehaviorSubject<Object[]>([]);
+  private loadingSubject = new BehaviorSubject<boolean>(false);
 
-    getDataSize():any {
-      return this._dataEmisorSize;
-    }
-    ChangeDataSize(size : number){
-      this._dataEmisorSize.emit(size);
-    }
+  public loading$ = this.loadingSubject.asObservable();
 
+  constructor(private dataService: DataService) {
+    super();
+  }
 
-   constructor(private _data_list: Data[],
-     private _paginator: MatPaginator) {
-       super();
-   }
+  connect(collectionViewer: CollectionViewer): Observable<Object[]> {
+    return this.dataSubject.asObservable();
+  }
 
-   /** Esta función es llamada por el data table para obtener lo que será renderizado */
-   connect(): Observable<Data[]> {
-     const displayDataChanges = [
-           this._data_list,
-           this._filterChange,
-           this._paginator.page
-       ];
+  disconnect(collectionViewer: CollectionViewer): void {
+    this.dataSubject.complete();
+    this.loadingSubject.complete();
+  }
 
-       return Observable.merge(...displayDataChanges).map(() => {
+  loadData(dependency: string, template: string, filter = '', sortColumn = '',
+              sortDirection = 'asc', pageIndex = 0, pageSize = 5,
+              repeatSections, dates, booleans, namesRepeats) {
+    this.loadingSubject.next(true);
 
-       // filtors
-       const filtered_list = this._data_list.slice().filter((item: Data) => {
-         let searchInput = (item.template).toLowerCase();
-         return searchInput.indexOf(this.filter.toLowerCase()) != -1;
-       });
-       // Obtenemos el tamaño de la lista filtrada
-       this._size = filtered_list.length;
-       this.ChangeDataSize( this._size );
-
-       const data = filtered_list.slice();
-
-       // Se toma la porción de datos de la página.
-       const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
-       return data.splice(startIndex, this._paginator.pageSize);
+    return new Promise( resolve => {
+      this.dataService.getAllByTemplateAndDependency(dependency, template, filter, sortColumn, sortDirection,
+        pageIndex, pageSize).pipe(
+        catchError(() => of([])),
+        finalize(() => this.loadingSubject.next(false))
+      )
+      .subscribe(data => {
+        console.log('dataSource', data);
+        const proccessedData: Object[] = [];
+        this.processData(data, proccessedData, null, repeatSections, dates, booleans, namesRepeats);
+        console.log('dataSource', proccessedData);
+        this.dataSubject.next(proccessedData);
+        resolve(proccessedData.length);
       });
+    });
+  }
 
-   }
-
-   disconnect() { }
+  processData(data, proccessedData, dataId, repeatSections, dates, booleans, namesRepeats) {
+    for (const i in data) {
+      if (typeof data[i] === 'object' && !repeatSections.includes(i)) {
+        if (data[i] != null && data[i].id) {
+          dataId = data[i].id;
+        }
+        this.processData(data[i], proccessedData, dataId, repeatSections, dates, booleans, namesRepeats);
+        if (data[i] != null && data[i].constructor.name === 'Object' && !data[i]['data']) {
+          data[i]['id'] = dataId;
+          proccessedData.push(data[i]);
+        }
+      } else {
+        if (dates.includes(i)) {
+          const options: Intl.DateTimeFormatOptions = {
+            year: 'numeric', month: '2-digit', day: '2-digit'
+          };
+          const date: Date = new Date(data[i]);
+          console.log(date);
+          data[i] = date.toLocaleDateString('ja-JP', options);
+        } else if (booleans.includes(i)) {
+          if (data[i]) {
+            data[i] = 'Si';
+          } else {
+            data[i] = 'No';
+          }
+        } else if (repeatSections.includes(i)) {
+          let dataRepeat = '';
+          for (let j = 0; j < data[i].length; j++ ) {
+            dataRepeat += '{ ';
+            for (const k in data[i][j]) {
+              if (typeof data[i][j][k] === 'object') {
+                dataRepeat += namesRepeats[k] + ': ' + data[i][j][k].toString() + ', ';
+              } else {
+                dataRepeat += namesRepeats[k] + ': ' + data[i][j][k] + ', ';
+              }
+            }
+            dataRepeat = dataRepeat.slice(0, -2) + ' }, <br><br>';
+          }
+          data[i] = dataRepeat.slice(0, -10);
+        }
+      }
+    }
+  }
 }

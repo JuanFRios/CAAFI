@@ -2,6 +2,7 @@ package co.com.caafi.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -18,7 +19,13 @@ public interface DataRepository extends MongoRepository<FormData, String> {
 	
     public FormData save(FormData data);
     
-    @Query("{ template: ?0, $where:'JSON.stringify(this).indexOf( ?1 )!=-1' }")
-    public List<FormData> findCustomByTemplate(String template, String dependency, Sort sort);
+    @Query("{ template: ?0, $where:'JSON.stringify(this).indexOf( ?1 )!=-1', "
+    		+ "$where:'JSON.stringify(this).toLowerCase().indexOf( ?2.toLowerCase())!=-1' }")
+    public List<FormData> findCustomByTemplate(String template, String dependency, 
+    		String filter, Pageable pageable);
+    
+    @Query(value = "{ template: ?0, $where:'JSON.stringify(this).indexOf( ?1 )!=-1', "
+    		+ "$where:'JSON.stringify(this).toLowerCase().indexOf( ?2.toLowerCase())!=-1' }", count = true)
+    public long countByTemplate(String template, String dependency, String filter);
 
 }

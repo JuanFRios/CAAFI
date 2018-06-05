@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import co.com.caafi.model.User;
 import co.com.caafi.model.template.FormData;
@@ -51,10 +53,22 @@ public class DataResource {
 		dataService.deleteById(id, (User) authentication.getPrincipal());
 	}
 
+	/*
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/bytemplateanddependency/{dependency}/{template}", method = RequestMethod.GET)
 	public List<FormData> findByTemplate(@PathVariable String template, @PathVariable String dependency) {
 		return dataService.findByTemplate(template, dependency);
+	}
+	*/
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/bytemplateanddependency/{dependency}/{template}", method = RequestMethod.GET)
+	public List<FormData> findByTemplateAndDependency(@PathVariable String template, 
+			@PathVariable String dependency, @RequestParam("filter") String filter,
+			@RequestParam("sortColumn") String sortColumn, @RequestParam("sortOrder") String sortOrder, 
+			@RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize) {
+		return dataService.findByTemplateAndDependency(template, dependency, filter, sortColumn, 
+				sortOrder, pageNumber, pageSize);
 	}
 
 	@CrossOrigin(origins = "*")
@@ -62,5 +76,12 @@ public class DataResource {
 	@ResponseStatus(HttpStatus.CREATED)
 	public FormData save(@RequestBody @Valid FormData data, Authentication authentication) {
 		return dataService.save(data, (User) authentication.getPrincipal());
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/count/{dependency}/{template}", method = RequestMethod.GET)
+	public FormData count(@PathVariable String template, @PathVariable String dependency,
+			@RequestParam("filter") String filter) {
+		return dataService.count(template, dependency, filter);
 	}
 }

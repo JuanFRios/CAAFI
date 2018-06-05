@@ -50,6 +50,7 @@ import { HttpModule } from '@angular/http';
 import { TooltipWrapperComponent } from './components/wrappers/tooltip/tooltip-wrapper.component';
 
 import { AppComponent } from './app.component';
+import { DataResolver } from './services/data.resolver';
 
 export function minlengthValidationMessage(err, field) {
   return `El campo ${field.templateOptions.label} debe contener al menos ${field.templateOptions.minLength} caracteres.`;
@@ -150,7 +151,8 @@ export function required(err, field) {
       ConfigService,
       LoginService,
       FileService,
-      ListService
+      ListService,
+      DataResolver
   ],
   bootstrap: [AppComponent]
 })

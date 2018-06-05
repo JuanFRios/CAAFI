@@ -3,4 +3,5 @@ export class Data {
   template: string;
   origin: string;
   data: Object;
+  countData: number;
 }

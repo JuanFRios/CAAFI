@@ -14,6 +14,7 @@ public class FormData {
 	private String eliminator;
 	private Object data;
 	private Date savedDate;
+	private long countData;
 
 	public FormData() {
 		this.savedDate = new Date();
@@ -82,6 +83,14 @@ public class FormData {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public long getCountData() {
+		return countData;
+	}
+
+	public void setCountData(long countData) {
+		this.countData = countData;
 	}
 
 }

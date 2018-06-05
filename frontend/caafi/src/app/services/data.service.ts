@@ -16,8 +16,11 @@ export class DataService {
     return this.restangular.all('data/bytemplate/'+template).getList();
   }
 
-  getAllByTemplateAndDependency(template: string, dependency: string): Observable<Data[]> {
-    return this.restangular.one('data/bytemplateanddependency/' + dependency + '/' + template).get();
+  getAllByTemplateAndDependency(template: string, dependency: string, filter: string,
+    sortColumn: string, sortOrder: string, pageNumber: number, pageSize: number): Observable<Data[]> {
+    return this.restangular.one('data/bytemplateanddependency/' + dependency + '/' + template
+    + '?filter=' + filter + '&sortColumn=' + sortColumn + '&sortOrder=' + sortOrder + '&pageNumber='
+    + pageNumber + '&pageSize=' + pageSize).get();
   }
 
   getByJson(json: string,fields: string): Observable<any[]> {
@@ -35,6 +38,10 @@ export class DataService {
 
   delete(id: number): Observable<Data> {
     return this.restangular.one('data/byid', id).remove();
+  }
+
+  count(template: string, dependency: string, filter: string): Observable<any> {
+    return this.restangular.one('data/count/' + dependency + '/' + template + '?filter=' + filter).get();
   }
 
 }
