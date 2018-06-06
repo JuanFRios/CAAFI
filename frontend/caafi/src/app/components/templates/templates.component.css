@@ -159,6 +159,11 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
     overflow: auto;
     max-height: 500px;
 }
+#dataTable .export {
+    display: table;
+    margin: auto;
+    padding-bottom: 10px;
+}
 
 .cdk-overlay-pane {
     position: absolute;

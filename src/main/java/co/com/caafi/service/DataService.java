@@ -83,8 +83,12 @@ public class DataService {
 		
 		Sort sort = new Sort(direction, column);
 		
-		return this.dataRepository.findCustomByTemplate(template, dependency, filter,
-				new PageRequest(pageNumber, pageSize, sort));
+		if(pageSize == -1) {
+			return this.dataRepository.findCustomByTemplate(template, dependency, filter, sort);
+		} else {
+			return this.dataRepository.findCustomByTemplate(template, dependency, filter,
+					new PageRequest(pageNumber, pageSize, sort));
+		}		
 	}
 
 	public FormData count(String template, String dependency, String filter) {

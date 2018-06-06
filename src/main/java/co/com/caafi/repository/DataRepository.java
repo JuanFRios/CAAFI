@@ -24,6 +24,11 @@ public interface DataRepository extends MongoRepository<FormData, String> {
     public List<FormData> findCustomByTemplate(String template, String dependency, 
     		String filter, Pageable pageable);
     
+    @Query("{ template: ?0, deleted: false, $where:'JSON.stringify(this).indexOf( ?1 )!=-1', "
+    		+ "$where:'JSON.stringify(this).toLowerCase().indexOf( ?2.toLowerCase())!=-1' }")
+    public List<FormData> findCustomByTemplate(String template, String dependency, 
+    		String filter, Sort sort);
+    
     @Query(value = "{ template: ?0, deleted: false, $where:'JSON.stringify(this).indexOf( ?1 )!=-1', "
     		+ "$where:'JSON.stringify(this).toLowerCase().indexOf( ?2.toLowerCase())!=-1' }", count = true)
     public long countByTemplate(String template, String dependency, String filter);

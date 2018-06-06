@@ -49,6 +49,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { TooltipWrapperComponent } from './components/wrappers/tooltip/tooltip-wrapper.component';
 
+import { MatProgressButtons } from 'mat-progress-buttons';
+
 import { AppComponent } from './app.component';
 
 export function minlengthValidationMessage(err, field) {
@@ -142,6 +144,7 @@ export function required(err, field) {
     LoadingModule,
     HttpClientModule,
     HttpModule,
+    MatProgressButtons,
     RestangularModule.forRoot(RestangularConfigFactory)
   ],
   providers: [

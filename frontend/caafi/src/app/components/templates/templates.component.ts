@@ -70,6 +70,17 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   tapPaginator: Subscription;
   sortChange: Subscription;
   filterEvent: Subscription;
+  isReport: boolean;
+  loadingReport = true;
+
+  @Input() exportCSVSpinnerButtonOptions: any = {
+    active: false,
+    text: 'Exportar CSV',
+    spinnerSize: 18,
+    raised: true,
+    buttonColor: 'primary',
+    spinnerColor: 'primary'
+  };
 
   constructor(
     private templatesService: TemplatesService,
@@ -84,6 +95,9 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.isReport = this.route.snapshot.routeConfig.path === 'reportes' ? true : false;
+    console.log(this.isReport);
+
     this.sub = this.route.params.subscribe(params => {
       this.loadConfig();
     });
@@ -100,8 +114,8 @@ export class TemplatesComponent implements OnInit, OnDestroy {
         error => this.errorMessage.push(error));
 
     this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
-      this.filter.nativeElement.value, this.sort.active, this.sort.direction, this.paginator.pageIndex, this.paginator.pageSize,
-      this.repeatSections, this.dates, this.booleans, this.namesRepeats);
+      this.filter.nativeElement.value, this.sort.active, this.sort.direction, this.paginator.pageIndex,
+      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.namesRepeats).then(dataRetorno => { });
   }
 
   loadConfig() {
@@ -471,6 +485,23 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     }
 
     this.options.resetModel();
+  }
+
+  exportCSV() {
+
+    this.exportCSVSpinnerButtonOptions.active = true;
+    this.exportCSVSpinnerButtonOptions.text = 'Cargando Reporte...';
+
+    this.dataService.getAllByTemplateAndDependency(this.activeFormPath, this.activeDependency.name,
+      this.filter.nativeElement.value, this.sort.active, this.sort.direction, 0, -1)
+      .subscribe(data => {
+        const proccessedData: Object[] = [];
+        this.dataService.processData(data, proccessedData, null, this.repeatSections, this.dates,
+          this.booleans, this.namesRepeats);
+          console.log(proccessedData);
+          this.exportCSVSpinnerButtonOptions.active = false;
+          this.exportCSVSpinnerButtonOptions.text = 'Exportar CSV';
+      });
   }
 
 }
