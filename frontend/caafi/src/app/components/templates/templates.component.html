@@ -1,149 +1,99 @@
 <div>
 
-	<button mat-button [matMenuTriggerFor]="main_menu">
+    <button mat-button [matMenuTriggerFor]="main_menu">
 		<i class="material-icons">more_vert</i> <span *ngIf="!activeForm">Seleccione
 			una dependencia académica o administrativa</span> <span *ngIf="activeForm" class="titleform"> {{activeDependency.name+ " - " +activeForm }}</span>
 	</button>
-	
-	<mat-menu #main_menu="matMenu">
-		<ng-container *ngFor="let mainItem of dependencies">
-			<button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
-			<mat-menu #sub_menu="matMenu">
-				<button *ngFor="let subItem of mainItem.forms" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
-			</mat-menu>
-		</ng-container>
-	</mat-menu>
 
-	<div class="container">
+    <mat-menu #main_menu="matMenu">
+        <ng-container *ngFor="let mainItem of dependencies">
+            <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
+            <mat-menu #sub_menu="matMenu">
+                <button *ngFor="let subItem of mainItem.forms" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
+            </mat-menu>
+        </ng-container>
+    </mat-menu>
 
-		<div *ngIf="activeForm">
-			<form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
-				<formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form">
-				<button mat-raised-button color="primary" type="button" (click)="resetConfirmation()">Limpiar</button>
-				<button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">
+    <div class="container">
+
+        <div *ngIf="activeForm">
+            <form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
+                <formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form">
+                    <button mat-raised-button color="primary" type="button" (click)="resetConfirmation()">Limpiar</button>
+                    <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">
 					Guardar</button>
-				</formly-form>
-			</form>
+                </formly-form>
+            </form>
 
-			<div [hidden]="!cargando">
-				<mat-spinner></mat-spinner>
-				<h4>Guardando...</h4>
-			</div>
-			<div *ngIf="errorMessage" class="error">
-				<p *ngFor="let error of errorMessage">{{error}}</p>
-			</div>
-			<div *ngIf="exito" class="exito">
-				<p>El formulario fue guardado con éxito</p>
-			</div>
+            <div [hidden]="!cargando">
+                <mat-spinner></mat-spinner>
+                <h4>Guardando...</h4>
+            </div>
+            <div *ngIf="errorMessage" class="error">
+                <p *ngFor="let error of errorMessage">{{error}}</p>
+            </div>
+            <div *ngIf="exito" class="exito">
+                <p>El formulario fue guardado con éxito</p>
+            </div>
 
-			<div id="dataTable" class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column" fxLayoutAlign.gt-md="space-around center"
-			fxLayoutGap="10px">
+            <div id="dataTable" class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column" fxLayoutAlign.gt-md="space-around center" fxLayoutGap="10px">
 
-			<mat-card fxFlex>
-			 <mat-card-content class="contenedor-tabla">
+                <mat-card fxFlex>
+                    <mat-card-content class="contenedor-tabla">
 
-				<ngx-loading [show]="dataSource.loading$ | async" [config]="{ fullScreenBackdrop: false }"></ngx-loading>
+                        <ngx-loading [show]="dataSource.loading$ | async" [config]="{ fullScreenBackdrop: false }"></ngx-loading>
 
-			   <div class="mat-container mat-elevation-z8">			
-					 
-					<!--
-					 <div class="table-header">
-							<mat-form-field>
-								<input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtro">
-							</mat-form-field>
-						</div>
-					-->
+                        <div class="mat-container mat-elevation-z8">
 
-					<div class="table-header">
-							<mat-input-container>
-									<input matInput placeholder="Filtro" #filter data-column="tituloArticulo">
-							</mat-input-container>
-					</div>
+                            <div class="table-header">
+                                <mat-input-container>
+                                    <input matInput placeholder="Filtro" #filter data-column="tituloArticulo">
+                                </mat-input-container>
+                            </div>
 
-						<mat-table class="" [dataSource]="dataSource" matSort>
+                            <mat-table class="" [dataSource]="dataSource" matSort>
 
-								<ng-container *ngFor="let col of displayedColumnsData" matColumnDef="{{ col }}">
-										<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-header-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}"> {{ displayedColumnsNames[col] }} </mat-header-cell>
-										<mat-cell *matCellDef="let row" class="mat-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}" [innerHtml]="row[col]"></mat-cell>
-									</ng-container>
-						
-								<mat-header-row *matHeaderRowDef="displayedColumnsData"></mat-header-row>						
-								<mat-row *matRowDef="let row; columns: displayedColumnsData"></mat-row>
-						
-						</mat-table>
+                                <ng-container matColumnDef="copy" id="actionsCell">
+                                    <mat-header-cell *matHeaderCellDef class="mat-header-cell action"> </mat-header-cell>
+                                    <mat-cell *matCellDef="let row" class="mat-cell action">
+                                        <button mat-raised-button color="primary" type="button" (click)="loadData( row.id, true )" title="Copiar"><mat-icon>file_copy</mat-icon></button>
+                                    </mat-cell>
+                                </ng-container>
 
-						<mat-paginator [length]="model?.countData" [pageSize]="5"
-                   [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+                                <ng-container matColumnDef="edit" id="actionsCell">
+                                    <mat-header-cell *matHeaderCellDef class="mat-header-cell action"> </mat-header-cell>
+                                    <mat-cell *matCellDef="let row" class="mat-cell action">
+                                        <button mat-raised-button color="primary" type="button" (click)="loadData( row.id )" title="Editar"><mat-icon>edit</mat-icon></button>
+                                    </mat-cell>
+                                </ng-container>
 
-						<!--
-			     <mat-table #table [dataSource]="dataSource" class="mat-table" matSort>
+                                <ng-container matColumnDef="delete" id="actionsCell">
+                                    <mat-header-cell *matHeaderCellDef class="mat-header-cell action last"> </mat-header-cell>
+                                    <mat-cell *matCellDef="let row" class="mat-cell action last">
+                                        <button mat-raised-button color="primary" type="button" (click)="deleteData( row.id )" title="Eliminar"><mat-icon>delete</mat-icon></button>
+                                    </mat-cell>
+                                </ng-container>
 
-						<ng-container matColumnDef="copy" id="actionsCell">
-							<mat-header-cell *matHeaderCellDef class="mat-header-cell action">  </mat-header-cell>
-							<mat-cell *matCellDef="let row" class="mat-cell action">
-								<button mat-raised-button color="primary" type="button" (click)="loadData( row.id, true )" title="Copiar"><mat-icon>file_copy</mat-icon></button>
-							</mat-cell>
-						</ng-container>
+                                <ng-container *ngFor="let col of displayedColumnsData" matColumnDef="{{ col }}">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-header-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}"> {{ displayedColumnsNames[col] }} </mat-header-cell>
+                                    <mat-cell *matCellDef="let row" class="mat-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}" [innerHtml]="row[col]"></mat-cell>
+                                </ng-container>
 
-						 <ng-container matColumnDef="edit" id="actionsCell">
-			         <mat-header-cell *matHeaderCellDef class="mat-header-cell action">  </mat-header-cell>
-			         <mat-cell *matCellDef="let row" class="mat-cell action">
-								 <button mat-raised-button color="primary" type="button" (click)="loadData( row.id )" title="Editar"><mat-icon>edit</mat-icon></button>
-							 </mat-cell>
-						 </ng-container>
-						 
-						 <ng-container matColumnDef="delete" id="actionsCell">
-							<mat-header-cell *matHeaderCellDef class="mat-header-cell action last">  </mat-header-cell>
-							<mat-cell *matCellDef="let row" class="mat-cell action last">
-							 <button mat-raised-button color="primary" type="button" (click)="deleteData( row.id )" title="Eliminar"><mat-icon>delete</mat-icon></button>
-						 </mat-cell>
-						</ng-container>
+                                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
 
-						<ng-container *ngFor="let col of displayedColumnsData" matColumnDef="{{ col }}">
-							<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-header-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}"> {{ displayedColumnsNames[col] }} </mat-header-cell>
-							<mat-cell *matCellDef="let row" class="mat-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}" [innerHtml]="row[col]"></mat-cell>
-						</ng-container>
+                            </mat-table>
 
-						<!--
-			       <ng-container *ngFor="let col of displayedColumnsData" matColumnDef="{{ col }}">
-			         <mat-header-cell *matHeaderCellDef class="mat-header-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}" mat-sort-header> {{ displayedColumnsNames[col] }} </mat-header-cell>
-			         <mat-cell *matCellDef="let row" class="mat-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}" [innerHtml]="row.data[col]"></mat-cell>
-						 </ng-container>
-						 
+                            <mat-paginator [length]="model?.countData" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 
-			       <mat-header-row *matHeaderRowDef="displayedColumns" class="mat-header-row"></mat-header-row>
-			       <mat-row *matRowDef="let row; columns: displayedColumns;" class="mat-row"></mat-row>
-					 </mat-table>
-					 
-					 <mat-paginator [length]="model?.dataCount" [pageSize]="5"
-									 [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
-									-->
-					 <!--
-					 <mat-paginator #paginator
-                 [pageSize]="5"
-                 [pageSizeOptions]="[5, 10, 20]"
-                 [showFirstLastButtons]="true">
-					</mat-paginator>
-					-->
+                        </div>
 
-					 <!--
-			   <mat-paginator
-			     #paginator
-			     [length]="paginatorSize"
-			     [pageIndex]="0"
-			     [pageSize]="5"
-			     [pageSizeOptions]="[5, 10, 25, 100]">
-				 </mat-paginator> -->
+                    </mat-card-content>
+                </mat-card>
 
-			   </div><!-- .md-container -->
-			 </mat-card-content>
-		 </mat-card>
+            </div>
 
-
-			</div>
-
-
-		</div>
-	</div>
-	<ngx-loading [show]="loading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
+        </div>
+    </div>
+    <ngx-loading [show]="loading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
 </div>

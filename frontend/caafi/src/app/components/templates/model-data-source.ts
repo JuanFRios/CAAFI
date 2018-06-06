@@ -39,10 +39,8 @@ export class ModelDataSource extends DataSource<Object> {
         finalize(() => this.loadingSubject.next(false))
       )
       .subscribe(data => {
-        console.log('dataSource', data);
         const proccessedData: Object[] = [];
         this.processData(data, proccessedData, null, repeatSections, dates, booleans, namesRepeats);
-        console.log('dataSource', proccessedData);
         this.dataSubject.next(proccessedData);
         resolve(proccessedData.length);
       });
@@ -66,7 +64,6 @@ export class ModelDataSource extends DataSource<Object> {
             year: 'numeric', month: '2-digit', day: '2-digit'
           };
           const date: Date = new Date(data[i]);
-          console.log(date);
           data[i] = date.toLocaleDateString('ja-JP', options);
         } else if (booleans.includes(i)) {
           if (data[i]) {
