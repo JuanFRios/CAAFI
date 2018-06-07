@@ -100,8 +100,8 @@
 
 							<mat-paginator [length]="model?.countData" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 
-							<div class="export">
-									<spinner-button [options]="exportCSVSpinnerButtonOptions" (click)="exportCSV()"></spinner-button>									
+							<div *ngIf="isReport" class="export">
+									<spinner-button [options]="exportCSVSpinnerButtonOptions" (click)="exportCSV()"></spinner-button>				
 							</div>							
 
 						</div>

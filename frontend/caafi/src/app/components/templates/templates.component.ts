@@ -23,6 +23,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { merge } from 'rxjs/observable/merge';
 import { fromEvent } from 'rxjs/observable/fromEvent';
+import { ExportToCsv } from 'export-to-csv';
 
 @Component({
   selector: 'app-templates',
@@ -424,50 +425,6 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  processData(data, proccessedData, dataId) {
-    for (const i in data) {
-      if (typeof data[i] === 'object' && !this.repeatSections.includes(i)) {
-        if (data[i] != null && data[i].id) {
-          dataId = data[i].id;
-        }
-        this.processData(data[i], proccessedData, dataId);
-        if (data[i] != null && data[i].constructor.name === 'Object' && !data[i]['data']) {
-          data[i]['id'] = dataId;
-          proccessedData.push(data[i]);
-        }
-      } else {
-        if (this.dates.includes(i)) {
-          const options: Intl.DateTimeFormatOptions = {
-            year: 'numeric', month: '2-digit', day: '2-digit'
-          };
-          const date: Date = new Date(data[i]);
-          console.log(date);
-          data[i] = date.toLocaleDateString('ja-JP', options);
-        } else if (this.booleans.includes(i)) {
-          if (data[i]) {
-            data[i] = 'Si';
-          } else {
-            data[i] = 'No';
-          }
-        } else if (this.repeatSections.includes(i)) {
-          let dataRepeat = '';
-          for (let j = 0; j < data[i].length; j++) {
-            dataRepeat += '{ ';
-            for (const k in data[i][j]) {
-              if (typeof data[i][j][k] === 'object') {
-                dataRepeat += this.namesRepeats[k] + ': ' + data[i][j][k].toString() + ', ';
-              } else {
-                dataRepeat += this.namesRepeats[k] + ': ' + data[i][j][k] + ', ';
-              }
-            }
-            dataRepeat = dataRepeat.slice(0, -2) + ' }, <br><br>';
-          }
-          data[i] = dataRepeat.slice(0, -10);
-        }
-      }
-    }
-  }
-
   resetConfirmation() {
     if (confirm('Esta acción limpiará el formulario. ¿Desea continuar?')) {
       this.reset();
@@ -496,9 +453,24 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       this.filter.nativeElement.value, this.sort.active, this.sort.direction, 0, -1)
       .subscribe(data => {
         const proccessedData: Object[] = [];
-        this.dataService.processData(data, proccessedData, null, this.repeatSections, this.dates,
-          this.booleans, this.namesRepeats);
-          console.log(proccessedData);
+        this.dataService.processDataReport(data, [], proccessedData, null, this.repeatSections,
+          this.dates, this.booleans, this.namesRepeats, this.displayedColumnsNames);
+          console.log('proccessedData', proccessedData);
+
+          const options = {
+            filename: 'reporte-' + this.activeDependency.name + '-' + this.activeFormPath,
+            fieldSeparator: ';',
+            quoteStrings: '"',
+            decimalseparator: '.',
+            showLabels: true,
+            showTitle: true,
+            title: 'Reporte: ' + this.activeDependency.name + ' - ' + this.activeFormPath,
+            useBom: true,
+            useKeysAsHeaders: true
+          };
+          const exportToCsv = new ExportToCsv(options);
+          exportToCsv.generateCsv(proccessedData);
+
           this.exportCSVSpinnerButtonOptions.active = false;
           this.exportCSVSpinnerButtonOptions.text = 'Exportar CSV';
       });
