@@ -83,17 +83,31 @@ public class DataService {
 		
 		Sort sort = new Sort(direction, column);
 		
-		if(pageSize == -1) {
-			return this.dataRepository.findCustomByTemplate(template, dependency, filter, sort);
+		if(filter != null && !filter.isEmpty()) {
+			if(pageSize == -1) {
+				return this.dataRepository.findCustomByTemplate(template, dependency, filter, sort);
+			} else {
+				return this.dataRepository.findCustomByTemplate(template, dependency, filter,
+						new PageRequest(pageNumber, pageSize, sort));
+			}
 		} else {
-			return this.dataRepository.findCustomByTemplate(template, dependency, filter,
-					new PageRequest(pageNumber, pageSize, sort));
-		}		
+			if(pageSize == -1) {
+				return this.dataRepository.findCustomByTemplateWithoutFilter(template, dependency, sort);
+			} else {
+				return this.dataRepository.findCustomByTemplateWithoutFilter(template, dependency,
+						new PageRequest(pageNumber, pageSize, sort));
+			}
+		}
+				
 	}
 
 	public FormData count(String template, String dependency, String filter) {
 		FormData data = new FormData();
-		data.setCountData(this.dataRepository.countByTemplate(template, dependency, filter));
+		if(filter != null && !filter.isEmpty()) {
+			data.setCountData(this.dataRepository.countByTemplate(template, dependency, filter));
+		} else {
+			data.setCountData(this.dataRepository.countByTemplateWithoutFilter(template, dependency));
+		}
 		return data;
 	}
 }
