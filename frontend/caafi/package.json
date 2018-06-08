@@ -35,7 +35,7 @@
     "mat-progress-buttons": "^1.2.9",
     "ngx-loading": "^1.0.14",
     "ngx-restangular": "^2.0.2",
-    "rxjs": "^5.5.11",
+    "rxjs": "^5.6.0-forward-compat.5",
     "zone.js": "^0.8.14"
   },
   "devDependencies": {
