@@ -29,12 +29,12 @@ export class ModelDataSource extends DataSource<Object> {
 
   loadData(dependency: string, template: string, filter = '', sortColumn = '',
               sortDirection = 'asc', pageIndex = 0, pageSize = 5,
-              repeatSections, dates, booleans, namesRepeats) {
+              repeatSections, dates, booleans, namesRepeats, filters) {
     this.loadingSubject.next(true);
 
     return new Promise( resolve => {
       this.dataService.getAllByTemplateAndDependency(dependency, template, filter, sortColumn, sortDirection,
-        pageIndex, pageSize).pipe(
+        pageIndex, pageSize, filters).pipe(
         catchError(() => of([])),
         finalize(() => this.loadingSubject.next(false))
       )
@@ -46,4 +46,19 @@ export class ModelDataSource extends DataSource<Object> {
       });
     });
   }
+
+  loading(state: boolean) {
+    this.loadingSubject.next(state);
+  }
+
+  objToSearchParams(obj): URLSearchParams {
+    const params: URLSearchParams = new URLSearchParams();
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        params.set(key, obj[key]);
+      }
+    }
+    return params;
+ }
+
 }

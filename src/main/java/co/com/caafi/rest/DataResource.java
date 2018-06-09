@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -66,9 +67,10 @@ public class DataResource {
 	public List<FormData> findByTemplateAndDependency(@PathVariable String template, 
 			@PathVariable String dependency, @RequestParam("filter") String filter,
 			@RequestParam("sortColumn") String sortColumn, @RequestParam("sortOrder") String sortOrder, 
-			@RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize) {
+			@RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize,
+			@RequestParam("filters") String filters) {
 		return dataService.findByTemplateAndDependency(template, dependency, filter, sortColumn, 
-				sortOrder, pageNumber, pageSize);
+				sortOrder, pageNumber, pageSize, filters);
 	}
 
 	@CrossOrigin(origins = "*")
@@ -81,7 +83,7 @@ public class DataResource {
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/count/{dependency}/{template}", method = RequestMethod.GET)
 	public FormData count(@PathVariable String template, @PathVariable String dependency,
-			@RequestParam("filter") String filter) {
-		return dataService.count(template, dependency, filter);
+			@RequestParam("filter") String filter, @RequestParam("filters") String filters) {
+		return dataService.count(template, dependency, filter, filters);
 	}
 }

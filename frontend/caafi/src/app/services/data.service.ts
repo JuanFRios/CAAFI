@@ -17,15 +17,16 @@ export class DataService {
   }
 
   getAllByTemplateAndDependency(template: string, dependency: string, filter: string,
-    sortColumn: string, sortOrder: string, pageNumber: number, pageSize: number): Observable<Data[]> {
+    sortColumn: string, sortOrder: string, pageNumber: number, pageSize: number,
+    filters: string): Observable<Data[]> {
     return this.restangular.one('data/bytemplateanddependency/' + dependency + '/' + template
       + '?filter=' + filter + '&sortColumn=' + sortColumn + '&sortOrder=' + sortOrder + '&pageNumber='
-      + pageNumber + '&pageSize=' + pageSize).get();
+      + pageNumber + '&pageSize=' + pageSize + '&filters=' + filters).get();
   }
 
   getByJson(json: string, fields: string): Observable<any[]> {
     return this.restangular.all('data/byJson/'
-      + json + "/" + fields).getList();
+      + json + '/' + fields).getList();
   }
 
   getById(id: number): Observable<Data> {
@@ -40,8 +41,9 @@ export class DataService {
     return this.restangular.one('data/byid', id).remove();
   }
 
-  count(template: string, dependency: string, filter: string): Observable<any> {
-    return this.restangular.one('data/count/' + dependency + '/' + template + '?filter=' + filter).get();
+  count(template: string, dependency: string, filter: string, filters: string): Observable<any> {
+    return this.restangular.one('data/count/' + dependency + '/' + template + '?filter=' + filter
+    + '&filters=' + filters).get();
   }
 
   processData(data, proccessedData, dataId, repeatSections, dates, booleans, namesRepeats) {

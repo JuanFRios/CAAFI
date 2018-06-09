@@ -73,6 +73,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   filterEvent: Subscription;
   isReport: boolean;
   loadingReport = true;
+  filters: string;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -97,7 +98,6 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isReport = this.route.snapshot.routeConfig.path === 'reportes' ? true : false;
-    console.log(this.isReport);
 
     this.sub = this.route.params.subscribe(params => {
       this.loadConfig();
@@ -108,7 +108,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
   loadDataPage() {
 
-    this.dataService.count(this.activeFormPath, this.activeDependency.name, this.filter.nativeElement.value)
+    this.dataService.count(this.activeFormPath, this.activeDependency.name, this.filter.nativeElement.value, this.filters)
       .subscribe(countData => {
         this.model = countData;
       },
@@ -116,7 +116,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
     this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
       this.filter.nativeElement.value, this.sort.active, this.sort.direction, this.paginator.pageIndex,
-      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.namesRepeats).then(dataRetorno => { });
+      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.namesRepeats, this.filters).then(dataRetorno => { });
   }
 
   loadConfig() {
@@ -148,14 +148,16 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     }
 
     this.activeDependency = depent;
-    console.log('dependency', this.activeDependency);
     this.form = new FormGroup({});
 
-    this.templatesService.getByName(form1.path)
+    let templateName = form1.path;
+    if (this.isReport) {
+      templateName = 'reportFilters';
+    }
+    this.templatesService.getByName(templateName)
       .subscribe(form2 => {
 
         this.variables = form2.variables;
-        console.log(this.variables);
 
         this.form = new FormGroup({});
 
@@ -165,14 +167,13 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
         this.formData = new Object();
 
-        this.formName = form2.name;
+        this.formName = form1.path;
 
         this.lists = [];
 
         this.tableColumns = form2.table;
         this.proccessFields(form2.fields);
 
-        console.log(form2);
         if (this.lists.length > 0) {
           this.getList(this.lists, 0, form2.fields);
         } else {
@@ -191,7 +192,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   proccessFields(fields) {
 
     // Proceess Validators
-    this.evalJSFromJSON(fields, ['pattern', 'defaultValue', 'optionsDB', 'key', 'label', 'type',
+    this.evalJSFromJSON(fields, ['pattern', 'defaultValue', 'optionsDB', 'label',
       'templateOptions?disabled', 'onInit', 'onDestroy', 'hideExpression', 'variable'], '');
   }
 
@@ -208,24 +209,6 @@ export class TemplatesComponent implements OnInit, OnDestroy {
           if (i === 'optionsDB') {
             path = path + '[\'options\']';
             this.lists.push([path, fields[i]]);
-          } else if (i === 'key' && !path.includes('fieldArray')) {
-            if (!this.tableColumns || this.tableColumns.includes(fields[i])) {
-              this.displayedColumns.push(fields[i]);
-              this.displayedColumnsData.push(fields[i]);
-              if (fields['type'] === 'repeat') {
-                this.displayedColumnsNames[fields[i]] = fields.sectionName;
-                this.repeatSections.push(fields[i]);
-                for (const j of fields['fieldArray']['fieldGroup']) {
-                  this.namesRepeats[j.key] = j.templateOptions.label;
-                }
-              } else {
-                this.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
-              }
-            }
-          } else if (i === 'type' && fields[i] === 'datepicker') {
-            this.dates.push(fields['key']);
-          } else if (i === 'type' && fields[i] === 'checkbox') {
-            this.booleans.push(fields['key']);
           } else if (i === 'templateOptions?disabled') {
             fields[i.replace('?', '.')] = fields[i];
             delete fields[i];
@@ -234,7 +217,6 @@ export class TemplatesComponent implements OnInit, OnDestroy {
               this.options['formState'] = {};
             }
             this.options['formState'][fields[i]] = 0;
-            console.log(this.options['formState']);
           } else {
             fields[i] = eval(fields[i]); // no-eval
           }
@@ -383,46 +365,107 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   }
 
   loadDataTable() {
-    this.dataService.count(this.activeFormPath, this.activeDependency.name, '')
+
+    this.loadTemplateFeatures().then(dataRetorno => {
+
+      const urlFilters = encodeURIComponent(JSON.stringify({}));
+
+      this.dataService.count(this.activeFormPath, this.activeDependency.name, '', urlFilters)
       .subscribe(countData => {
         this.model = countData;
       },
-        error => this.errorMessage.push(error));
+      error => this.errorMessage.push(error));
 
-    this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
-      '', '', '', 0, 5, this.repeatSections, this.dates, this.booleans, this.namesRepeats)
-      .then(dataRetorno => { });
+      this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
+        '', '', '', 0, 5, this.repeatSections, this.dates, this.booleans, this.namesRepeats, {});
 
-    if (this.sortChange) {
-      this.sortChange.unsubscribe();
+      if (this.sortChange) {
+        this.sortChange.unsubscribe();
+      }
+      this.sortChange = this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+
+      if (this.tapPaginator) {
+        this.tapPaginator.unsubscribe();
+      }
+      this.paginator.pageIndex = 0;
+      this.tapPaginator = merge(this.sort.sortChange, this.paginator.page)
+        .pipe(
+          tap(() => this.loadDataPage())
+        )
+        .subscribe();
+
+      // server-side search
+      if (this.filterEvent) {
+        this.filterEvent.unsubscribe();
+      }
+      this.filterEvent = fromEvent(this.filter.nativeElement, 'keyup')
+        .pipe(
+          debounceTime(150),
+          distinctUntilChanged(),
+          tap(() => {
+            this.paginator.pageIndex = 0;
+            this.loadDataPage();
+          })
+        )
+        .subscribe();
+    });
+  }
+
+  loadTemplateFeatures() {
+
+    return new Promise( resolve => {
+
+      this.dataSource.loading(true);
+
+      this.displayedColumns = ['copy', 'edit', 'delete'];
+      this.displayedColumnsData = [];
+      this.displayedColumnsNames = [];
+      this.repeatSections = [];
+      this.namesRepeats = {};
+      this.dates = [];
+      this.booleans = [];
+
+      this.templatesService.getByName(this.activeFormPath)
+        .subscribe(form => {
+
+          this.getTemplateFeatures(form.fields, ['key', 'type'], '');
+          this.dataSource.loading(false);
+
+          resolve();
+
+        },
+        error => {
+          this.errorMessage.push(error);
+          this.loading = false;
+        });
+    });
+  }
+
+  getTemplateFeatures(fields, keys, path) {
+
+    for (const i in fields) {
+      if (typeof fields[i] === 'object') {
+        this.getTemplateFeatures(fields[i], keys, path + '[\'' + i + '\']');
+      } else if (this.arrayContains(i, keys)) {
+        if (i === 'key' && !path.includes('fieldArray')) {
+          this.displayedColumns.push(fields[i]);
+          this.displayedColumnsData.push(fields[i]);
+          if (fields['type'] === 'repeat') {
+            this.displayedColumnsNames[fields[i]] = fields.sectionName;
+            this.repeatSections.push(fields[i]);
+            for (const j of fields['fieldArray']['fieldGroup']) {
+              this.namesRepeats[j.key] = j.templateOptions.label;
+            }
+          } else {
+            this.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
+          }
+        } else if (i === 'type' && fields[i] === 'datepicker') {
+          this.dates.push(fields['key']);
+        } else if (i === 'type' && fields[i] === 'checkbox') {
+          this.booleans.push(fields['key']);
+        }
+      }
     }
-    console.log('sort', this.sort);
-    this.sortChange = this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-
-    if (this.tapPaginator) {
-      this.tapPaginator.unsubscribe();
-    }
-    this.paginator.pageIndex = 0;
-    this.tapPaginator = merge(this.sort.sortChange, this.paginator.page)
-      .pipe(
-        tap(() => this.loadDataPage())
-      )
-      .subscribe();
-
-    // server-side search
-    if (this.filterEvent) {
-      this.filterEvent.unsubscribe();
-    }
-    this.filterEvent = fromEvent(this.filter.nativeElement, 'keyup')
-      .pipe(
-        debounceTime(150),
-        distinctUntilChanged(),
-        tap(() => {
-          this.paginator.pageIndex = 0;
-          this.loadDataPage();
-        })
-      )
-      .subscribe();
   }
 
   resetConfirmation() {
@@ -442,6 +485,11 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     }
 
     this.options.resetModel();
+    this.filters = '';
+
+    if (this.isReport) {
+      this.loadDataPage();
+    }
   }
 
   exportCSV() {
@@ -450,12 +498,11 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.exportCSVSpinnerButtonOptions.text = 'Cargando Reporte...';
 
     this.dataService.getAllByTemplateAndDependency(this.activeFormPath, this.activeDependency.name,
-      this.filter.nativeElement.value, this.sort.active, this.sort.direction, 0, -1)
+      this.filter.nativeElement.value, this.sort.active, this.sort.direction, 0, -1, this.filters)
       .subscribe(data => {
         const proccessedData: Object[] = [];
         this.dataService.processDataReport(data, [], proccessedData, null, this.repeatSections,
           this.dates, this.booleans, this.namesRepeats, this.displayedColumnsNames);
-          console.log('proccessedData', proccessedData);
 
           const options = {
             filename: 'reporte-' + this.activeDependency.name + '-' + this.activeFormPath,
@@ -474,6 +521,22 @@ export class TemplatesComponent implements OnInit, OnDestroy {
           this.exportCSVSpinnerButtonOptions.active = false;
           this.exportCSVSpinnerButtonOptions.text = 'Exportar CSV';
       });
+  }
+
+  filterData(filterFormData) {
+    const urlFilters = encodeURIComponent(JSON.stringify(filterFormData));
+    this.filters = urlFilters;
+    this.dataService.count(this.activeFormPath, this.activeDependency.name, this.filter.nativeElement.value, urlFilters)
+    .subscribe(countData => {
+      this.model = countData;
+    },
+    error => this.errorMessage.push(error));
+
+    this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
+      this.filter.nativeElement.value, this.sort.active, this.sort.direction, this.paginator.pageIndex,
+      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.namesRepeats,
+      urlFilters
+    ).then(dataRetorno => { });
   }
 
 }

@@ -19,30 +19,15 @@ public interface DataRepository extends MongoRepository<FormData, String> {
 	
     public FormData save(FormData data);
     
-    @Query("{ template: ?0, deleted: false, $where:'JSON.stringify(this).indexOf( ?1 )!=-1', "
-    		+ "$where:'JSON.stringify(this).toLowerCase().indexOf( ?2.toLowerCase())!=-1' }")
+    @Query("{ template: ?0, deleted: false, $where: 'JSON.stringify(this.data).indexOf( ?1 )!=-1 && eval(?2) && eval(?3);' }")
     public List<FormData> findCustomByTemplate(String template, String dependency, 
-    		String filter, Pageable pageable);
+    		String filter, String filters, Pageable pageable);
     
-    @Query("{ template: ?0, deleted: false, $where:'JSON.stringify(this).indexOf( ?1 )!=-1'}")
-    public List<FormData> findCustomByTemplateWithoutFilter(String template, String dependency,
-    		Pageable pageable);
-    
-    @Query("{ template: ?0, deleted: false, $where:'JSON.stringify(this).indexOf( ?1 )!=-1', "
-    		+ "$where:'JSON.stringify(this).toLowerCase().indexOf( ?2.toLowerCase())!=-1' }")
+    @Query("{ template: ?0, deleted: false, $where:'JSON.stringify(this.data).indexOf( ?1 )!=-1 && eval(?2) && eval(?3);' }")
     public List<FormData> findCustomByTemplate(String template, String dependency, 
-    		String filter, Sort sort);
+    		String filter, String filters, Sort sort);
     
-    @Query("{ template: ?0, deleted: false, $where:'JSON.stringify(this).indexOf( ?1 )!=-1'}")
-    public List<FormData> findCustomByTemplateWithoutFilter(String template, String dependency, 
-    		Sort sort);
-    
-    @Query(value = "{ template: ?0, deleted: false, $where:'JSON.stringify(this).indexOf( ?1 )!=-1', "
-    		+ "$where:'JSON.stringify(this).toLowerCase().indexOf( ?2.toLowerCase())!=-1' }", count = true)
-    public long countByTemplate(String template, String dependency, String filter);
-    
-    @Query(value = "{ template: ?0, deleted: false, $where:'JSON.stringify(this).indexOf( ?1 )!=-1'}",
-    		count = true)
-    public long countByTemplateWithoutFilter(String template, String dependency);
+    @Query(value = "{ template: ?0, deleted: false, $where:'JSON.stringify(this.data).indexOf( ?1 )!=-1 && eval(?2) && eval(?3);' }", count = true)
+    public long countByTemplate(String template, String dependency, String filter, String filters);
 
 }
