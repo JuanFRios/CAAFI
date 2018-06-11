@@ -43,21 +43,6 @@ public class DataService {
         return this.dataRepository.findAll();
     }
 
-    /*
-    public List<FormData> findByTemplate(String template, String dependency) {
-    	
-    		/*
-    		Query query = new Query();
-    		query.addCriteria(Criteria.where("template").is(template));
-        return this.mongoTemplate.find(query, FormData.class);
-        
-        
-    		return this.dataRepository.findCustomByTemplate(template, dependency, new Sort(Sort.Direction.DESC, "savedDate"));
-        
-    		//return this.dataRepository.findByTemplateAndOriginAndDeleted(template, dependency, false, new Sort(Sort.Direction.DESC, "savedDate"));
-
-    }*/
-
     public List<Object> findByJson(String template, String fields) {
         BasicQuery query = new BasicQuery(template, JsonFlattener.flatten(fields));
         return this.mongoTemplate.find(query, Object.class, "data");
@@ -71,59 +56,9 @@ public class DataService {
 	public List<FormData> findByTemplateAndDependency(String template, String dependency, String filter,
 			String sortColumn, String sortOrder, int pageNumber, int pageSize, String filters) {
 
-		String column = "savedDate";
-		if(sortColumn != null && !sortColumn.isEmpty()) {
-			column = "data." + sortColumn;
-		}
-		
-		Direction direction = Sort.Direction.DESC;
-		if(sortOrder != null && !sortOrder.isEmpty() && "asc".equals(sortOrder)) {			
-			direction = Sort.Direction.ASC;
-		} else if(sortOrder.isEmpty()) {
-			column = "savedDate";
-		}
-		
-		Order order = new Order(direction, column);
-		Sort sort = new Sort(order);
-		
-		String filterWhere = "true";
-		if(filter != null && !filter.isEmpty()) {
-			filterWhere = "JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + filter + "\\\".toLowerCase())!=-1";
-		}
-		
-		String filtersWhere = "true";
-		if(filters != null && !filters.isEmpty() && !"{}".equals(filters)) {
-			try {
-				HashMap<String,Object> result = new ObjectMapper().readValue(filters, HashMap.class);
-				filtersWhere = "?1 && ?2 && ?3";
-				for (Entry<String, Object> entry : result.entrySet()) {
-					if(entry.getKey().equals("semestreInicio")) {
-						if(entry.getValue() != null && !((String) entry.getValue()).isEmpty()) {
-							filtersWhere = filtersWhere.replace("?1", "this.data.semestre >= \\\"" + (String) entry.getValue() + "\\\"");
-						} else {
-							filtersWhere = filtersWhere.replace("?1", "true");
-						}
-					} else if(entry.getKey().equals("semestreFin")) {
-						if(entry.getValue() != null && !((String) entry.getValue()).isEmpty()) {
-							filtersWhere = filtersWhere.replace("?2", "this.data.semestre <= \\\"" + (String) entry.getValue() + "\\\"");
-						} else {
-							filtersWhere = filtersWhere.replace("?2", "true");
-						}
-					} else if(entry.getKey().equals("grupoInvestigacion")) {
-						if(entry.getValue() != null && !((String) entry.getValue()).isEmpty()) {
-							filtersWhere = filtersWhere.replace("?3", "JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + (String) entry.getValue() + "\\\".toLowerCase())!=-1");
-						} else {
-							filtersWhere = filtersWhere.replace("?3", "true");
-						}
-					}
-			    }
-				filtersWhere = filtersWhere.replace("?1", "true");
-				filtersWhere = filtersWhere.replace("?2", "true");
-				filtersWhere = filtersWhere.replace("?3", "true");
-			} catch (Exception e) {
-				filtersWhere = "true";
-			}
-		}
+		Sort sort = getSort(sortColumn, sortOrder);
+		String filterWhere = getGenericFilter(filter);
+		String filtersWhere = getFilters(filters);
 		
 		if(pageSize == -1) {
 			return this.dataRepository.findCustomByTemplate(template, dependency, filterWhere, 
@@ -134,45 +69,67 @@ public class DataService {
 		}
 	}
 
-	public FormData count(String template, String dependency, String filter, String filters) {
-		FormData data = new FormData();
-		String filterWhere = "true";
-		if(filter != null && !filter.isEmpty()) {
-			filterWhere = "JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + filter + "\\\".toLowerCase())!=-1";
-		}
+	private String getFilters(String filters) {
 		String filtersWhere = "true";
 		if(filters != null && !filters.isEmpty() && !"{}".equals(filters)) {
 			try {
 				HashMap<String,Object> result = new ObjectMapper().readValue(filters, HashMap.class);
-				filtersWhere = "?1 && ?2 && ?3";
+				filtersWhere = "true";
 				for (Entry<String, Object> entry : result.entrySet()) {
-					if(entry.getKey().equals("semestreInicio")) {
-						if(entry.getValue() != null && !((String) entry.getValue()).isEmpty()) {
-							filtersWhere = filtersWhere.replace("?1", "this.data.semestre >= \\\"" + (String) entry.getValue() + "\\\"");
-						} else {
-							filtersWhere = filtersWhere.replace("?1", "true");
-						}
-					} else if(entry.getKey().equals("semestreFin")) {
-						if(entry.getValue() != null && !((String) entry.getValue()).isEmpty()) {
-							filtersWhere = filtersWhere.replace("?2", "this.data.semestre <= \\\"" + (String) entry.getValue() + "\\\"");
-						} else {
-							filtersWhere = filtersWhere.replace("?2", "true");
-						}
-					} else if(entry.getKey().equals("grupoInvestigacion")) {
-						if(entry.getValue() != null && !((String) entry.getValue()).isEmpty()) {
-							filtersWhere = filtersWhere.replace("?3", "JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + (String) entry.getValue() + "\\\".toLowerCase())!=-1");
-						} else {
-							filtersWhere = filtersWhere.replace("?3", "true");
+					if(entry.getValue() != null && !((String)entry.getValue()).isEmpty()) {
+						String[] entryKey = entry.getKey().split("-");
+						String type = entryKey[0];
+						String name = entryKey[1];
+						switch(type) {
+						case "tea": // Text Equals All
+							filtersWhere += " && JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + (String) entry.getValue() + "\\\".toLowerCase() )!=-1";
+							break;
+						case "tge": // Text Greater or Equals than
+							filtersWhere += " && this.data." + name + " >= \\\"" + (String) entry.getValue() + "\\\"";
+							break;
+						case "tle": // Text Less or Equals than
+							filtersWhere += " && this.data." + name + " <= \\\"" + (String) entry.getValue() + "\\\"";
+							break;
+						case "te": // Text Equals
+							filtersWhere += " && this.data." + name + " == \\\"" + (String) entry.getValue() + "\\\"";
+							break;
+						default:
+							filtersWhere += " && true";
+							break;
 						}
 					}
 			    }
-				filtersWhere = filtersWhere.replace("?1", "true");
-				filtersWhere = filtersWhere.replace("?2", "true");
-				filtersWhere = filtersWhere.replace("?3", "true");
 			} catch (Exception e) {
 				filtersWhere = "true";
 			}
 		}
+		return filtersWhere;
+	}
+
+	private String getGenericFilter(String filter) {
+		String filterWhere = "true";
+		if(filter != null && !filter.isEmpty()) {
+			filterWhere = "JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + filter + "\\\".toLowerCase() )!=-1";
+		}
+		return filterWhere;
+	}
+
+	private Sort getSort(String sortColumn, String sortOrder) {
+		Direction direction;
+		if(sortOrder != null && !sortOrder.isEmpty() && "asc".equals(sortOrder)) {			
+			direction = Sort.Direction.ASC;
+		} else {
+			direction = Sort.Direction.DESC;
+		}
+		
+		Order order = new Order(direction, sortColumn);
+		return new Sort(order);
+	}
+
+	public FormData count(String template, String dependency, String filter, String filters) {
+		FormData data = new FormData();
+		String filterWhere = getGenericFilter(filter);
+		String filtersWhere = getFilters(filters);
 		data.setCountData(this.dataRepository.countByTemplate(template, dependency, filterWhere, 
 				filtersWhere));
 		return data;

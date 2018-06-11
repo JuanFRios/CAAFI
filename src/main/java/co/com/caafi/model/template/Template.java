@@ -16,6 +16,7 @@ public class Template {
 	private Integer version;
 	private String description;
 	private List<Map<String, Object>> fields;
+	private List<Map<String, Object>> report;
 	private Map<String, Object> variables;
 	private Date startDate;
 	private Date endDate;
@@ -100,6 +101,14 @@ public class Template {
 
 	public void setTable(List<String> table) {
 		this.table = table;
+	}
+
+	public List<Map<String, Object>> getReport() {
+		return report;
+	}
+
+	public void setReport(List<Map<String, Object>> report) {
+		this.report = report;
 	}
 
 }

@@ -7,4 +7,5 @@ export class Template {
   variables: Object;
   fields: Array<FormlyFieldConfig>;
   table: String[];
+  report: Array<FormlyFieldConfig>;
 }

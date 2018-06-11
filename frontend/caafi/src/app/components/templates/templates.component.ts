@@ -74,6 +74,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   isReport: boolean;
   loadingReport = true;
   filters: string;
+  showForm = true;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -115,7 +116,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
         error => this.errorMessage.push(error));
 
     this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
-      this.filter.nativeElement.value, this.sort.active, this.sort.direction, this.paginator.pageIndex,
+      this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
       this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.namesRepeats, this.filters).then(dataRetorno => { });
   }
 
@@ -150,11 +151,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.activeDependency = depent;
     this.form = new FormGroup({});
 
-    let templateName = form1.path;
-    if (this.isReport) {
-      templateName = 'reportFilters';
-    }
-    this.templatesService.getByName(templateName)
+    this.templatesService.getByName(form1.path)
       .subscribe(form2 => {
 
         this.variables = form2.variables;
@@ -172,21 +169,26 @@ export class TemplatesComponent implements OnInit, OnDestroy {
         this.lists = [];
 
         this.tableColumns = form2.table;
-        this.proccessFields(form2.fields);
 
-        if (this.lists.length > 0) {
-          this.getList(this.lists, 0, form2.fields);
-        } else {
-          this.formFields = form2.fields;
-          this.loading = false;
-          this.loadDataTable();
+        let fields = form2.fields;
+        if (this.isReport) {
+          fields = form2.report;
         }
+        this.showForm = fields && fields.length > 0 ? true : false;
+
+        this.proccessFields(fields);
+        this.getList(this.lists, 0, fields);
+
+        this.formFields = fields;
+        this.loading = false;
+        this.loadDataTable();
+        this.form = new FormGroup({});
       },
-        error => {
-          this.errorMessage.push(error);
-          this.activeForm = null;
-          this.loading = false;
-        });
+      error => {
+        this.errorMessage.push(error);
+        this.activeForm = null;
+        this.loading = false;
+      });
   }
 
   proccessFields(fields) {
@@ -347,27 +349,21 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   }
 
   getList(list, current, fields) {
-    if (list.length > current) {
-      this.configService.getByName(list[current][1])
-        .subscribe(confi => {
-          eval('fields' + list[current][0] + ' = ' + JSON.stringify(confi.value)); // no-eval
-          current++;
-          this.getList(list, current, fields);
-        });
-    } else {
-      this.formFields = fields;
-      this.loading = false;
-
-      this.loadDataTable();
-
-      this.form = new FormGroup({});
+    if (this.lists.length > 0) {
+      if (list.length > current) {
+        this.configService.getByName(list[current][1])
+          .subscribe(confi => {
+            eval('fields' + list[current][0] + ' = ' + JSON.stringify(confi.value)); // no-eval
+            current++;
+            this.getList(list, current, fields);
+          });
+      }
     }
   }
 
   loadDataTable() {
 
     this.loadTemplateFeatures().then(dataRetorno => {
-
       const urlFilters = encodeURIComponent(JSON.stringify({}));
 
       this.dataService.count(this.activeFormPath, this.activeDependency.name, '', urlFilters)
@@ -377,7 +373,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       error => this.errorMessage.push(error));
 
       this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
-        '', '', '', 0, 5, this.repeatSections, this.dates, this.booleans, this.namesRepeats, {});
+        '', 'savedDate', 'desc', 0, 5, this.repeatSections, this.dates, this.booleans, this.namesRepeats, urlFilters);
 
       if (this.sortChange) {
         this.sortChange.unsubscribe();
@@ -442,12 +438,11 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   }
 
   getTemplateFeatures(fields, keys, path) {
-
     for (const i in fields) {
       if (typeof fields[i] === 'object') {
         this.getTemplateFeatures(fields[i], keys, path + '[\'' + i + '\']');
       } else if (this.arrayContains(i, keys)) {
-        if (i === 'key' && !path.includes('fieldArray')) {
+        if (i === 'key' && !path.includes('fieldArray') && !path.includes('options')) {
           this.displayedColumns.push(fields[i]);
           this.displayedColumnsData.push(fields[i]);
           if (fields['type'] === 'repeat') {
@@ -498,7 +493,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.exportCSVSpinnerButtonOptions.text = 'Cargando Reporte...';
 
     this.dataService.getAllByTemplateAndDependency(this.activeFormPath, this.activeDependency.name,
-      this.filter.nativeElement.value, this.sort.active, this.sort.direction, 0, -1, this.filters)
+      this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, 0, -1, this.filters)
       .subscribe(data => {
         const proccessedData: Object[] = [];
         this.dataService.processDataReport(data, [], proccessedData, null, this.repeatSections,
@@ -523,7 +518,17 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       });
   }
 
+  getSortColumn() {
+    let sortColumn = 'savedDate';
+    if (this.sort.active != null && this.sort.active.length > 0
+      && this.sort.direction != null && this.sort.direction.length > 0) {
+      sortColumn = 'data.' + this.sort.active;
+    }
+    return sortColumn;
+  }
+
   filterData(filterFormData) {
+    console.log('filterFormData', filterFormData);
     const urlFilters = encodeURIComponent(JSON.stringify(filterFormData));
     this.filters = urlFilters;
     this.dataService.count(this.activeFormPath, this.activeDependency.name, this.filter.nativeElement.value, urlFilters)
@@ -532,8 +537,9 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     },
     error => this.errorMessage.push(error));
 
+    this.paginator.pageIndex = 0;
     this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
-      this.filter.nativeElement.value, this.sort.active, this.sort.direction, this.paginator.pageIndex,
+      this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
       this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.namesRepeats,
       urlFilters
     ).then(dataRetorno => { });
