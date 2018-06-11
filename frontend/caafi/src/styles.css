@@ -2138,10 +2138,14 @@ span.gt-highlight-search {
 
 .mat-menu-panel {
     max-height: calc(100vh - 300px) !important;
+    max-width: none !important;
 }
 
 #cdk-overlay-0 .mat-menu-panel {
     max-height: calc(100vh - 198px) !important;
+}
+.mat-menu-item {
+    font-size: 14px;
 }
 
 body {

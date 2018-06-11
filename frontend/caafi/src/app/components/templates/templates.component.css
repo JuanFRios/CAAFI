@@ -174,8 +174,10 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 .mat-menu-panel {
     overflow: auto;
     max-height: calc(100vh - 48px);
+    max-width: auto;
 }
 
 .cdk-overlay-pane .mat-menu-panel {
     max-height: calc(100vh - 68px);
+    max-width: none;
 }
