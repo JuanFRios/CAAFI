@@ -1,6 +1,6 @@
 <mat-form-field [style.width]="'100%'">
-  <mat-label *ngIf="to.label">{{ to.label }}</mat-label>
-  <mat-placeholder *ngIf="to.placeholder">{{ to.placeholder }}</mat-placeholder>
+  <mat-label *ngIf="to.label">{{ to.label }} <span *ngIf="to.required">*</span></mat-label>
+  <mat-placeholder *ngIf="to.placeholder">{{ to.placeholder }} <span *ngIf="to.required">*</span></mat-placeholder>
   <mat-error [id]="null"><formly-validation-message [fieldForm]="formControl" [field]="field"></formly-validation-message></mat-error>
   <input matInput
     [errorStateMatcher]="errorStateMatcher"

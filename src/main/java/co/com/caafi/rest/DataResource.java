@@ -51,23 +51,15 @@ public class DataResource {
 	public void deleteById(@PathVariable String id, Authentication authentication) {
 		dataService.deleteById(id, (User) authentication.getPrincipal());
 	}
-
-	/*
-	@CrossOrigin(origins = "*")
-	@RequestMapping(path = "/bytemplateanddependency/{dependency}/{template}", method = RequestMethod.GET)
-	public List<FormData> findByTemplate(@PathVariable String template, @PathVariable String dependency) {
-		return dataService.findByTemplate(template, dependency);
-	}
-	*/
 	
 	@CrossOrigin(origins = "*")
-	@RequestMapping(path = "/bytemplateanddependency/{dependency}/{template}", method = RequestMethod.GET)
-	public List<FormData> findByTemplateAndDependency(@PathVariable String template, 
-			@PathVariable String dependency, @RequestParam("filter") String filter,
+	@RequestMapping(path = "/bytemplate/{template}", method = RequestMethod.GET)
+	public List<FormData> findByTemplate(@PathVariable String template, 
+			@RequestParam("dependency") String dependency, @RequestParam("filter") String filter,
 			@RequestParam("sortColumn") String sortColumn, @RequestParam("sortOrder") String sortOrder, 
 			@RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize,
 			@RequestParam("filters") String filters) {
-		return dataService.findByTemplateAndDependency(template, dependency, filter, sortColumn, 
+		return dataService.findByTemplate(template, dependency, filter, sortColumn, 
 				sortOrder, pageNumber, pageSize, filters);
 	}
 
@@ -79,8 +71,8 @@ public class DataResource {
 	}
 	
 	@CrossOrigin(origins = "*")
-	@RequestMapping(path = "/count/{dependency}/{template}", method = RequestMethod.GET)
-	public FormData count(@PathVariable String template, @PathVariable String dependency,
+	@RequestMapping(path = "/count/{template}", method = RequestMethod.GET)
+	public FormData count(@PathVariable String template, @RequestParam("dependency") String dependency,
 			@RequestParam("filter") String filter, @RequestParam("filters") String filters) {
 		return dataService.count(template, dependency, filter, filters);
 	}

@@ -53,20 +53,29 @@ public class DataService {
         return this.dataRepository.save(data);
     }
 
-	public List<FormData> findByTemplateAndDependency(String template, String dependency, String filter,
+	public List<FormData> findByTemplate(String template, String dependency, String filter,
 			String sortColumn, String sortOrder, int pageNumber, int pageSize, String filters) {
 
 		Sort sort = getSort(sortColumn, sortOrder);
+		String dependencyFilter = getDependencyFilter(dependency);
 		String filterWhere = getGenericFilter(filter);
 		String filtersWhere = getFilters(filters);
 		
 		if(pageSize == -1) {
-			return this.dataRepository.findCustomByTemplate(template, dependency, filterWhere, 
+			return this.dataRepository.findCustomByTemplate(template, dependencyFilter, filterWhere, 
 					filtersWhere, sort);
 		} else {
-			return this.dataRepository.findCustomByTemplate(template, dependency, filterWhere,
+			return this.dataRepository.findCustomByTemplate(template, dependencyFilter, filterWhere,
 					filtersWhere, new PageRequest(pageNumber, pageSize, sort));
 		}
+	}
+
+	private String getDependencyFilter(String dependency) {
+		String dependencyFilter = "true";
+		if(dependency != null && !dependency.isEmpty() && !"ALL".equals(dependency)) {
+			dependencyFilter = "JSON.stringify(this).indexOf( \\\"" + dependency + "\\\" )!=-1";
+		}
+		return dependencyFilter;
 	}
 
 	private String getFilters(String filters) {
@@ -128,9 +137,10 @@ public class DataService {
 
 	public FormData count(String template, String dependency, String filter, String filters) {
 		FormData data = new FormData();
+		String dependencyFilter = getDependencyFilter(dependency);
 		String filterWhere = getGenericFilter(filter);
 		String filtersWhere = getFilters(filters);
-		data.setCountData(this.dataRepository.countByTemplate(template, dependency, filterWhere, 
+		data.setCountData(this.dataRepository.countByTemplate(template, dependencyFilter, filterWhere, 
 				filtersWhere));
 		return data;
 	}

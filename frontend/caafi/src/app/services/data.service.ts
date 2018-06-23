@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Data } from '../common/data';
+import { Dependency } from '../common/dependency';
 import { Observable } from 'rxjs/Observable';
 import { RestangularModule, Restangular } from 'ngx-restangular';
 
@@ -16,12 +17,17 @@ export class DataService {
     return this.restangular.all('data/bytemplate/' + template).getList();
   }
 
-  getAllByTemplateAndDependency(template: string, dependency: string, filter: string,
+  getAllByTemplateAndDependency(template: string, dependency: string, allDataAccess: boolean, filter: string,
     sortColumn: string, sortOrder: string, pageNumber: number, pageSize: number,
     filters: string): Observable<Data[]> {
-    return this.restangular.one('data/bytemplateanddependency/' + dependency + '/' + template
-      + '?filter=' + filter + '&sortColumn=' + sortColumn + '&sortOrder=' + sortOrder + '&pageNumber='
-      + pageNumber + '&pageSize=' + pageSize + '&filters=' + filters).get();
+
+    let dependencyName = dependency;
+    if (allDataAccess) {
+      dependencyName = 'ALL';
+    }
+    return this.restangular.one('data/bytemplate/' + template
+    + '?filter=' + filter + '&sortColumn=' + sortColumn + '&sortOrder=' + sortOrder + '&pageNumber='
+    + pageNumber + '&pageSize=' + pageSize + '&filters=' + filters + '&dependency=' + dependencyName).get();
   }
 
   getByJson(json: string, fields: string): Observable<any[]> {
@@ -41,9 +47,13 @@ export class DataService {
     return this.restangular.one('data/byid', id).remove();
   }
 
-  count(template: string, dependency: string, filter: string, filters: string): Observable<any> {
-    return this.restangular.one('data/count/' + dependency + '/' + template + '?filter=' + filter
-    + '&filters=' + filters).get();
+  count(template: string, dependency: string, allDataAccess: boolean, filter: string, filters: string): Observable<any> {
+    let dependencyName = dependency;
+    if (allDataAccess) {
+      dependencyName = 'ALL';
+    }
+    return this.restangular.one('data/count/' + template + '?filter=' + filter
+        + '&filters=' + filters + '&dependency=' + dependencyName).get();
   }
 
   processData(data, proccessedData, dataId, repeatSections, dates, booleans, namesRepeats) {

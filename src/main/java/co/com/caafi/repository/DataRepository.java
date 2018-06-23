@@ -2,6 +2,7 @@ package co.com.caafi.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -19,15 +20,15 @@ public interface DataRepository extends MongoRepository<FormData, String> {
 	
     public FormData save(FormData data);
     
-    @Query("{ template: ?0, deleted: false, $where: 'JSON.stringify(this).indexOf( ?1 )!=-1 && eval(?2) && eval(?3);' }")
-    public List<FormData> findCustomByTemplate(String template, String dependency, 
+    @Query("{ template: ?0, deleted: false, $where: 'eval(?1) && eval(?2) && eval(?3);' }")
+    public List<FormData> findCustomByTemplate(String template, String dependencyFilter, 
     		String filter, String filters, Pageable pageable);
     
-    @Query("{ template: ?0, deleted: false, $where:'JSON.stringify(this).indexOf( ?1 )!=-1 && eval(?2) && eval(?3);' }")
-    public List<FormData> findCustomByTemplate(String template, String dependency, 
+    @Query("{ template: ?0, deleted: false, $where:'eval(?1) && eval(?2) && eval(?3);' }")
+    public List<FormData> findCustomByTemplate(String template, String dependencyFilter, 
     		String filter, String filters, Sort sort);
     
-    @Query(value = "{ template: ?0, deleted: false, $where:'JSON.stringify(this).indexOf( ?1 )!=-1 && eval(?2) && eval(?3);' }", count = true)
-    public long countByTemplate(String template, String dependency, String filter, String filters);
+    @Query(value = "{ template: ?0, deleted: false, $where:'eval(?1) && eval(?2) && eval(?3);' }", count = true)
+    public long countByTemplate(String template, String dependencyFilter, String filter, String filters);
 
 }

@@ -28,7 +28,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.configService.getByName("LISTA_MODULOS")
+    this.configService.getByName('LISTA_MODULOS')
       .subscribe(confi => {
         this.lista_modulos = confi.value;
         this.moduloActivo = confi.value[0].name;
@@ -38,7 +38,7 @@ export class HeaderComponent implements OnInit {
       .subscribe(usuario => {
 
       }, error => {
-       if(localStorage.getItem('tokenUser')){ 
+       if (localStorage.getItem('tokenUser')) {
          localStorage.removeItem('tokenUser');
         this.router.navigate(['/home']);
       }

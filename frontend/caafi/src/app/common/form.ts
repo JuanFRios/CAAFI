@@ -3,11 +3,5 @@ export class Form {
     path: string;
     template: string;
     config: any;
-
-    constructor( name: string, path: string, template: string, config: any) {
-        this.name = name;
-        this.path = path;
-        this.template = template;
-        this.config = config;
-    }
+    allDataAccess: boolean;
 }

@@ -8,6 +8,7 @@ public class Form {
 	private List<String> role;
 	private String template;
 	private Object config;
+	private boolean allDataAccess;
 
 	public String getName() {
 		return name;
@@ -47,6 +48,14 @@ public class Form {
 
 	public void setRole(List<String> role) {
 		this.role = role;
+	}
+
+	public boolean isAllDataAccess() {
+		return allDataAccess;
+	}
+
+	public void setAllDataAccess(boolean allDataAccess) {
+		this.allDataAccess = allDataAccess;
 	}
 
 }

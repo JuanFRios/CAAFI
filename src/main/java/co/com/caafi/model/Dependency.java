@@ -7,6 +7,7 @@ public class Dependency {
 	private String name;
 	private List<String> role;
 	private List<Form> forms;
+	private List<Form> formsReport;
 
 	public String getName() {
 		return name;
@@ -30,6 +31,14 @@ public class Dependency {
 
 	public void setForms(List<Form> forms) {
 		this.forms = forms;
+	}
+
+	public List<Form> getFormsReport() {
+		return formsReport;
+	}
+
+	public void setFormsReport(List<Form> formsReport) {
+		this.formsReport = formsReport;
 	}
 
 }

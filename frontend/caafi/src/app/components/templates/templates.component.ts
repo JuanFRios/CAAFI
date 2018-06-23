@@ -43,10 +43,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   data: Data;
   dependencies: Dependency[];
   activeDependency: Dependency;
-  activeForm: string;
-  activeFormPath: string;
   lists: String[][] = [];
-  formName: string;
   options: FormlyFormOptions = {};
   variables: Object = {};
   takeUntil = takeUntil;
@@ -75,6 +72,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   loadingReport = true;
   filters: string;
   showForm = true;
+  activeForm: Form;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -109,15 +107,16 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
   loadDataPage() {
 
-    this.dataService.count(this.activeFormPath, this.activeDependency.name, this.filter.nativeElement.value, this.filters)
+    this.dataService.count(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
+      this.filter.nativeElement.value, this.filters)
       .subscribe(countData => {
         this.model = countData;
       },
         error => this.errorMessage.push(error));
 
-    this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
+    this.dataSource.loadData(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
       this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
-      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.namesRepeats, this.filters).then(dataRetorno => { });
+      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.namesRepeats, this.filters);
   }
 
   loadConfig() {
@@ -128,7 +127,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
         error => this.errorMessage.push(error));
   }
 
-  loadForm(form1: Form, depent: Dependency) {
+  loadForm(activeForm: Form, dependency: Dependency) {
 
     this.loading = true;
     this.errorMessage = [];
@@ -148,31 +147,26 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       this.options.resetModel();
     }
 
-    this.activeDependency = depent;
+    this.activeDependency = dependency;
+    this.activeForm = activeForm;
     this.form = new FormGroup({});
 
-    this.templatesService.getByName(form1.path)
-      .subscribe(form2 => {
+    this.templatesService.getByName(activeForm.path)
+      .subscribe(template => {
 
-        this.variables = form2.variables;
+        this.variables = template.variables;
 
         this.form = new FormGroup({});
 
-        this.activeForm = form1.name;
-
-        this.activeFormPath = form1.path;
-
         this.formData = new Object();
-
-        this.formName = form1.path;
 
         this.lists = [];
 
-        this.tableColumns = form2.table;
+        this.tableColumns = template.table;
 
-        let fields = form2.fields;
+        let fields = template.fields;
         if (this.isReport) {
-          fields = form2.report;
+          fields = template.report;
         }
         this.showForm = fields && fields.length > 0 ? true : false;
 
@@ -237,7 +231,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.data = new Data();
     const formsData: FormData[] = this.getFiles(template);
     this.data.data = template;
-    this.data.template = this.formName;
+    this.data.template = this.activeForm.path;
     this.data.origin = this.activeDependency.name;
 
     if (this.currentId != null) {
@@ -366,13 +360,14 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.loadTemplateFeatures().then(dataRetorno => {
       const urlFilters = encodeURIComponent(JSON.stringify({}));
 
-      this.dataService.count(this.activeFormPath, this.activeDependency.name, '', urlFilters)
+      this.dataService.count(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
+        '', urlFilters)
       .subscribe(countData => {
         this.model = countData;
       },
       error => this.errorMessage.push(error));
 
-      this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
+      this.dataSource.loadData(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
         '', 'savedDate', 'desc', 0, 5, this.repeatSections, this.dates, this.booleans, this.namesRepeats, urlFilters);
 
       if (this.sortChange) {
@@ -421,7 +416,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       this.dates = [];
       this.booleans = [];
 
-      this.templatesService.getByName(this.activeFormPath)
+      this.templatesService.getByName(this.activeForm.path)
         .subscribe(form => {
 
           this.getTemplateFeatures(form.fields, ['key', 'type'], '');
@@ -492,21 +487,22 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.exportCSVSpinnerButtonOptions.active = true;
     this.exportCSVSpinnerButtonOptions.text = 'Cargando Reporte...';
 
-    this.dataService.getAllByTemplateAndDependency(this.activeFormPath, this.activeDependency.name,
-      this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, 0, -1, this.filters)
+    this.dataService.getAllByTemplateAndDependency(this.activeForm.path, this.activeDependency.name,
+      this.activeForm.allDataAccess, this.filter.nativeElement.value, this.getSortColumn(),
+      this.sort.direction, 0, -1, this.filters)
       .subscribe(data => {
         const proccessedData: Object[] = [];
         this.dataService.processDataReport(data, [], proccessedData, null, this.repeatSections,
           this.dates, this.booleans, this.namesRepeats, this.displayedColumnsNames);
 
           const options = {
-            filename: 'reporte-' + this.activeDependency.name + '-' + this.activeFormPath,
+            filename: 'reporte-' + this.activeDependency.name + '-' + this.activeForm.path,
             fieldSeparator: ';',
             quoteStrings: '"',
             decimalseparator: '.',
             showLabels: true,
             showTitle: true,
-            title: 'Reporte: ' + this.activeDependency.name + ' - ' + this.activeFormPath,
+            title: 'Reporte: ' + this.activeDependency.name + ' - ' + this.activeForm.path,
             useBom: true,
             useKeysAsHeaders: true
           };
@@ -531,18 +527,18 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     console.log('filterFormData', filterFormData);
     const urlFilters = encodeURIComponent(JSON.stringify(filterFormData));
     this.filters = urlFilters;
-    this.dataService.count(this.activeFormPath, this.activeDependency.name, this.filter.nativeElement.value, urlFilters)
+    this.dataService.count(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
+      this.filter.nativeElement.value, urlFilters)
     .subscribe(countData => {
       this.model = countData;
     },
     error => this.errorMessage.push(error));
 
     this.paginator.pageIndex = 0;
-    this.dataSource.loadData(this.activeFormPath, this.activeDependency.name,
+    this.dataSource.loadData(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
       this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
       this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.namesRepeats,
-      urlFilters
-    ).then(dataRetorno => { });
+      urlFilters);
   }
 
 }

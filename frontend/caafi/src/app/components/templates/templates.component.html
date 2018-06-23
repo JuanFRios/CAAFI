@@ -3,15 +3,23 @@
 	<button mat-button [matMenuTriggerFor]="main_menu">
 		<i class="material-icons">more_vert</i>
 		<span *ngIf="!activeForm">Seleccione una dependencia académica o administrativa</span>
-		<span *ngIf="activeForm" class="titleform"> {{activeDependency.name+ " - " +activeForm }}</span>
+		<span *ngIf="activeForm" class="titleform"> {{activeDependency.name+ " - " + activeForm.name }}</span>
 	</button>
 
 	<mat-menu #main_menu="matMenu">
 		<ng-container *ngFor="let mainItem of dependencies">
-			<button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
-			<mat-menu #sub_menu="matMenu">
-				<button *ngFor="let subItem of mainItem.forms" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
-			</mat-menu>
+			<div *ngIf="isReport && mainItem.formsReport;else no_report_content">
+				<button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>			
+				<mat-menu #sub_menu="matMenu">
+					<button *ngFor="let subItem of mainItem.formsReport" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
+				</mat-menu>
+			</div>
+			<ng-template #no_report_content>
+				<button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>			
+				<mat-menu #sub_menu="matMenu">
+					<button *ngFor="let subItem of mainItem.forms" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
+				</mat-menu>
+			</ng-template>
 		</ng-container>
 	</mat-menu>
 
