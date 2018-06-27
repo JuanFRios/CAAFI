@@ -1,5 +1,6 @@
 package co.com.caafi.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,5 +33,9 @@ public class FileService {
         }
         return filename;
     }
+
+	public File getFile(String name) {
+		return new File(UPLOAD_FILE_SERVER + name);
+	}
 
 }

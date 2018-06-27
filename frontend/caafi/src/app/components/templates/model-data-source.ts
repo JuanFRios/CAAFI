@@ -28,7 +28,7 @@ export class ModelDataSource extends DataSource<Object> {
 
   loadData(template: string, dependency: string, allDataAccess: boolean, filter = '', sortColumn = '',
               sortDirection = 'asc', pageIndex = 0, pageSize = 5,
-              repeatSections, dates, booleans, namesRepeats, filters) {
+              repeatSections, dates, booleans, files, namesRepeats, filters) {
     this.loadingSubject.next(true);
 
     return new Promise( resolve => {
@@ -39,7 +39,7 @@ export class ModelDataSource extends DataSource<Object> {
       )
       .subscribe(data => {
         const proccessedData: Object[] = [];
-        this.dataService.processData(data, proccessedData, null, repeatSections, dates, booleans, namesRepeats);
+        this.dataService.processData(data, proccessedData, null, repeatSections, dates, booleans, files, namesRepeats);
         this.dataSubject.next(proccessedData);
         resolve(proccessedData);
       });

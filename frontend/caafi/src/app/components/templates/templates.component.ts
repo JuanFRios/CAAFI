@@ -65,6 +65,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   namesRepeats = {};
   dates = [];
   booleans = [];
+  files = [];
   tapPaginator: Subscription;
   sortChange: Subscription;
   filterEvent: Subscription;
@@ -116,7 +117,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
     this.dataSource.loadData(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
       this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
-      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.namesRepeats, this.filters);
+      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.files, this.namesRepeats, this.filters);
   }
 
   loadConfig() {
@@ -142,6 +143,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.namesRepeats = {};
     this.dates = [];
     this.booleans = [];
+    this.files = [];
 
     if (this.options.resetModel) {
       this.options.resetModel();
@@ -368,7 +370,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       error => this.errorMessage.push(error));
 
       this.dataSource.loadData(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
-        '', 'savedDate', 'desc', 0, 5, this.repeatSections, this.dates, this.booleans, this.namesRepeats, urlFilters);
+        '', 'savedDate', 'desc', 0, 5, this.repeatSections, this.dates, this.booleans, this.files, this.namesRepeats, urlFilters);
 
       if (this.sortChange) {
         this.sortChange.unsubscribe();
@@ -415,6 +417,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       this.namesRepeats = {};
       this.dates = [];
       this.booleans = [];
+      this.files = [];
 
       this.templatesService.getByName(this.activeForm.path)
         .subscribe(form => {
@@ -453,6 +456,8 @@ export class TemplatesComponent implements OnInit, OnDestroy {
           this.dates.push(fields['key']);
         } else if (i === 'type' && fields[i] === 'checkbox') {
           this.booleans.push(fields['key']);
+        } else if (i === 'type' && fields[i] === 'file') {
+          this.files.push(fields['key']);
         }
       }
     }
@@ -493,7 +498,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
       .subscribe(data => {
         const proccessedData: Object[] = [];
         this.dataService.processDataReport(data, [], proccessedData, null, this.repeatSections,
-          this.dates, this.booleans, this.namesRepeats, this.displayedColumnsNames);
+          this.dates, this.booleans, this.files, this.namesRepeats, this.displayedColumnsNames);
 
           const options = {
             filename: 'reporte-' + this.activeDependency.name + '-' + this.activeForm.path,
@@ -537,8 +542,14 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.paginator.pageIndex = 0;
     this.dataSource.loadData(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
       this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
-      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.namesRepeats,
+      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.files, this.namesRepeats,
       urlFilters);
+  }
+
+  downloadFile() {
+    //window['windowDownloadFile'] = () => {
+      console.log('download');
+    //};
   }
 
 }

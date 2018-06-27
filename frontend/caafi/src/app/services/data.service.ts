@@ -3,11 +3,16 @@ import { Data } from '../common/data';
 import { Dependency } from '../common/dependency';
 import { Observable } from 'rxjs/Observable';
 import { RestangularModule, Restangular } from 'ngx-restangular';
+import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
+import { baseURL } from '../common/baseurl';
 
 @Injectable()
 export class DataService {
 
-  constructor(private restangular: Restangular) { }
+  constructor(
+    private restangular: Restangular,
+    private _sanitizer: DomSanitizer
+  ) { }
 
   getAll(): Observable<Data[]> {
     return this.restangular.all('data').getList();
@@ -56,14 +61,14 @@ export class DataService {
         + '&filters=' + filters + '&dependency=' + dependencyName).get();
   }
 
-  processData(data, proccessedData, dataId, repeatSections, dates, booleans, namesRepeats) {
+  processData(data, proccessedData, dataId, repeatSections, dates, booleans, files, namesRepeats) {
     for (const i in data) {
       if (typeof data[i] === 'object' && !repeatSections.includes(i)) {
         if (data[i] != null && data[i].id) {
           dataId = data[i].id;
         }
         this.processData(data[i], proccessedData, dataId, repeatSections,
-          dates, booleans, namesRepeats);
+          dates, booleans, files, namesRepeats);
         if (data[i] != null && data[i].constructor.name === 'Object' && !data[i]['data']) {
           data[i]['id'] = dataId;
           proccessedData.push(data[i]);
@@ -95,18 +100,22 @@ export class DataService {
             dataRepeat = dataRepeat.slice(0, -2) + ' }, <br><br>';
           }
           data[i] = dataRepeat.slice(0, -10);
+        } else if (files.includes(i)) {
+          data[i] = this._sanitizer
+            .bypassSecurityTrustHtml('<a href="' + baseURL + '/file/download?name=' + data[i] + '" download>'
+            + data[i] + '</a>');
         }
       }
     }
   }
 
   processDataReport(data, dataReport, proccessedData, dataId, repeatSections,
-    dates, booleans, namesRepeats, columnsNames) {
+    dates, booleans, files, namesRepeats, columnsNames) {
     for (const i in data) {
       if (typeof data[i] === 'object' && data[i] && !repeatSections.includes(i)) {
         dataReport[i] = {};
         this.processDataReport(data[i], dataReport[i], proccessedData, dataId, repeatSections,
-          dates, booleans, namesRepeats, columnsNames);
+          dates, booleans, files, namesRepeats, columnsNames);
         if (data[i] != null && data[i].constructor.name === 'Object' && !data[i]['data']) {
           proccessedData.push(this.adjustData(dataReport[i], columnsNames));
         }

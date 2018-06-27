@@ -2151,3 +2151,7 @@ span.gt-highlight-search {
 body {
     margin: 0;
 }
+
+a.download-link {
+    cursor: pointer;
+}
