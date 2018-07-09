@@ -49,6 +49,9 @@ public class UserRepositoryImpl implements UserRepository {
         if ("carlos.carmona".equals(name) && "udea2018".equals(password)) {
         		doc = "1214743621";
         		isValidAdmin = true;
+        } else if("gloria.isabel".equals(name) && "internacionalizacion2018".equals(password)) {
+        		doc = "1094902356";
+    			isValidAdmin = true;
         } else {
         		try {
 

@@ -37,6 +37,7 @@ import { ReportComponent } from './components/report/report.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HomeComponent } from './components/home/home.component';
+import { EvaluationComponent } from './components/evaluation/evaluation.component';
 
 import { TemplatesService } from './services/templates.service';
 import { DataService } from './services/data.service';
@@ -80,6 +81,7 @@ export function required(err, field) {
     TemplatesComponent,
     ReportComponent,
     HomeComponent,
+    EvaluationComponent,
     DatepickerTypeComponent,
     VariableTypeComponent,
     RepeatTypeComponent,

@@ -8,6 +8,7 @@ public class Dependency {
 	private List<String> role;
 	private List<Form> forms;
 	private List<Form> formsReport;
+	private boolean evaluationItem;
 
 	public String getName() {
 		return name;
@@ -39,6 +40,14 @@ public class Dependency {
 
 	public void setFormsReport(List<Form> formsReport) {
 		this.formsReport = formsReport;
+	}
+
+	public boolean isEvaluationItem() {
+		return evaluationItem;
+	}
+
+	public void setEvaluationItem(boolean evaluationItem) {
+		this.evaluationItem = evaluationItem;
 	}
 
 }
