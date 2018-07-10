@@ -34,7 +34,6 @@ public class UserRepositoryImpl implements UserRepository {
     @Value("${SERVICIO_VALIDAR_USUARIO}")
     String serviceName;
     @Value("${SERVICIO_SIPE}")
-
     String serviceNameSipe;
     @Value("${SIPE_PARM_CC}")
     String paramSipeCC;

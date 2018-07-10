@@ -1,20 +1,22 @@
 <div>
 
-	<button mat-button [matMenuTriggerFor]="main_menu">
+    <button mat-button [matMenuTriggerFor]="main_menu">
 		<i class="material-icons">more_vert</i>
 		<span *ngIf="!activeForm">Seleccione una dependencia académica o administrativa</span>
 		<span *ngIf="activeForm" class="titleform"> {{activeDependency.name+ " - " + activeForm.name }}</span>
 	</button>
 
-	<mat-menu #main_menu="matMenu">    
-    <ng-container *ngFor="let mainItem of dependencies">
-      <div *ngIf="mainItem.evaluationItem">
-        <button mat-menu-item (click)="load(mainItem)">{{ mainItem.name }}</button>        
-      </div>
-    </ng-container>
-	</mat-menu>
+    <mat-menu #main_menu="matMenu">
+        <ng-container *ngFor="let mainItem of dependencies">
+            <div *ngIf="mainItem.evaluationItem">
+                <button mat-menu-item (click)="load(mainItem)">{{ mainItem.name }}</button>
+            </div>
+        </ng-container>
+    </mat-menu>
 
+    <div *ngIf="activeDependency">
+        <iframe class="frame-informes" width="100%" height="300" [src]="activeDependency.evaluationDoc | safe : 'resourceUrl'" (load)="onLoad()"></iframe>
+    </div>
 
-	
-	<ngx-loading [show]="loading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
+    <ngx-loading [show]="loading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
 </div>

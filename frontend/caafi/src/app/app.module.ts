@@ -53,6 +53,7 @@ import { TooltipWrapperComponent } from './components/wrappers/tooltip/tooltip-w
 import { MatProgressButtons } from 'mat-progress-buttons';
 
 import { AppComponent } from './app.component';
+import { SafePipe } from './safe.pipe';
 
 export function minlengthValidationMessage(err, field) {
   return `El campo ${field.templateOptions.label} debe contener al menos ${field.templateOptions.minLength} caracteres.`;
@@ -87,7 +88,8 @@ export function required(err, field) {
     RepeatTypeComponent,
     FileValueAccessor,
     FormlyFieldFile,
-    TooltipWrapperComponent
+    TooltipWrapperComponent,
+    SafePipe
   ],
   imports: [
     BrowserModule,

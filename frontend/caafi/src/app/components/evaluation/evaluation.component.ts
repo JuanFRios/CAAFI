@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 export class EvaluationComponent implements OnInit {
 
   dependencies: Dependency[];
+  activeDependency: Dependency;
   errorMessage: string[] = [];
   sub: any;
 
@@ -23,8 +24,6 @@ export class EvaluationComponent implements OnInit {
     this.sub = this.route.params.subscribe(params => {
       this.loadConfig();
     });
-
-    console.log(this.dependencies);
   }
 
   loadConfig() {
@@ -33,6 +32,14 @@ export class EvaluationComponent implements OnInit {
         this.dependencies = form.value;
       },
         error => this.errorMessage.push(error));
+  }
+
+  load(dependency: Dependency) {
+    this.activeDependency = dependency;
+  }
+
+  onLoad() {
+    console.log('loaded');
   }
 
 }

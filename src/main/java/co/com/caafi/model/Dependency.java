@@ -9,6 +9,7 @@ public class Dependency {
 	private List<Form> forms;
 	private List<Form> formsReport;
 	private boolean evaluationItem;
+	private String evaluationDoc;
 
 	public String getName() {
 		return name;
@@ -48,6 +49,14 @@ public class Dependency {
 
 	public void setEvaluationItem(boolean evaluationItem) {
 		this.evaluationItem = evaluationItem;
+	}
+
+	public String getEvaluationDoc() {
+		return evaluationDoc;
+	}
+
+	public void setEvaluationDoc(String evaluationDoc) {
+		this.evaluationDoc = evaluationDoc;
 	}
 
 }
