@@ -10,6 +10,7 @@ public class Dependency {
 	private List<Form> formsReport;
 	private boolean evaluationItem;
 	private String evaluationDoc;
+	private boolean noDependency;
 
 	public String getName() {
 		return name;
@@ -57,6 +58,14 @@ public class Dependency {
 
 	public void setEvaluationDoc(String evaluationDoc) {
 		this.evaluationDoc = evaluationDoc;
+	}
+
+	public boolean isNoDependency() {
+		return noDependency;
+	}
+
+	public void setNoDependency(boolean noDependency) {
+		this.noDependency = noDependency;
 	}
 
 }
