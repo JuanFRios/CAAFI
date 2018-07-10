@@ -2,8 +2,8 @@
 
     <button mat-button [matMenuTriggerFor]="main_menu">
 		<i class="material-icons">more_vert</i>
-		<span *ngIf="!activeForm">Seleccione una dependencia académica o administrativa</span>
-		<span *ngIf="activeForm" class="titleform"> {{activeDependency.name+ " - " + activeForm.name }}</span>
+		<span *ngIf="!activeDependency">Seleccione una dependencia académica o administrativa</span>
+		<span *ngIf="activeDependency" class="titleform"> {{activeDependency.name}}</span>
 	</button>
 
     <mat-menu #main_menu="matMenu">

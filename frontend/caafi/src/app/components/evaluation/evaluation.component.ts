@@ -14,6 +14,7 @@ export class EvaluationComponent implements OnInit {
   activeDependency: Dependency;
   errorMessage: string[] = [];
   sub: any;
+  loading: false;
 
   constructor(
     private configService: ConfigService,
