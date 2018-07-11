@@ -49,3 +49,4 @@ frontend/caafi/e2e/*.map
 # System Files
 .DS_Store
 Thumbs.db
+sh.exe.stackdump
