@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileService {
 
-    public static final String UPLOAD_FILE_SERVER = "/mnt/datos_caafi/";
+    public static final String UPLOAD_FILE_SERVER = "/mnt/";
     private final Path rootLocation;
 
     public FileService() {
