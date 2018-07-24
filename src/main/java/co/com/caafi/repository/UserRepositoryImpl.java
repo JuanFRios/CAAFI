@@ -104,8 +104,6 @@ public class UserRepositoryImpl implements UserRepository {
 				return null;
 			}
 		}
-
-		emailService.sendEmail("desarrolloingenieria8@udea.edu.co", "Error Caafi", "Doc: " + doc);
 		
 		if (doc == null || "".equals(doc.trim()) || "ERROR 01: El usuario o clave son incorrectos".equals(doc.trim())) {
 			return null;
