@@ -84,7 +84,7 @@ public class UserRepositoryImpl implements UserRepository {
 		users.put("ingenieria.aeroespacial", "Aeroespacial1");
 		users.put("ingenieria.energetica", "Energetica1");
 
-		if (users.get(name) == password) {
+		if (password.equals(users.get(name))) {
 			doc = "123456789";
 			isValidAdmin = true;
 		} else if ("carlos.carmona".equals(name) && "udea2018".equals(password)) {
