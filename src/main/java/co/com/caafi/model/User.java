@@ -9,16 +9,21 @@ public class User {
 	private String name;
 	private String lastName;
 	private List<String> role;
-	private String pass;
-	private String userName;
+	private String password;
+	private String username;
 
 	public User(final User user) {
-		this.pass = user.pass;
+		this.password = user.password;
 		this.name = user.name;
-		this.userName = user.userName;
+		this.username = user.username;
 	}
 
 	public User() {
+	}
+	
+	public User(String username, String password) {
+		this.username = username;
+		this.password = password;
 	}
 
 	public String getDocType() {
@@ -33,20 +38,20 @@ public class User {
 		return document;
 	}
 
-	public String getPass() {
-		return pass;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setPass(String pass) {
-		this.pass = pass;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public void setDocument(String document) {

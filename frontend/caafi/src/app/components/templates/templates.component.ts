@@ -191,7 +191,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
     // Proceess Validators
     this.evalJSFromJSON(fields, ['pattern', 'defaultValue', 'optionsDB', 'label',
-      'templateOptions?disabled', 'onInit', 'onDestroy', 'hideExpression', 'variable'], '');
+      'templateOptions?disabled', 'onInit', 'onDestroy', 'hideExpression', 'variable', 'watcher'], '');
   }
 
   /**

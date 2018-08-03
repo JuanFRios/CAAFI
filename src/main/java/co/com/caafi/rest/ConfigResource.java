@@ -28,7 +28,7 @@ public class ConfigResource {
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/template/role/{name}", method = RequestMethod.GET)
-	public ConfigTemplate findTemplateConfigByRol(@PathVariable String name,Authentication authentication) {
-		return this.configService.findTemplateConfigByRol((User) authentication.getPrincipal(),name);
+	public ConfigTemplate findTemplateConfigByRol(@PathVariable String name, Authentication authentication) {
+		return this.configService.findTemplateConfigByRol((User) authentication.getPrincipal(), name);
 	}
 }

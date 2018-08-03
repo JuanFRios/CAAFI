@@ -43,11 +43,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.sistemas.security</groupId>
-			<artifactId>OrgSistemasSecurity</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
@@ -79,10 +74,10 @@
             <version>1.1.1</version>
         </dependency>
         <dependency>
-	<groupId>com.github.wnameless</groupId>
-	<artifactId>json-flattener</artifactId>
-	<version>0.5.0</version>
-</dependency>
+			<groupId>com.github.wnameless</groupId>
+			<artifactId>json-flattener</artifactId>
+			<version>0.5.0</version>
+		</dependency>
 
         <!-- https://mvnrepository.com/artifact/net.sf.ezmorph/ezmorph -->
         <dependency>
@@ -114,6 +109,11 @@
             <artifactId>commons-beanutils</artifactId>
             <version>1.7.0</version>
         </dependency>
+        
+        <dependency>
+  			<groupId>org.apache.httpcomponents</groupId>
+  			<artifactId>httpclient</artifactId>
+		</dependency>
 
 	</dependencies>
 

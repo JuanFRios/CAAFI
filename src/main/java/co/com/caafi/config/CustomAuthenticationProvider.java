@@ -15,7 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import co.com.caafi.model.User;
-import co.com.caafi.repository.UserRepository;
+import co.com.caafi.service.UserService;
 
 /**
  * @author carlcaep
@@ -25,13 +25,13 @@ import co.com.caafi.repository.UserRepository;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
-	UserRepository userRepository;
+	UserService userService;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) {
 		String name = authentication.getName();
 		String password = authentication.getCredentials().toString();
-		User user = userRepository.getUser(name, password);
+		User user = userService.getUser(name, password);
 		if (user != null) {
 			// use the credentials
 			// and authenticate against the third-party system
