@@ -17,7 +17,7 @@ public class UserRestService extends RestService {
 		 
 		HttpEntity<User> request = new HttpEntity<>(new User(username, password));
 		User user = restTemplate.postForObject(env.getProperty("udea.auth-api.base-url") + 
-				env.getProperty("udea.auth-api.api.by-credentials.path")	, request, User.class);
+				env.getProperty("udea.auth-api.api.by-credentials.path"), request, User.class);
 		return user;
 
 	}
