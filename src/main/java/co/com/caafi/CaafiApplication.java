@@ -7,6 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CaafiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CaafiApplication.class, args);
+		SpringApplication.run(CaafiApplication.class, "--debug");
 	}
 }
