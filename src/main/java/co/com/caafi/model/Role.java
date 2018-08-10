@@ -5,6 +5,8 @@ public class Role {
 	private String dependency;
 	private String role;
 	
+	public Role() {
+	}
 	public Role(String dependency, String role) {
 		this.dependency = dependency;
 		this.role = role;
