@@ -10,6 +10,7 @@ import co.com.caafi.model.Config;
 import co.com.caafi.model.ConfigTemplate;
 import co.com.caafi.model.Dependency;
 import co.com.caafi.model.Form;
+import co.com.caafi.model.Role;
 import co.com.caafi.model.User;
 import co.com.caafi.repository.ConfigRepository;
 import co.com.caafi.repository.ConfigTemplateRepository;
@@ -29,10 +30,10 @@ public class ConfigService {
 		ConfigTemplate config = this.configTemplateRepository.findByName(name);
 		List<Dependency> result = new ArrayList<>();
 		config.getValue().forEach(x -> {
-			if (hasRole(x.getRole(), user.getRole())) {
+			if (hasRole(x.getRole(), user.getRoles())) {
 				List<Form> form = new ArrayList<>();
 				x.getForms().forEach(y -> {
-					if (hasRole(y.getRole(), user.getRole())) {
+					if (hasRole(y.getRole(), user.getRoles())) {
 						form.add(y);
 					}
 				});
@@ -44,10 +45,10 @@ public class ConfigService {
 		return config;
 	}
 
-	private boolean hasRole(List<String> resource, List<String> role) {
-		for (String rol : role) {
+	private boolean hasRole(List<String> resource, List<Role> roles) {
+		for (Role role : roles) {
 			for (String res : resource) {
-				if (res.equals(rol)) {
+				if (res.equals(role.getRole())) {
 					return true;
 				}
 			}

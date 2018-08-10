@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import co.com.caafi.model.Role;
 import co.com.caafi.model.User;
 import co.com.caafi.service.UserService;
 
@@ -35,7 +36,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		if (user != null) {
 			// use the credentials
 			// and authenticate against the third-party system
-			return new UsernamePasswordAuthenticationToken(user, password, transformRole(user.getRole()));
+			return new UsernamePasswordAuthenticationToken(user, password, transformRole(user.getRoles()));
 		} else {
 			return null;
 		}
@@ -46,9 +47,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		return authentication.equals(UsernamePasswordAuthenticationToken.class);
 	}
 
-	private List<GrantedAuthority> transformRole(List<String> list) {
+	private List<GrantedAuthority> transformRole(List<Role> list) {
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-		list.forEach(x -> authorities.add(new SimpleGrantedAuthority(x)));
+		list.forEach(x -> authorities.add(new SimpleGrantedAuthority(x.getRole())));
 		return authorities;
 
 	}

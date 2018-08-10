@@ -5,7 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyString;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +20,7 @@ import co.com.caafi.model.Config;
 import co.com.caafi.model.ConfigTemplate;
 import co.com.caafi.model.Dependency;
 import co.com.caafi.model.Form;
+import co.com.caafi.model.Role;
 import co.com.caafi.model.User;
 import co.com.caafi.repository.ConfigRepository;
 import co.com.caafi.repository.ConfigTemplateRepository;
@@ -49,7 +52,9 @@ public class ConfigServiceTest {
     public void findTemplateConfigByRolTest() {
 
         User user = new User();
-        user.setRole(Arrays.asList("admin"));
+        List<Role> roles = new ArrayList<Role>();
+        roles.add(new Role("", "admin"));
+        user.setRoles(roles);
         ConfigTemplate tem = new ConfigTemplate();
         tem.setName("form1");
         tem.setId("dklsfjpoa");
