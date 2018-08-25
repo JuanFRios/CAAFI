@@ -8,7 +8,7 @@ public class User {
 	private String document;
 	private String name;
 	private String lastName;
-	private List<Role> roles;
+	private List<String> roles;
 	private String password;
 	private String username;
 
@@ -74,11 +74,11 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	public List<Role> getRoles() {
+	public List<String> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<Role> roles) {
+	public void setRoles(List<String> roles) {
 		this.roles = roles;
 	}
 

@@ -20,7 +20,6 @@ import co.com.caafi.model.Config;
 import co.com.caafi.model.ConfigTemplate;
 import co.com.caafi.model.Dependency;
 import co.com.caafi.model.Form;
-import co.com.caafi.model.Role;
 import co.com.caafi.model.User;
 import co.com.caafi.repository.ConfigRepository;
 import co.com.caafi.repository.ConfigTemplateRepository;
@@ -52,8 +51,8 @@ public class ConfigServiceTest {
     public void findTemplateConfigByRolTest() {
 
         User user = new User();
-        List<Role> roles = new ArrayList<Role>();
-        roles.add(new Role("", "admin"));
+        List<String> roles = new ArrayList<String>();
+        roles.add("admin");
         user.setRoles(roles);
         ConfigTemplate tem = new ConfigTemplate();
         tem.setName("form1");
