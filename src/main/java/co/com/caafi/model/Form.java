@@ -9,6 +9,7 @@ public class Form {
 	private String template;
 	private Object config;
 	private boolean allDataAccess;
+	private List<Form> subItems;
 
 	public String getName() {
 		return name;
@@ -56,6 +57,14 @@ public class Form {
 
 	public void setAllDataAccess(boolean allDataAccess) {
 		this.allDataAccess = allDataAccess;
+	}
+
+	public List<Form> getSubItems() {
+		return subItems;
+	}
+
+	public void setSubItems(List<Form> subItems) {
+		this.subItems = subItems;
 	}
 
 }

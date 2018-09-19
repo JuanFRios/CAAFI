@@ -9,5 +9,6 @@ export const routes: Routes = [
   { path: 'formularios', component: TemplatesComponent, canActivate: [AuthGuard]},
   { path: 'reportes', component: TemplatesComponent, canActivate: [AuthGuard] },
   { path: 'autoevaluacion', component: EvaluationComponent, canActivate: [AuthGuard] },
+  { path: 'encuestas', component: TemplatesComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: 'formularios' }
 ];

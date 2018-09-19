@@ -8,6 +8,7 @@ public class Dependency {
 	private List<String> role;
 	private List<Form> forms;
 	private List<Form> formsReport;
+	private List<Form> polls;
 	private boolean evaluationItem;
 	private String evaluationDoc;
 	private boolean noDependency;
@@ -66,6 +67,14 @@ public class Dependency {
 
 	public void setNoDependency(boolean noDependency) {
 		this.noDependency = noDependency;
+	}
+
+	public List<Form> getPolls() {
+		return polls;
+	}
+
+	public void setPolls(List<Form> polls) {
+		this.polls = polls;
 	}
 
 }

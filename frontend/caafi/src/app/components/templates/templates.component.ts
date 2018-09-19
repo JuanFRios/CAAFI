@@ -74,6 +74,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   filters: string;
   showForm = true;
   activeForm: Form;
+  routePath: String;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -98,6 +99,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isReport = this.route.snapshot.routeConfig.path === 'reportes' ? true : false;
+    this.routePath = this.route.snapshot.routeConfig.path;
 
     this.sub = this.route.params.subscribe(params => {
       this.loadConfig();
