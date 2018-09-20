@@ -1959,6 +1959,7 @@ button.btn-agregar {
     width: 31%;
     padding: 0 10px;
 }
+
 .w-50 {
     width: 47%;
 }
@@ -2156,6 +2157,7 @@ span.gt-highlight-search {
 #cdk-overlay-0 .mat-menu-panel {
     max-height: calc(100vh - 198px) !important;
 }
+
 .mat-menu-item {
     font-size: 14px;
 }
@@ -2166,4 +2168,9 @@ body {
 
 a.download-link {
     cursor: pointer;
+}
+
+.title-label {
+    width: 100%;
+    margin-bottom: 10px;
 }

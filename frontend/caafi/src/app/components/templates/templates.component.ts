@@ -24,6 +24,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { merge } from 'rxjs/observable/merge';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { ExportToCsv } from 'export-to-csv';
+import { baseURL } from '../../common/baseurl';
 
 @Component({
   selector: 'app-templates',
@@ -552,6 +553,16 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     //window['windowDownloadFile'] = () => {
       console.log('download');
     //};
+  }
+
+  enviarEncuesta(emails) {
+    console.log('enviar encuesta a: ', emails);
+
+    this.templatesService.senTemplateByEmail(this.activeForm.path, emails)
+    .subscribe(result => {
+      
+    },
+    error => this.errorMessage.push(error));
   }
 
 }

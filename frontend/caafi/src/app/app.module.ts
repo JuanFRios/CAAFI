@@ -17,7 +17,7 @@ import {
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { LoadingModule } from 'ngx-loading';
 
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { GenericTableModule } from 'angular-generic-table';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
@@ -93,6 +93,7 @@ export function required(err, field) {
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     CommonModule,
     ReactiveFormsModule,
     FlexLayoutModule,

@@ -112,53 +112,65 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 #dataTable .mat-row {
     display: inline-flex;
 }
-#dataTable .mat-cell, 
+
+#dataTable .mat-cell,
 #dataTable .mat-header-cell {
     flex: none;
     width: 300px;
     text-align: left;
 }
-#dataTable .mat-cell.repeat, 
+
+#dataTable .mat-cell.repeat,
 #dataTable .mat-header-cell.repeat {
     width: 1200px
 }
+
 #dataTable .mat-header-cell.action,
 #dataTable .mat-cell.action {
     flex: none;
     width: 40px;
 }
+
 #dataTable .mat-header-cell.action.last,
 #dataTable .mat-cell.action.last {
     margin-right: 10px;
 }
+
 #dataTable .mat-table {
     overflow-x: scroll;
 }
+
 #dataTable .mat-card {
     width: 100%;
 }
+
 #dataTable .action .mat-raised-button {
     width: auto;
     min-width: auto;
     padding: 0 5px;
 }
+
 #dataTable .contenedor-tabla.mat-card-content {
     position: relative;
 }
+
 #dataTable .table-header {
     min-height: 64px;
     padding: 8px 24px 0;
     background-color: #FAFAFA;
 }
+
 #dataTable .mat-form-field {
     font-size: 14px;
     width: 100%;
     margin: 0;
 }
+
 #dataTable .mat-table {
     overflow: auto;
     max-height: 500px;
 }
+
 #dataTable .export {
     display: table;
     margin: auto;
@@ -180,4 +192,13 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 .cdk-overlay-pane .mat-menu-panel {
     max-height: calc(100vh - 68px);
     max-width: none;
+}
+
+.container-formPollEmails {
+    display: flex;
+    flex-direction: column;
+}
+
+.container-formPollEmails>* {
+    width: 100%;
 }
