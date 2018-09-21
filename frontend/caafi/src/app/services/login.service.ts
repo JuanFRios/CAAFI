@@ -25,22 +25,25 @@ export class LoginService implements CanActivate {
 
 	canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
 
-		this.check().subscribe(usuario => {}, error => {
-		  if (localStorage.getItem('tokenUser')) {
-			localStorage.removeItem('tokenUser');
-			this.router.navigate(['/home']);
-		  }
+		this.check().subscribe(usuario => { }, error => {
+			if (localStorage.getItem('tokenUser')) {
+				localStorage.removeItem('tokenUser');
+				console.log('navigate 1');
+				this.router.navigate(['/home']);
+			}
 		});
 
 		if (this.isLogIn()) {
+			console.log('Is Login', localStorage.getItem('tokenUser'));
 			return true;
 		}
-		
+
+		console.log('navigate 2')
 		this.router.navigate(['/home']);
 		return false;
 	}
 
-	isLogIn(): boolean {		
+	isLogIn(): boolean {
 		return localStorage.getItem('tokenUser') != null;
 	}
 
@@ -85,16 +88,16 @@ export class LoginService implements CanActivate {
 		headers.append("X-Requested-With", "XMLHttpRequest");
 		options.headers = headers;
 		return this.http.get(baseURL + "/account/check", options)
-			.map((response: Response) => {});
+			.map((response: Response) => { });
 	}
 
 	checkStatus() {
 		this.check().subscribe(usuario => {
 		}, error => {
-		  if (localStorage.getItem('tokenUser')) {
-			localStorage.removeItem('tokenUser');
-			this.router.navigate(['/home']);
-		  }
+			if (localStorage.getItem('tokenUser')) {
+				localStorage.removeItem('tokenUser');
+				this.router.navigate(['/home']);
+			}
 		});
 	}
 

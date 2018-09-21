@@ -69,7 +69,17 @@
                         <textarea matInput #poll_emails placeholder="Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
                     </mat-form-field>
                 </div>
-                <button mat-raised-button color="primary" type="button" (click)="enviarEncuesta(poll_emails.value)">Enviar encuesta</button>
+				<button mat-raised-button color="primary" type="button" (click)="enviarEncuesta(poll_emails.value)">Enviar encuesta</button>
+				<div [hidden]="!cargandoEncuesta">
+					<mat-spinner></mat-spinner>
+					<h4>Guardando...</h4>
+				</div>
+				<div *ngIf="errorMessageEncuesta" class="error">
+					<p *ngFor="let error of errorMessageEncuesta">{{error}}</p>
+				</div>
+				<div *ngIf="exitoEncuesta" class="exito">
+					<p>La encuesta se ha enviado satisfactoriamente</p>
+				</div>
             </div>
 
             <div id="dataTable" class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column" fxLayoutAlign.gt-md="space-around center" fxLayoutGap="10px">

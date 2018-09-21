@@ -2,9 +2,12 @@ package co.com.caafi.service;
 
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import co.com.caafi.model.StringResponse;
 import co.com.caafi.model.template.Template;
 import co.com.caafi.repository.TemplateRepository;
 
@@ -25,11 +28,11 @@ public class TemplateService {
 		return this.templateRepository.findAll();
 	}
 
-	public String sendTemplateByMail(String template, String emails) {
+	public StringResponse sendTemplateByMail(String template, String emails, String url) throws JSONException {
 		String[] emailsSpl = emails.split(",");
 		for(String email : emailsSpl) {
-			emailService.sendEmail(email, "Encuesta Caafi",  template);
+			emailService.sendEmail(email, "Encuesta Caafi", url);
 		}
-		return "OK";
+		return new StringResponse("OK");
 	}
 }

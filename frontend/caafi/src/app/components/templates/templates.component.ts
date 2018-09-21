@@ -76,6 +76,9 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   showForm = true;
   activeForm: Form;
   routePath: String;
+  errorMessageEncuesta: string[] = [];
+  exitoEncuesta = false;
+  cargandoEncuesta = false;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -103,6 +106,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.routePath = this.route.snapshot.routeConfig.path;
 
     this.sub = this.route.params.subscribe(params => {
+      console.log(params);
       this.loadConfig();
     });
 
@@ -556,13 +560,18 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   }
 
   enviarEncuesta(emails) {
-    console.log('enviar encuesta a: ', emails);
-
-    this.templatesService.senTemplateByEmail(this.activeForm.path, emails)
+    this.cargandoEncuesta = true;
+    this.templatesService.senTemplateByEmail(this.activeForm.path, emails, '/encuestas/' + this.activeForm.path)
     .subscribe(result => {
-      
+      if (result.response === 'OK') {
+        this.exitoEncuesta = true;
+      }
+      this.cargandoEncuesta = false;
     },
-    error => this.errorMessage.push(error));
+    error => {
+      this.errorMessageEncuesta.push(error);
+      this.cargandoEncuesta = false;
+    });
   }
 
 }
