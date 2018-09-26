@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, Inject, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, Input, ViewChild, ElementRef,
+  AfterViewInit, AfterViewChecked, AfterContentInit, AfterContentChecked } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
 import { ConfigService } from '../../services/config.service';
 import { DataService } from '../../services/data.service';
@@ -25,13 +26,14 @@ import { merge } from 'rxjs/observable/merge';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { ExportToCsv } from 'export-to-csv';
 import { baseURL } from '../../common/baseurl';
+import { httpBaseURL } from '../../common/baseurl';
 
 @Component({
   selector: 'app-templates',
   templateUrl: './templates.component.html',
   styleUrls: ['./templates.component.css']
 })
-export class TemplatesComponent implements OnInit, OnDestroy {
+export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onDestroy$ = new Subject<void>();
   sub: any;
@@ -42,7 +44,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   formFields: Array<FormlyFieldConfig>;
   formData: Object;
   data: Data;
-  dependencies: Dependency[];
+  //dependencies: Dependency[];
   activeDependency: Dependency;
   lists: String[][] = [];
   options: FormlyFormOptions = {};
@@ -75,10 +77,11 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   filters: string;
   showForm = true;
   activeForm: Form;
-  routePath: String;
+  routePath: string;
   errorMessageEncuesta: string[] = [];
   exitoEncuesta = false;
   cargandoEncuesta = false;
+  pollId: string;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -103,14 +106,33 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isReport = this.route.snapshot.routeConfig.path === 'reportes' ? true : false;
-    this.routePath = this.route.snapshot.routeConfig.path;
+    const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
+    this.routePath = urlTree.root.children['primary'].segments[0].path;
+    if (this.routePath === 'encuestas' && this.route.snapshot.paramMap.get('id') != null) {
+      this.pollId = this.route.snapshot.paramMap.get('id');
+    }
 
+    /*
     this.sub = this.route.params.subscribe(params => {
       console.log(params);
       this.loadConfig();
     });
+    */
 
     this.dataSource = new ModelDataSource(this.dataService);
+  }
+
+  ngAfterViewInit() {
+    if (this.pollId) {
+      console.log(this.activeForm);
+      const af = new Form();
+      af.path = this.pollId;
+      const dep = new Dependency('name', []);
+      //this.loadFormById(this.pollId);
+      setTimeout(() => {
+        this.loadForm(af, dep);
+      });
+    }
   }
 
   loadDataPage() {
@@ -184,7 +206,51 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
         this.formFields = fields;
         this.loading = false;
-        this.loadDataTable();
+        //this.loadDataTable();
+        this.form = new FormGroup({});
+      },
+      error => {
+        this.errorMessage.push(error);
+        this.activeForm = null;
+        this.loading = false;
+      });
+  }
+
+  loadFormById(idForm: string) {
+
+    this.loading = true;
+    this.errorMessage = [];
+    this.exito = false;
+    this.cargando = false;
+    this.data = new Data();
+    this.currentId = null;
+    this.repeatSections = [];
+    this.namesRepeats = {};
+    this.dates = [];
+    this.booleans = [];
+    this.files = [];
+
+    if (this.options.resetModel) {
+      this.options.resetModel();
+    }
+
+    this.form = new FormGroup({});
+
+    this.templatesService.getByName(idForm)
+      .subscribe(template => {
+
+        this.variables = template.variables;
+        this.form = new FormGroup({});
+        this.formData = new Object();
+        this.lists = [];
+        const fields = template.fields;
+        this.showForm = fields && fields.length > 0 ? true : false;
+
+        this.proccessFields(fields);
+        this.getList(this.lists, 0, fields);
+
+        this.formFields = fields;
+        this.loading = false;
         this.form = new FormGroup({});
       },
       error => {
@@ -561,7 +627,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
   enviarEncuesta(emails) {
     this.cargandoEncuesta = true;
-    this.templatesService.senTemplateByEmail(this.activeForm.path, emails, '/encuestas/' + this.activeForm.path)
+    this.templatesService.senTemplateByEmail(this.activeForm.path, emails, httpBaseURL + '/encuestas/' + this.activeForm.path)
     .subscribe(result => {
       if (result.response === 'OK') {
         this.exitoEncuesta = true;

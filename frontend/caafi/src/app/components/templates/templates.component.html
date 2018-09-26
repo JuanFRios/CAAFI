@@ -1,44 +1,8 @@
+<app-menu></app-menu>
 <div>
-
-    <button mat-button [matMenuTriggerFor]="main_menu">
-		<i class="material-icons">more_vert</i>
-		<span *ngIf="!activeForm">Seleccione una dependencia académica o administrativa</span>
-		<span *ngIf="activeForm" class="titleform"> {{activeDependency.name+ " - " + activeForm.name }}</span>
-	</button>
-
-    <mat-menu #main_menu="matMenu">
-        <ng-container *ngFor="let mainItem of dependencies">
-
-            <div *ngIf="routePath === 'reportes' && mainItem.formsReport">
-                <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
-                <mat-menu #sub_menu="matMenu">
-                    <button *ngFor="let subItem of mainItem.formsReport" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
-                </mat-menu>
-            </div>
-            <div *ngIf="(routePath === 'reportes' && !mainItem.formsReport) || routePath === 'formularios'">
-                <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
-                <mat-menu #sub_menu="matMenu">
-                    <button *ngFor="let subItem of mainItem.forms" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
-                </mat-menu>
-            </div>
-            <div *ngIf="routePath === 'encuestas'">
-                <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
-                <mat-menu #sub_menu="matMenu">
-                    <ng-container *ngFor="let subItemBtn of mainItem.polls">
-                        <button mat-menu-item [matMenuTriggerFor]="sub_sub_menu">{{ subItemBtn.name }}</button>
-                        <mat-menu #sub_sub_menu="matMenu">
-                            <button *ngFor="let subItem of subItemBtn.subItems" mat-menu-item (click)="loadForm(subItem , subItemBtn)">{{ subItem.name }}</button>
-                        </mat-menu>
-                    </ng-container>
-                </mat-menu>
-            </div>
-
-        </ng-container>
-    </mat-menu>
-
     <div class="container">
 
-        <div *ngIf="activeForm">
+        <div *ngIf="activeForm != null">
 
             <div *ngIf="showForm">
                 <form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
@@ -52,16 +16,17 @@
                 <div [hidden]="!cargando">
                     <mat-spinner></mat-spinner>
                     <h4>Guardando...</h4>
-                </div>
+				</div>
                 <div *ngIf="errorMessage" class="error">
                     <p *ngFor="let error of errorMessage">{{error}}</p>
-                </div>
+				</div>
                 <div *ngIf="exito" class="exito">
                     <p>El formulario fue guardado con éxito</p>
                 </div>
             </div>
 
-            <div *ngIf="routePath === 'encuestas'">
+            <!-- <div *ngIf="routePath === 'encuestas'"> 
+			<div *ngIf="false">
                 <hr>
                 <h4>Configuración de la Encuesta</h4>
                 <div class="container-formPollEmails">
@@ -82,7 +47,7 @@
 				</div>
             </div>
 
-            <div id="dataTable" class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column" fxLayoutAlign.gt-md="space-around center" fxLayoutGap="10px">
+            <div *ngIf="false" id="dataTable" class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column" fxLayoutAlign.gt-md="space-around center" fxLayoutGap="10px">
 
                 <mat-card fxFlex>
                     <mat-card-content class="contenedor-tabla">
@@ -150,7 +115,8 @@
                     </mat-card-content>
                 </mat-card>
 
-            </div>
+			</div>
+			-->
 
         </div>
     </div>

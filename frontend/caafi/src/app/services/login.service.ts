@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import {
-	CanActivate, Router,
-	ActivatedRouteSnapshot,
-	RouterStateSnapshot,
-	CanActivateChild,
-	NavigationExtras,
-	CanLoad, Route
+    CanActivate, Router,
+    ActivatedRouteSnapshot,
+    RouterStateSnapshot,
+    CanActivateChild,
+    NavigationExtras,
+    CanLoad, Route
 } from '@angular/router';
 import { LoginData } from '../common/loginData';
 import { Observable } from 'rxjs/Observable';
@@ -18,87 +18,90 @@ import { baseURL } from '../common/baseurl';
 @Injectable()
 export class LoginService implements CanActivate {
 
-	redirectUrl: string;
-	loginUser: any;
+    redirectUrl: string;
+    loginUser: any;
 
-	constructor(private restangular: Restangular, public http: Http, private router: Router) { }
+    constructor(private restangular: Restangular, public http: Http, private router: Router) { }
 
-	canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            this.check().subscribe(tokenUser => {
+                if (this.isLogIn()) {
+                    console.log('Is Login', localStorage.getItem('tokenUser'));
+                    resolve(true);
+                } else {
+                    this.router.navigate(['/home']);
+                    resolve(false);
+                }
+            }, error => {
+                if (localStorage.getItem('tokenUser')) {
+                    localStorage.removeItem('tokenUser');
+                }
+                this.router.navigate(['/home']);
+                resolve(false);
+            });
+        });
+    }
 
-		this.check().subscribe(usuario => { }, error => {
-			if (localStorage.getItem('tokenUser')) {
-				localStorage.removeItem('tokenUser');
-				console.log('navigate 1');
-				this.router.navigate(['/home']);
-			}
-		});
+    isLogIn(): boolean {
+        return localStorage.getItem('tokenUser') != null;
+    }
 
-		if (this.isLogIn()) {
-			console.log('Is Login', localStorage.getItem('tokenUser'));
-			return true;
-		}
+    login(data: LoginData) {
+        let headers = new Headers();
+        headers.append('Accept', 'application/json')
+        // creating base64 encoded String from user name and password
+        var base64Credential: string = btoa(data.username + ':' + data.password);
 
-		console.log('navigate 2')
-		this.router.navigate(['/home']);
-		return false;
-	}
+        headers.append("Authorization", "Basic " + base64Credential);
+        headers.append("X-Requested-With", "XMLHttpRequest");
+        let options = new RequestOptions();
+        options.withCredentials = true
+        options.headers = headers;
+        return this.http.get(baseURL + "/account/login", options)
+            .map((response: Response) => {
+                // login successful if there's a jwt token in the response
+                let user = response.json().user;// the returned user object is a
+                // principal object
+                localStorage.setItem('tokenUser', response.json().token);
+                if (user) {
+                    // store user details in local storage to keep user logged in
+                    // between page refreshes
+                    this.loginUser = user;
+                }
+            });
+    }
 
-	isLogIn(): boolean {
-		return localStorage.getItem('tokenUser') != null;
-	}
+    logOut() {
+        let options = new RequestOptions();
+        options.withCredentials = true
 
-	login(data: LoginData) {
-		let headers = new Headers();
-		headers.append('Accept', 'application/json')
-		// creating base64 encoded String from user name and password
-		var base64Credential: string = btoa(data.username + ':' + data.password);
+        return this.http.get(baseURL + "/account/logout", options)
+            .map((response: Response) => {
+            });
+    }
 
-		headers.append("Authorization", "Basic " + base64Credential);
-		headers.append("X-Requested-With", "XMLHttpRequest");
-		let options = new RequestOptions();
-		options.withCredentials = true
-		options.headers = headers;
-		return this.http.get(baseURL + "/account/login", options)
-			.map((response: Response) => {
-				// login successful if there's a jwt token in the response
-				let user = response.json().user;// the returned user object is a
-				// principal object
-				localStorage.setItem('tokenUser', response.json().token);
-				if (user) {
-					// store user details in local storage to keep user logged in
-					// between page refreshes
-					this.loginUser = user;
-				}
-			});
-	}
+    check() {
+        let options = new RequestOptions();
+        options.withCredentials = true
+        let headers = new Headers();
+        headers.append("X-Requested-With", "XMLHttpRequest");
+        options.headers = headers;
+        return this.http.get(baseURL + "/account/check", options)
+            .map((response: Response) => {
+                console.log('response.json', response.json());
+                return response.json().response;
+            });
+    }
 
-	logOut() {
-		let options = new RequestOptions();
-		options.withCredentials = true
-
-		return this.http.get(baseURL + "/account/logout", options)
-			.map((response: Response) => {
-			});
-	}
-
-	check() {
-		let options = new RequestOptions();
-		options.withCredentials = true
-		let headers = new Headers();
-		headers.append("X-Requested-With", "XMLHttpRequest");
-		options.headers = headers;
-		return this.http.get(baseURL + "/account/check", options)
-			.map((response: Response) => { });
-	}
-
-	checkStatus() {
-		this.check().subscribe(usuario => {
-		}, error => {
-			if (localStorage.getItem('tokenUser')) {
-				localStorage.removeItem('tokenUser');
-				this.router.navigate(['/home']);
-			}
-		});
-	}
+    checkStatus() {
+        this.check().subscribe(usuario => {
+        }, error => {
+            if (localStorage.getItem('tokenUser')) {
+                localStorage.removeItem('tokenUser');
+                this.router.navigate(['/home']);
+            }
+        });
+    }
 
 }
