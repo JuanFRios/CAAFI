@@ -6,11 +6,14 @@
     </button>
 
     <mat-menu #main_menu="matMenu">
-        <ng-container *ngFor="let mainItem of dependencies">
-            <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
+        <!--
+        <ng-container *ngFor="let menuItem of menuItems">
+            <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ menuItem.name }}</button>
             <mat-menu #sub_menu="matMenu">
-                <button *ngFor="let subItem of mainItem.forms" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
+                <button *ngFor="let subItem of menuItem.subItems" mat-menu-item (click)="emitLoadTemplate(subItem , menuItem)">{{ subItem.name }}</button>
             </mat-menu>
         </ng-container>
+        -->
+        <div [innerHtml]="menuStructure"></div>
     </mat-menu>
 </div>

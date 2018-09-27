@@ -83,6 +83,8 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
   cargandoEncuesta = false;
   pollId: string;
 
+  menuItems: any;
+
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
     text: 'Exportar CSV',
@@ -105,6 +107,9 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
   ) { }
 
   ngOnInit() {
+
+    this.loadMenu(this.route.snapshot.routeConfig.path);
+
     this.isReport = this.route.snapshot.routeConfig.path === 'reportes' ? true : false;
     const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
     this.routePath = urlTree.root.children['primary'].segments[0].path;
@@ -130,9 +135,24 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
       const dep = new Dependency('name', []);
       //this.loadFormById(this.pollId);
       setTimeout(() => {
-        this.loadForm(af, dep);
+        //this.loadForm(af, dep);
       });
     }
+  }
+
+  /**
+   * Loads the menu of an especified module
+   * @param module module to load the menu
+   */
+  loadMenu(module: string) {
+    this.configService.getByName(module).subscribe(
+      config => {
+        this.menuItems = config.value;
+      },
+      error => {
+        console.log('ERROR: ', error);
+      }
+    );
   }
 
   loadDataPage() {
@@ -152,13 +172,16 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
   loadConfig() {
     this.configService.getTemplateConfig('dependencias')
       .subscribe(form => {
-        this.dependencies = form.value;
+        //this.dependencies = form.value;
       },
         error => this.errorMessage.push(error));
   }
 
-  loadForm(activeForm: Form, dependency: Dependency) {
+  //loadForm(activeForm: Form, dependency: Dependency) {
+  loadForm($event) {
 
+    console.log('REceived emitt loading...', $event);
+    /*
     this.loading = true;
     this.errorMessage = [];
     this.exito = false;
@@ -214,6 +237,8 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
         this.activeForm = null;
         this.loading = false;
       });
+    */
+
   }
 
   loadFormById(idForm: string) {

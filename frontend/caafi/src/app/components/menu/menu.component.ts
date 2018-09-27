@@ -1,6 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { Dependency } from '../../common/dependency';
 import { ConfigService } from '../../services/config.service';
+import { DomSanitizer, SafeHtml } from '../../../../node_modules/@angular/platform-browser';
 
 @Component({
   selector: 'app-menu',
@@ -9,14 +10,19 @@ import { ConfigService } from '../../services/config.service';
 })
 export class MenuComponent implements OnInit {
 
-  @Output() loadTemplateEmitter = new EventEmitter();
+  @Input() menuItems: any;
+  @Output() loadTemplate = new EventEmitter();
+  menuStructure: SafeHtml;
   dependencies: Dependency[];
 
   constructor(
-    private configService: ConfigService
+    private configService: ConfigService,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
+    console.log('menuItems 1', this.menuItems);
+    this.menuStructure = this.sanitizer.bypassSecurityTrustHtml('<ng-container *ngFor="let menuItem of menuItems"><button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ menuItem.name }}</button><mat-menu #sub_menu="matMenu"><button *ngFor="let subItem of menuItem.subItems" mat-menu-item (click)="emitLoadTemplate(subItem , menuItem)">{{ subItem.name }}</button></mat-menu></ng-container>');
     this.loadDependencies();
   }
 
@@ -28,8 +34,10 @@ export class MenuComponent implements OnInit {
     error => console.log('ERROR: ', error));
   }
 
-  loadForm() {
-    console.log('loading...');
+  emitLoadTemplate (subItem, mainItem) {
+    console.log('subItem', subItem);
+    console.log('mainItem', mainItem);
+    this.loadTemplate.emit('hello');
   }
 
 }

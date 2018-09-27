@@ -1,5 +1,45 @@
-<app-menu></app-menu>
+<div *ngIf="menuItems">
+	<app-menu [menuItems]="menuItems" (loadTemplate)="loadForm($event)"></app-menu>
+</div>
 <div>
+
+	<!--
+	<button mat-button [matMenuTriggerFor]="main_menu">
+		<i class="material-icons">more_vert</i>
+		<span *ngIf="!activeForm">Seleccione una dependencia académica o administrativa</span>
+		<span *ngIf="activeForm" class="titleform"> {{activeDependency.name+ " - " + activeForm.name }}</span>
+	</button>
+
+	<mat-menu #main_menu="matMenu">
+		<ng-container *ngFor="let mainItem of dependencies">
+
+			<div *ngIf="routePath === 'reportes' && mainItem.formsReport">
+				<button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
+				<mat-menu #sub_menu="matMenu">
+					<button *ngFor="let subItem of mainItem.formsReport" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
+				</mat-menu>
+			</div>
+			<div *ngIf="(routePath === 'reportes' && !mainItem.formsReport) || routePath === 'formularios'">
+				<button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
+				<mat-menu #sub_menu="matMenu">
+					<button *ngFor="let subItem of mainItem.forms" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
+				</mat-menu>
+			</div>
+			<div *ngIf="routePath === 'encuestas'">
+				<button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
+				<mat-menu #sub_menu="matMenu">
+					<ng-container *ngFor="let subItemBtn of mainItem.polls">
+						<button mat-menu-item [matMenuTriggerFor]="sub_sub_menu">{{ subItemBtn.name }}</button>
+						<mat-menu #sub_sub_menu="matMenu">
+							<button *ngFor="let subItem of subItemBtn.subItems" mat-menu-item (click)="loadForm(subItem , subItemBtn)">{{ subItem.name }}</button>
+						</mat-menu>
+					</ng-container>
+				</mat-menu>
+			</div>
+		</ng-container>
+	</mat-menu>
+	-->
+
     <div class="container">
 
         <div *ngIf="activeForm != null">
