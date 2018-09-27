@@ -33,14 +33,15 @@ import { httpBaseURL } from '../../common/baseurl';
   templateUrl: './templates.component.html',
   styleUrls: ['./templates.component.css']
 })
-export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
+export class TemplatesComponent implements OnInit {
 
+  /*
   onDestroy$ = new Subject<void>();
   sub: any;
   errorMessage: string[] = [];
   exito = false;
   cargando = false;
-  form: FormGroup;
+  //form: FormGroup;
   formFields: Array<FormlyFieldConfig>;
   formData: Object;
   data: Data;
@@ -82,9 +83,13 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
   exitoEncuesta = false;
   cargandoEncuesta = false;
   pollId: string;
+  */
 
   menuItems: any;
+  activeModule: string;
+  formName: string;
 
+  /*
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
     text: 'Exportar CSV',
@@ -93,40 +98,42 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
     buttonColor: 'primary',
     spinnerColor: 'primary'
   };
+  */
 
   constructor(
-    private templatesService: TemplatesService,
-    private dataService: DataService,
     private route: ActivatedRoute,
     private configService: ConfigService,
-    private fileService: FileService,
-    private listService: ListService,
-    private cdRef: ChangeDetectorRef,
-    private loginService: LoginService,
     public router: Router
   ) { }
 
   ngOnInit() {
 
-    this.loadMenu(this.route.snapshot.routeConfig.path);
-
-    this.isReport = this.route.snapshot.routeConfig.path === 'reportes' ? true : false;
     const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
-    this.routePath = urlTree.root.children['primary'].segments[0].path;
-    if (this.routePath === 'encuestas' && this.route.snapshot.paramMap.get('id') != null) {
-      this.pollId = this.route.snapshot.paramMap.get('id');
-    }
+    this.activeModule = urlTree.root.children['primary'].segments[0].path;
+    this.loadMenu(this.activeModule);
+    this.formName = this.route.snapshot.paramMap.get('id');
+
+
+    /*
+    //this.isReport = this.route.snapshot.routeConfig.path === 'reportes' ? true : false;
+    //const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
+    //this.routePath = urlTree.root.children['primary'].segments[0].path;
+    //if (this.routePath === 'encuestas' && this.route.snapshot.paramMap.get('id') != null) {
+    //  this.pollId = this.route.snapshot.paramMap.get('id');
+    //}
+    */
 
     /*
     this.sub = this.route.params.subscribe(params => {
       console.log(params);
       this.loadConfig();
     });
-    */
 
-    this.dataSource = new ModelDataSource(this.dataService);
+    //this.dataSource = new ModelDataSource(this.dataService);
+    */
   }
 
+  /*
   ngAfterViewInit() {
     if (this.pollId) {
       console.log(this.activeForm);
@@ -139,6 +146,7 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
   }
+  */
 
   /**
    * Loads the menu of an especified module
@@ -155,6 +163,7 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  /*
   loadDataPage() {
 
     this.dataService.count(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
@@ -181,7 +190,7 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
   loadForm($event) {
 
     console.log('REceived emitt loading...', $event);
-    /*
+
     this.loading = true;
     this.errorMessage = [];
     this.exito = false;
@@ -237,7 +246,6 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
         this.activeForm = null;
         this.loading = false;
       });
-    */
 
   }
 
@@ -291,10 +299,13 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.evalJSFromJSON(fields, ['pattern', 'defaultValue', 'optionsDB', 'label',
       'templateOptions?disabled', 'onInit', 'onDestroy', 'hideExpression', 'variable', 'watcher'], '');
   }
+  */
 
   /**
    * Eval all javascript strings from db
    */
+
+   /*
   evalJSFromJSON(fields, keys, path) {
     for (const i in fields) {
       if (typeof fields[i] === 'object') {
@@ -664,5 +675,6 @@ export class TemplatesComponent implements OnInit, OnDestroy, AfterViewInit {
       this.cargandoEncuesta = false;
     });
   }
+  */
 
 }

@@ -6,14 +6,14 @@
     </button>
 
     <mat-menu #main_menu="matMenu">
-        <!--
         <ng-container *ngFor="let menuItem of menuItems">
-            <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ menuItem.name }}</button>
-            <mat-menu #sub_menu="matMenu">
-                <button *ngFor="let subItem of menuItem.subItems" mat-menu-item (click)="emitLoadTemplate(subItem , menuItem)">{{ subItem.name }}</button>
-            </mat-menu>
+            <span *ngIf="menuItem.subItems && menuItem.subItems.length > 0">
+                <button mat-menu-item [matMenuTriggerFor]="menu.childMenu">{{ menuItem.name }}</button>
+                <app-menu-item #menu [items]="menuItem.subItems" [module]="module"></app-menu-item>
+            </span>
+            <span *ngIf="!menuItem.subItems || menuItem.subItems.length === 0">
+                <button mat-menu-item [routerLink]="['/', module, menuItem.path]">{{ menuItem.name }}</button>
+            </span>
         </ng-container>
-        -->
-        <div [innerHtml]="menuStructure"></div>
     </mat-menu>
 </div>

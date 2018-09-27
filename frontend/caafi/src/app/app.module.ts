@@ -55,6 +55,8 @@ import { MatProgressButtons } from 'mat-progress-buttons';
 import { AppComponent } from './app.component';
 import { SafePipe } from './safe.pipe';
 import { MenuComponent } from './components/menu/menu.component';
+import { MenuItemComponent } from './components/menu/menu-item/menu-item.component';
+import { FormlyComponent } from './components/formly/formly.component';
 
 export function minlengthValidationMessage(err, field) {
   return `El campo ${field.templateOptions.label} debe contener al menos ${field.templateOptions.minLength} caracteres.`;
@@ -81,6 +83,8 @@ export function required(err, field) {
     HeaderComponent,
     FooterComponent,
     MenuComponent,
+    MenuItemComponent,
+    FormlyComponent,
     TemplatesComponent,
     ReportComponent,
     HomeComponent,
