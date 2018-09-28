@@ -50,13 +50,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { TooltipWrapperComponent } from './components/wrappers/tooltip/tooltip-wrapper.component';
 
-import { MatProgressButtons } from 'mat-progress-buttons';
-
 import { AppComponent } from './app.component';
 import { SafePipe } from './safe.pipe';
 import { MenuComponent } from './components/menu/menu.component';
 import { MenuItemComponent } from './components/menu/menu-item/menu-item.component';
 import { FormlyComponent } from './components/formly/formly.component';
+import { MatProgressButtons } from 'mat-progress-buttons';
 
 export function minlengthValidationMessage(err, field) {
   return `El campo ${field.templateOptions.label} debe contener al menos ${field.templateOptions.minLength} caracteres.`;
@@ -155,8 +154,8 @@ export function required(err, field) {
     LoadingModule,
     HttpClientModule,
     HttpModule,
-    MatProgressButtons,
-    RestangularModule.forRoot(RestangularConfigFactory)
+    RestangularModule.forRoot(RestangularConfigFactory),
+    MatProgressButtons
   ],
   providers: [
       TemplatesService,
