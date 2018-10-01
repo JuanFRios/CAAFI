@@ -9,7 +9,7 @@
     </span>
     <!-- Handle leaf node menu items -->
     <span *ngIf="!item.subItems || item.subItems.length === 0">
-        <button mat-menu-item [routerLink]="['/', module, item.path]">
+        <button mat-menu-item [routerLink]="['/', module, item.path]" routerLinkActive="active">
           <span>{{item.name}}</span>
     </button>
     </span>

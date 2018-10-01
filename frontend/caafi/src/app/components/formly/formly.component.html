@@ -1,23 +1,21 @@
-<div>
-    <div class="container">
-        <form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
-            <formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form">
-                <button mat-raised-button color="primary" type="button" (click)="resetConfirmation()">Limpiar</button>
-                <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">Guardar</button>
-            </formly-form>
-        </form>
+<div *ngIf="formName != null" class="container">
+    <form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
+        <formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form">
+            <button mat-raised-button color="primary" type="button" (click)="resetConfirmation()">Limpiar</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">Guardar</button>
+        </formly-form>
+    </form>
 
-        <!--
-        <div [hidden]="!cargando">
-            <mat-spinner></mat-spinner>
-            <h4>Guardando...</h4>
-        </div>
-        <div *ngIf="errorMessage" class="error">
-            <p *ngFor="let error of errorMessage">{{error}}</p>
-        </div>
-        <div *ngIf="exito" class="exito">
-            <p>El formulario fue guardado con éxito</p>
-        </div>
-        -->
+    <!--
+    <div [hidden]="!cargando">
+        <mat-spinner></mat-spinner>
+        <h4>Guardando...</h4>
     </div>
+    <div *ngIf="errorMessage" class="error">
+        <p *ngFor="let error of errorMessage">{{error}}</p>
+    </div>
+    <div *ngIf="exito" class="exito">
+        <p>El formulario fue guardado con éxito</p>
+    </div>
+    -->
 </div>

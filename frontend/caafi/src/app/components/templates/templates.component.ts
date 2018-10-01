@@ -33,7 +33,7 @@ import { httpBaseURL } from '../../common/baseurl';
   templateUrl: './templates.component.html',
   styleUrls: ['./templates.component.css']
 })
-export class TemplatesComponent implements OnInit {
+export class TemplatesComponent implements OnInit, OnDestroy {
 
   /*
   onDestroy$ = new Subject<void>();
@@ -88,6 +88,8 @@ export class TemplatesComponent implements OnInit {
   menuItems: any;
   activeModule: string;
   formName: string;
+  fullLoading: boolean;
+  navigationSubscription;
 
   /*
   @Input() exportCSVSpinnerButtonOptions: any = {
@@ -104,14 +106,19 @@ export class TemplatesComponent implements OnInit {
     private route: ActivatedRoute,
     private configService: ConfigService,
     public router: Router
-  ) { }
+  ) {
+    this.fullLoading = false;
+  }
 
   ngOnInit() {
 
     const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
     this.activeModule = urlTree.root.children['primary'].segments[0].path;
     this.loadMenu(this.activeModule);
-    this.formName = this.route.snapshot.paramMap.get('id');
+
+    this.navigationSubscription = this.route.params.subscribe(params => {
+      this.formName = this.route.snapshot.paramMap.get('id');
+    });
 
 
     /*
@@ -161,6 +168,19 @@ export class TemplatesComponent implements OnInit {
         console.log('ERROR: ', error);
       }
     );
+  }
+
+  /**
+   * Displays the loading
+   */
+  toggleLoading($event) {
+    this.fullLoading = $event;
+  }
+
+  ngOnDestroy() {
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
+    }
   }
 
   /*

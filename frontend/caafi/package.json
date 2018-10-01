@@ -30,6 +30,7 @@
     "@ngx-formly/core": "^2.0.0-rc.4",
     "@ngx-formly/material": "^2.0.0-rc.4",
     "angular-generic-table": "^4.0.1",
+    "angular-notifier": "^3.0.0",
     "core-js": "^2.5.7",
     "export-to-csv": "^0.1.1",
     "hammerjs": "^2.0.8",

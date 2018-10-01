@@ -12,7 +12,7 @@
                 <app-menu-item #menu [items]="menuItem.subItems" [module]="module"></app-menu-item>
             </span>
             <span *ngIf="!menuItem.subItems || menuItem.subItems.length === 0">
-                <button mat-menu-item [routerLink]="['/', module, menuItem.path]">{{ menuItem.name }}</button>
+                <button mat-menu-item [routerLink]="['/', module, menuItem.path]" routerLinkActive="active">{{ menuItem.name }}</button>
             </span>
         </ng-container>
     </mat-menu>

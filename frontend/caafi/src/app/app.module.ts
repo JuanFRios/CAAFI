@@ -56,6 +56,8 @@ import { MenuComponent } from './components/menu/menu.component';
 import { MenuItemComponent } from './components/menu/menu-item/menu-item.component';
 import { FormlyComponent } from './components/formly/formly.component';
 import { MatProgressButtons } from 'mat-progress-buttons';
+import { RouterModule } from '../../node_modules/@angular/router';
+import { NotifierModule } from 'angular-notifier';
 
 export function minlengthValidationMessage(err, field) {
   return `El campo ${field.templateOptions.label} debe contener al menos ${field.templateOptions.minLength} caracteres.`;
@@ -155,7 +157,9 @@ export function required(err, field) {
     HttpClientModule,
     HttpModule,
     RestangularModule.forRoot(RestangularConfigFactory),
-    MatProgressButtons
+    MatProgressButtons,
+    RouterModule,
+    NotifierModule
   ],
   providers: [
       TemplatesService,

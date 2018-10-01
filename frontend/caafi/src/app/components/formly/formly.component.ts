@@ -1,18 +1,21 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, SimpleChange, OnDestroy } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
 import { FormGroup } from '@angular/forms';
 import { Data } from '../../common/data';
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import { ConfigService } from '../../services/config.service';
+import { takeUntil, startWith, tap } from 'rxjs/operators';
+import { Subject } from '../../../../node_modules/rxjs';
 
 @Component({
   selector: 'app-formly',
   templateUrl: './formly.component.html',
   styleUrls: ['./formly.component.css']
 })
-export class FormlyComponent implements OnInit {
+export class FormlyComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() formName: string;
+  @Output() fullLoading = new EventEmitter();
 
   data: Data;
   currentId: string;
@@ -27,6 +30,11 @@ export class FormlyComponent implements OnInit {
   formData: Object;
   lists: String[][];
   formFields: Array<FormlyFieldConfig>;
+  takeUntil = takeUntil;
+  startWith = startWith;
+  tap = tap;
+  onDestroy$ = new Subject<void>();
+  private readonly notifier: NotifierService;
 
   constructor(
     private templatesService: TemplatesService,
@@ -44,9 +52,15 @@ export class FormlyComponent implements OnInit {
     this.files = [];
     this.form = new FormGroup({});
     this.lists = [];
+
+    this.notifier = notifierService;
   }
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    const formName: SimpleChange = changes.formName;
+    this.formName = formName.currentValue;
     if (this.formName != null) {
       this.loadForm();
     }
@@ -56,11 +70,13 @@ export class FormlyComponent implements OnInit {
    * Loads an specified form from DB
    */
   loadForm() {
+    this.fullLoading.emit(true);
+
     if (this.options.resetModel) {
       this.options.resetModel();
     }
 
-    this.templatesService.getByName(this.formName)
+    this.templatesService.getByName('this.formName')
       .subscribe(template => {
         this.variables = template.variables;
         this.formData = new Object();
@@ -69,9 +85,11 @@ export class FormlyComponent implements OnInit {
         this.proccessFields(fields);
         this.getList(this.lists, 0, fields);
         this.formFields = fields;
+        this.fullLoading.emit(false);
       },
         error => {
           console.log('ERROR: ', error);
+          this.notifier.notify( 'success', 'You are awesome! I mean it!' );
           /*
           this.errorMessage.push(error);
           this.activeForm = null;
@@ -130,6 +148,11 @@ export class FormlyComponent implements OnInit {
 
   arrayContains(needle, arrhaystack) {
     return (arrhaystack.indexOf(needle) > -1);
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
 }
