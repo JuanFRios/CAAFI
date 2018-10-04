@@ -10,6 +10,7 @@ export class MenuItemComponent implements OnInit {
 
   @Input() items: any;
   @Input() module: string;
+  @Input() parent?: string;
   @ViewChild('childMenu') public childMenu;
 
   constructor(

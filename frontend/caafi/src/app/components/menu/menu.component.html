@@ -1,15 +1,15 @@
 <div>
     <button mat-button [matMenuTriggerFor]="main_menu">
         <i class="material-icons">more_vert</i>
-        <span *ngIf="!activeForm">Seleccione una dependencia académica o administrativa</span>
-        <span *ngIf="activeForm" class="titleform"> {{activeDependency.name+ " - " + activeForm.name }}</span>
+        <span *ngIf="form == null">Seleccione una dependencia académica o administrativa</span>
+        <span *ngIf="form != null" class="titleform"> {{ dependency + " - " + form }}</span>
     </button>
 
     <mat-menu #main_menu="matMenu">
         <ng-container *ngFor="let menuItem of menuItems">
             <span *ngIf="menuItem.subItems && menuItem.subItems.length > 0">
                 <button mat-menu-item [matMenuTriggerFor]="menu.childMenu">{{ menuItem.name }}</button>
-                <app-menu-item #menu [items]="menuItem.subItems" [module]="module"></app-menu-item>
+                <app-menu-item #menu [items]="menuItem.subItems" [module]="module" [parent]="menuItem.path"></app-menu-item>
             </span>
             <span *ngIf="!menuItem.subItems || menuItem.subItems.length === 0">
                 <button mat-menu-item [routerLink]="['/', module, menuItem.path]" routerLinkActive="active">{{ menuItem.name }}</button>

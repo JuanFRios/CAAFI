@@ -7,7 +7,7 @@ import { LoginService as AuthGuard } from '../services/login.service';
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'formularios', component: TemplatesComponent, canActivate: [AuthGuard] },
-  { path: 'formularios/:id', component: TemplatesComponent, canActivate: [AuthGuard] },
+  { path: 'formularios/:dependency/:form', component: TemplatesComponent, canActivate: [AuthGuard] },
   { path: 'reportes', component: TemplatesComponent, canActivate: [AuthGuard] },
   { path: 'autoevaluacion', component: EvaluationComponent, canActivate: [AuthGuard] },
   { path: 'encuestas', component: TemplatesComponent, canActivate: [AuthGuard] },

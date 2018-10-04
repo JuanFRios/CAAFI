@@ -159,7 +159,19 @@ export function required(err, field) {
     RestangularModule.forRoot(RestangularConfigFactory),
     MatProgressButtons,
     RouterModule,
-    NotifierModule
+    NotifierModule.withConfig({
+      position: {
+        horizontal: {
+          position: 'right',
+          distance: 12
+        },
+        vertical: {
+          position: 'top',
+          distance: 12,
+          gap: 10
+        }
+      }
+    })
   ],
   providers: [
       TemplatesService,

@@ -1,19 +1,24 @@
 <div>
-	<!-- Menu -->
-	<div *ngIf="menuItems">
-		<app-menu [module]="activeModule" [menuItems]="menuItems"></app-menu>
-	</div>
+    <!-- Menu -->
+    <div *ngIf="menuItems">
+        <app-menu [module]="activeModule" [form]="formName" [dependency]="dependencyName" [menuItems]="menuItems"></app-menu>
+    </div>
 
-	<!-- Formly -->
-	<div>
-		<app-formly [formName]="formName" (fullLoading)="toggleLoading($event)"></app-formly>
-	</div>
+    <!-- Formly -->
+    <div>
+        <app-formly [formId]="formId" [dependencyName]="dependencyName" (fullLoading)="toggleLoading($event)"></app-formly>
+    </div>
 
-	<!-- Loading -->
-	<ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
-	
-	<!-- Notifier -->
-	<notifier-container></notifier-container>
+    <!-- Data Table -->
+    <div>
+        <app-data-table [formId]="formId" [dependencyName]="dependencyName"></app-data-table>
+    </div>
+
+    <!-- Loading -->
+    <ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
+
+    <!-- Notifier -->
+    <notifier-container></notifier-container>
 </div>
 
 <!--

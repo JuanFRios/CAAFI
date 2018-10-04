@@ -1,4 +1,16 @@
+/***** IMPORTS *****/
+
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "../node_modules/angular-notifier/styles/core.css";
+@import "../node_modules/angular-notifier/styles/themes/theme-material.css";
+@import "../node_modules/angular-notifier/styles/types/type-default.css";
+@import "../node_modules/angular-notifier/styles/types/type-error.css";
+@import "../node_modules/angular-notifier/styles/types/type-info.css";
+@import "../node_modules/angular-notifier/styles/types/type-success.css";
+@import "../node_modules/angular-notifier/styles/types/type-warning.css";
+
+/***** STYLES *****/
+
 .mat-elevation-z0 {
     box-shadow: 0 0 0 0 rgba(0, 0, 0, .2), 0 0 0 0 rgba(0, 0, 0, .14), 0 0 0 0 rgba(0, 0, 0, .12)
 }

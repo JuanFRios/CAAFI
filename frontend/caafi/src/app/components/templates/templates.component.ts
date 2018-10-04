@@ -87,9 +87,12 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
   menuItems: any;
   activeModule: string;
+  formId: string;
   formName: string;
+  dependencyId: string;
   fullLoading: boolean;
   navigationSubscription;
+  dependencyName: string;
 
   /*
   @Input() exportCSVSpinnerButtonOptions: any = {
@@ -114,10 +117,11 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
     const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
     this.activeModule = urlTree.root.children['primary'].segments[0].path;
-    this.loadMenu(this.activeModule);
 
     this.navigationSubscription = this.route.params.subscribe(params => {
-      this.formName = this.route.snapshot.paramMap.get('id');
+      this.formId = this.route.snapshot.paramMap.get('form');
+      this.dependencyId = this.route.snapshot.paramMap.get('dependency');
+      this.loadMenu(this.activeModule);
     });
 
 
@@ -163,11 +167,25 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.configService.getByName(module).subscribe(
       config => {
         this.menuItems = config.value;
+        this.getDependencyName();
       },
       error => {
         console.log('ERROR: ', error);
       }
     );
+  }
+
+  getDependencyName(): void {
+    for (const dependency of this.menuItems) {
+      if (dependency.path === this.dependencyId) {
+        this.dependencyName = dependency.name;
+        for (const form of dependency.subItems) {
+          if (form.path === this.formId) {
+            this.formName = form.name;
+          }
+        }
+      }
+    }
   }
 
   /**
