@@ -5,4 +5,8 @@ export class UtilService {
 
   constructor() {}
 
+  arrayContains(needle, arrhaystack) {
+    return (arrhaystack.indexOf(needle) > -1);
+  }
+
 }

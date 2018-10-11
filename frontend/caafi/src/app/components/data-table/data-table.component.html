@@ -3,6 +3,7 @@
     <mat-card fxFlex>
         <mat-card-content class="contenedor-tabla">
 
+            <!--
             <ngx-loading [show]="dataSource.loading$ | async" [config]="{ fullScreenBackdrop: false }"></ngx-loading>
 
             <div class="mat-container mat-elevation-z8">
@@ -44,7 +45,6 @@
                         </ng-container>
                     </div>
 
-                    <!--
                     <ng-container *ngFor="let col of displayedColumnsData" matColumnDef="{{ col }}">
                         <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-header-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}">
                             {{ displayedColumnsNames[col] }} </mat-header-cell>
@@ -53,19 +53,17 @@
 
                     <mat-header-row *matHeaderRowDef="!isReport ? displayedColumns : displayedColumnsData"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: !isReport ? displayedColumns : displayedColumnsData"></mat-row>
-                    -->
 
                 </mat-table>
 
-                <!--
                 <mat-paginator [length]="model?.countData" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 
                 <div *ngIf="isReport" class="export">
                     <spinner-button [options]="exportCSVSpinnerButtonOptions" (click)="exportCSV()"></spinner-button>
                 </div>
-                -->
 
             </div>
+            -->
 
         </mat-card-content>
     </mat-card>
