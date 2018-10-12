@@ -58,6 +58,8 @@ import { FormlyComponent } from './components/formly/formly.component';
 import { MatProgressButtons } from 'mat-progress-buttons';
 import { RouterModule } from '../../node_modules/@angular/router';
 import { NotifierModule } from 'angular-notifier';
+import { DataTableComponent } from './components/data-table/data-table.component';
+import { UtilService } from './services/util.service';
 
 export function minlengthValidationMessage(err, field) {
   return `El campo ${field.templateOptions.label} debe contener al menos ${field.templateOptions.minLength} caracteres.`;
@@ -86,6 +88,7 @@ export function required(err, field) {
     MenuComponent,
     MenuItemComponent,
     FormlyComponent,
+    DataTableComponent,
     TemplatesComponent,
     ReportComponent,
     HomeComponent,
@@ -179,7 +182,8 @@ export function required(err, field) {
       ConfigService,
       LoginService,
       FileService,
-      ListService
+      ListService,
+      UtilService
   ],
   bootstrap: [AppComponent]
 })
