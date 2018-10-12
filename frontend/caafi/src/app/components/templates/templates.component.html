@@ -1,9 +1,9 @@
-<div>
-    <!-- Menu -->
-    <div *ngIf="menuItems">
-        <app-menu [module]="activeModule" [form]="formName" [dependency]="dependencyName" [menuItems]="menuItems"></app-menu>
-    </div>
+<!-- Menu -->
+<div *ngIf="menuItems">
+    <app-menu [module]="activeModule" [form]="formName" [dependency]="dependencyName" [menuItems]="menuItems"></app-menu>
+</div>
 
+<div *ngIf="formId != null"> 
     <!-- Formly -->
     <div>
         <app-formly [formId]="formId" [dependencyName]="dependencyName" (fullLoading)="toggleLoading($event)"></app-formly>
@@ -11,7 +11,7 @@
 
     <!-- Data Table -->
     <div>
-        <app-data-table [formId]="formId" [dependencyName]="dependencyName"></app-data-table>
+        <app-data-table></app-data-table>
     </div>
 
     <!-- Loading -->

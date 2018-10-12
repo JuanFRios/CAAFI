@@ -12,7 +12,6 @@ import { Form } from '../../common/form';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import { ActivatedRoute } from '@angular/router';
-import { ModelDataSource } from './model-data-source';
 import { MatTableModule } from '@angular/material/table';
 import { MatSort, MatPaginator, MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
