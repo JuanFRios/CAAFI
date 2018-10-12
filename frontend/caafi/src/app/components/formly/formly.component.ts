@@ -23,6 +23,7 @@ export class FormlyComponent implements OnInit, OnChanges, OnDestroy {
   @Input() formId: string;
   @Input() dependencyName: string;
   @Output() fullLoading = new EventEmitter();
+  @Output() dataSaved = new EventEmitter();
 
   data: Data;
   repeatSections;
@@ -205,6 +206,7 @@ export class FormlyComponent implements OnInit, OnChanges, OnDestroy {
         }
         this.reset();
         this.fullLoading.emit(false);
+        this.dataSaved.emit(null);
         this.submitButtonOptions.active = false;
         this.notifier.notify( 'success', 'OK: El formulario ha sido guardado exitosamente.' );
       },

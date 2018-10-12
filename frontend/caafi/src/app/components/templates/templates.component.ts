@@ -26,6 +26,7 @@ import { fromEvent } from 'rxjs/observable/fromEvent';
 import { ExportToCsv } from 'export-to-csv';
 import { baseURL } from '../../common/baseurl';
 import { httpBaseURL } from '../../common/baseurl';
+import { FormlyComponent } from '../formly/formly.component';
 
 @Component({
   selector: 'app-templates',
@@ -107,7 +108,8 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private configService: ConfigService,
-    public router: Router
+    public router: Router,
+    private formlyComponent: FormlyComponent
   ) {
     this.fullLoading = false;
   }
@@ -198,6 +200,10 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
     }
+  }
+
+  onDataSaved($event) {
+    console.log('saved');
   }
 
   /*

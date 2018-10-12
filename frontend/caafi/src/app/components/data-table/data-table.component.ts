@@ -1,19 +1,29 @@
-import { OnInit, Component, Input } from '@angular/core';
+import { OnInit, Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { ModelDataSource } from './model-data-source';
 import { DataService } from '../../services/data.service';
 import { TemplatesService } from '../../services/templates.service';
 import { UtilService } from '../../services/util.service';
 import { NotifierService } from 'angular-notifier';
+import { Data } from '../../common/data';
+import { MatSort, MatPaginator } from '@angular/material';
+import { Subscription } from 'rxjs/Subscription';
+import { merge } from 'rxjs/observable/merge';
+import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { fromEvent } from 'rxjs/observable/fromEvent';
 
 @Component({
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.css']
 })
-export class DataTableComponent implements OnInit {
+export class DataTableComponent implements OnInit, AfterViewInit {
 
   @Input() formId: string;
   @Input() dependencyName: string;
+  @Input() allDataAccess: boolean;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('filter') filter: ElementRef;
 
   private readonly notifier: NotifierService;
   dataSource: ModelDataSource;
@@ -25,6 +35,11 @@ export class DataTableComponent implements OnInit {
   dates;
   booleans;
   files;
+  model: Data;
+  sortChange: Subscription;
+  tapPaginator: Subscription;
+  filterEvent: Subscription;
+  filters: string;
 
   constructor(
     private dataService: DataService,
@@ -43,6 +58,11 @@ export class DataTableComponent implements OnInit {
 
   ngOnInit() {
     this.dataSource = new ModelDataSource(this.dataService);
+    this.loadDataTable();
+  }
+
+  ngAfterViewInit() {
+    
   }
 
   loadDataTable() {
@@ -50,13 +70,15 @@ export class DataTableComponent implements OnInit {
     this.loadTemplateFeatures().then(dataRetorno => {
       const urlFilters = encodeURIComponent(JSON.stringify({}));
 
-      this.dataService.count(this.formId, this.dependencyName, false, '', urlFilters)
+      this.dataService.count(this.formId, this.dependencyName, this.allDataAccess, '', urlFilters)
       .subscribe(countData => {
         this.model = countData;
       },
-      error => this.errorMessage.push(error));
+      error => {
+        this.notifier.notify( 'error', 'ERROR: Error al cargar los datos del formulario.' );
+      });
 
-      this.dataSource.loadData(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
+      this.dataSource.loadData(this.formId, this.dependencyName, this.allDataAccess,
         '', 'savedDate', 'desc', 0, 5, this.repeatSections, this.dates, this.booleans, this.files, this.namesRepeats, urlFilters);
 
       if (this.sortChange) {
@@ -67,6 +89,7 @@ export class DataTableComponent implements OnInit {
       if (this.tapPaginator) {
         this.tapPaginator.unsubscribe();
       }
+
       this.paginator.pageIndex = 0;
       this.tapPaginator = merge(this.sort.sortChange, this.paginator.page)
         .pipe(
@@ -147,6 +170,31 @@ export class DataTableComponent implements OnInit {
         }
       }
     }
+  }
+
+  loadDataPage() {
+
+    this.dataService.count(this.formId, this.dependencyName, this.allDataAccess,
+      this.filter.nativeElement.value, this.filters)
+      .subscribe(countData => {
+        this.model = countData;
+      },
+      error => {
+        this.notifier.notify( 'error', 'ERROR: Error al cargar los datos del formulario.' );
+      });
+
+    this.dataSource.loadData(this.formId, this.dependencyName, this.allDataAccess,
+      this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
+      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.files, this.namesRepeats, this.filters);
+  }
+
+  getSortColumn() {
+    let sortColumn = 'savedDate';
+    if (this.sort.active != null && this.sort.active.length > 0
+      && this.sort.direction != null && this.sort.direction.length > 0) {
+      sortColumn = 'data.' + this.sort.active;
+    }
+    return sortColumn;
   }
 
 }

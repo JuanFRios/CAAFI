@@ -4,7 +4,7 @@
         <mat-card-content class="contenedor-tabla">
 
             <ngx-loading [show]="dataSource.loading$ | async" [config]="{ fullScreenBackdrop: false }"></ngx-loading>
-            
+
             <div class="mat-container mat-elevation-z8">
 
                 <div class="table-header">
@@ -14,7 +14,7 @@
                 </div>
 
                 <mat-table [dataSource]="dataSource" matSort>
-                    
+
                     <ng-container matColumnDef="copy" id="actionsCell">
                         <mat-header-cell *matHeaderCellDef class="mat-header-cell action"> </mat-header-cell>
                         <mat-cell *matCellDef="let row" class="mat-cell action">
@@ -53,9 +53,9 @@
 
                 </mat-table>
 
-                <!--
                 <mat-paginator [length]="model?.countData" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 
+                <!--
                 <div *ngIf="isReport" class="export">
                     <spinner-button [options]="exportCSVSpinnerButtonOptions" (click)="exportCSV()"></spinner-button>
                 </div>

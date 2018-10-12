@@ -3,15 +3,15 @@
     <app-menu [module]="activeModule" [form]="formName" [dependency]="dependencyName" [menuItems]="menuItems"></app-menu>
 </div>
 
-<div *ngIf="formId != null"> 
+<div *ngIf="formId != null">
     <!-- Formly -->
     <div>
-        <app-formly [formId]="formId" [dependencyName]="dependencyName" (fullLoading)="toggleLoading($event)"></app-formly>
+        <app-formly [formId]="formId" [dependencyName]="dependencyName" (fullLoading)="toggleLoading($event)" (dataSaved)="onDataSaved($event)"></app-formly>
     </div>
 
     <!-- Data Table -->
     <div>
-        <app-data-table></app-data-table>
+        <app-data-table [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="false"></app-data-table>
     </div>
 
     <!-- Loading -->
