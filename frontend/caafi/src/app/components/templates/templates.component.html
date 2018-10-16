@@ -1,21 +1,43 @@
 <!-- Menu -->
 <div *ngIf="menuItems">
-    <app-menu [module]="activeModule" [form]="formName" [dependency]="dependencyName" [menuItems]="menuItems"></app-menu>
+    <app-menu 
+        [module]="activeModule" 
+        [form]="formName" 
+        [dependency]="dependencyName" 
+        [menuItems]="menuItems"
+    ></app-menu>
 </div>
 
-<div *ngIf="formId != null">
+<div *ngIf="template != null">
     <!-- Formly -->
     <div>
-        <app-formly [formId]="formId" [dependencyName]="dependencyName" (fullLoading)="toggleLoading($event)" (dataSaved)="onDataSaved($event)"></app-formly>
+        <app-formly #formly
+            [formId]="formId" 
+            [dependencyName]="dependencyName" 
+            [template]="template"
+            (fullLoading)="toggleLoading($event)" 
+            (dataSaved)="dataTable.refresh($event)"
+        ></app-formly>
     </div>
 
     <!-- Data Table -->
     <div>
-        <app-data-table [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="false"></app-data-table>
+        <app-data-table #dataTable
+            [formId]="formId" 
+            [dependencyName]="dependencyName" 
+            [allDataAccess]="false"
+            [template]="template"
+            (copyData)="formly.copyData($event)"
+            (editData)="formly.editData($event)"
+            (deleteData)="formly.deleteData($event)"
+        ></app-data-table>
     </div>
 
     <!-- Loading -->
-    <ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
+    <ngx-loading 
+        [show]="fullLoading" 
+        [config]="{ fullScreenBackdrop: true }"
+    ></ngx-loading>
 
     <!-- Notifier -->
     <notifier-container></notifier-container>

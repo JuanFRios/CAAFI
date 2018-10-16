@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs/observable/of';
 import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
 import { ConfigService } from './config.service';
-import { Config } from '../common/config';
 import { from } from 'rxjs/observable/from';
 
 @Injectable()

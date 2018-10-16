@@ -27,6 +27,8 @@ import { ExportToCsv } from 'export-to-csv';
 import { baseURL } from '../../common/baseurl';
 import { httpBaseURL } from '../../common/baseurl';
 import { FormlyComponent } from '../formly/formly.component';
+import { UtilService } from '../../services/util.service';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-templates',
@@ -85,6 +87,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   pollId: string;
   */
 
+  private readonly notifier: NotifierService;
   menuItems: any;
   activeModule: string;
   formId: string;
@@ -93,6 +96,9 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   fullLoading: boolean;
   navigationSubscription;
   dependencyName: string;
+  varFields;
+  fields: any;
+  template: any;
 
   /*
   @Input() exportCSVSpinnerButtonOptions: any = {
@@ -108,10 +114,15 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private configService: ConfigService,
-    public router: Router,
-    private formlyComponent: FormlyComponent
+    private templatesService: TemplatesService,
+    private utilService: UtilService,
+    private listService: ListService,
+    notifierService: NotifierService,
+    public router: Router
   ) {
+    this.notifier = notifierService;
     this.fullLoading = false;
+    this.varFields = {};
   }
 
   ngOnInit() {
@@ -122,9 +133,13 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     this.navigationSubscription = this.route.params.subscribe(params => {
       this.formId = this.route.snapshot.paramMap.get('form');
       this.dependencyId = this.route.snapshot.paramMap.get('dependency');
-      this.loadMenu(this.activeModule);
-    });
 
+      this.loadMenu(this.activeModule);
+
+      if (this.formId != null) {
+        this.loadTemplate();
+      }
+    });
 
     /*
     //this.isReport = this.route.snapshot.routeConfig.path === 'reportes' ? true : false;
@@ -190,6 +205,65 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Loads an specified template from DB
+   */
+  loadTemplate() {
+    this.toggleLoading(true);
+
+    this.templatesService.getByName(this.formId)
+      .subscribe(template => {
+        this.loadTemplateFeatures(template);
+        this.template = template;
+        this.toggleLoading(false);
+      },
+        error => {
+          this.toggleLoading(false);
+          this.notifier.notify( 'error', 'ERROR: Error al cargar el formulario.' );
+        });
+  }
+
+  loadTemplateFeatures(template) {
+    template['displayedColumns'] = ['copy', 'edit', 'delete'];
+    template['displayedColumnsData'] = [];
+    template['displayedColumnsNames'] = [];
+    template['repeatSections'] = [];
+    template['namesRepeats'] = {};
+    template['dates'] = [];
+    template['booleans'] = [];
+    template['files'] = [];
+
+    this.getTemplateFeatures(template, template.fields, ['key', 'type'], '');
+  }
+
+  getTemplateFeatures(template, fields, keys, path) {
+    for (const i in fields) {
+      if (typeof fields[i] === 'object') {
+        this.getTemplateFeatures(template, fields[i], keys, path + '[\'' + i + '\']');
+      } else if (this.utilService.arrayContains(i, keys)) {
+        if (i === 'key' && !path.includes('fieldArray') && !path.includes('options')) {
+          template.displayedColumns.push(fields[i]);
+          template.displayedColumnsData.push(fields[i]);
+          if (fields['type'] === 'repeat') {
+            template.displayedColumnsNames[fields[i]] = fields.sectionName;
+            template.repeatSections.push(fields[i]);
+            for (const j of fields['fieldArray']['fieldGroup']) {
+              template.namesRepeats[j.key] = j.templateOptions.label;
+            }
+          } else {
+            template.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
+          }
+        } else if (i === 'type' && fields[i] === 'datepicker') {
+          template.dates.push(fields['key']);
+        } else if (i === 'type' && fields[i] === 'checkbox') {
+          template.booleans.push(fields['key']);
+        } else if (i === 'type' && fields[i] === 'file') {
+          template.files.push(fields['key']);
+        }
+      }
+    }
+  }
+
+  /**
    * Displays the loading
    */
   toggleLoading($event) {
@@ -200,10 +274,6 @@ export class TemplatesComponent implements OnInit, OnDestroy {
     if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
     }
-  }
-
-  onDataSaved($event) {
-    console.log('saved');
   }
 
   /*
@@ -230,6 +300,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
   }
 
   //loadForm(activeForm: Form, dependency: Dependency) {
+    /*
   loadForm($event) {
 
     console.log('REceived emitt loading...', $event);

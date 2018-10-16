@@ -1,38 +1,44 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, SimpleChange, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, FormArray } from '@angular/forms';
 import { Data } from '../../common/data';
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
-import { ConfigService } from '../../services/config.service';
 import { takeUntil, startWith, tap } from 'rxjs/operators';
-import { Subject, Subscription } from '../../../../node_modules/rxjs';
+import { Subject, Subscription, BehaviorSubject } from '../../../../node_modules/rxjs';
 import { NotifierService } from 'angular-notifier';
 import { MatDialog } from '@angular/material';
 import { ListService } from '../../services/list.service';
 import { DataService } from '../../services/data.service';
 import { FileService } from '../../services/file.service';
 import { UtilService } from '../../services/util.service';
+import { RepeatTypeComponent } from '../types/repeat-section/repeat-section.component';
 
 @Component({
   selector: 'app-formly',
   templateUrl: './formly.component.html',
   styleUrls: ['./formly.component.css']
 })
-export class FormlyComponent implements OnInit, OnChanges, OnDestroy {
+export class FormlyComponent implements OnInit, OnDestroy {
 
   @Input() formId: string;
   @Input() dependencyName: string;
   @Output() fullLoading = new EventEmitter();
   @Output() dataSaved = new EventEmitter();
 
+  @ViewChildren('repeat') components: QueryList<RepeatTypeComponent>;
+
+  private _template = new BehaviorSubject<any>([]);
+  @Input()
+    set template(value) {
+        this._template.next(value);
+    }
+
+    get template() {
+        return this._template.getValue();
+    }
+
   data: Data;
-  repeatSections;
-  namesRepeats;
-  dates;
-  booleans;
-  files;
-  options: FormlyFormOptions;
-  variables: Object;
+  options: FormlyFormOptions = {};
   form: FormGroup;
   formData: Object;
   formFields: Array<FormlyFieldConfig>;
@@ -43,30 +49,8 @@ export class FormlyComponent implements OnInit, OnChanges, OnDestroy {
   private readonly notifier: NotifierService;
   formLoaded: boolean;
   valueChangesSubscription: Subscription;
-
-  resetButtonOptions = {
-    active: false,
-    text: 'Limpiar',
-    buttonColor: 'primary',
-    barColor: 'primary',
-    mode: 'indeterminate',
-    value: 0,
-    raised: true,
-    stroked: true,
-    disabled: false
-  };
-
-  submitButtonOptions = {
-    active: false,
-    text: 'Guardar',
-    buttonColor: 'primary',
-    barColor: 'primary',
-    mode: 'indeterminate',
-    value: 0,
-    raised: true,
-    stroked: true,
-    disabled: true
-  };
+  currentId: string;
+  saving: boolean;
 
   constructor(
     private templatesService: TemplatesService,
@@ -78,13 +62,6 @@ export class FormlyComponent implements OnInit, OnChanges, OnDestroy {
     notifierService: NotifierService,
   ) {
     this.data = new Data();
-    this.repeatSections = [];
-    this.options = {};
-    this.variables = {};
-    this.namesRepeats = {};
-    this.dates = [];
-    this.booleans = [];
-    this.files = [];
     this.form = new FormGroup({});
     this.takeUntil = takeUntil;
     this.startWith = startWith;
@@ -92,46 +69,31 @@ export class FormlyComponent implements OnInit, OnChanges, OnDestroy {
     this.onDestroy$ = new Subject<void>();
     this.notifier = notifierService;
     this.formLoaded = false;
+    this.currentId = null;
+    this.saving = false;
   }
 
   ngOnInit() {
-    this.valueChangesSubscription = this.form.valueChanges.subscribe(value => {
-      this.submitButtonOptions.disabled = !this.form.valid;
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    const formId: SimpleChange = changes.formId;
-    if (formId != null) {
-      this.formId = formId.currentValue;
-      this.loadForm();
-    }
+    this._template
+      .subscribe(x => {
+        this.loadForm();
+      });
   }
 
   /**
    * Loads an specified form from DB
    */
   loadForm() {
-    this.fullLoading.emit(true);
-
     if (this.options.resetModel) {
       this.options.resetModel();
     }
 
-    this.templatesService.getByName(this.formId)
-      .subscribe(template => {
-        this.variables = template.variables;
-        this.formData = new Object();
-        const fields = template.fields;
-        this.proccessFields(fields);
-        this.formFields = fields;
-        this.formLoaded = true;
-        this.fullLoading.emit(false);
-      },
-        error => {
-          this.fullLoading.emit(false);
-          this.notifier.notify( 'error', 'ERROR: Error al cargar el formulario.' );
-        });
+    this.formData = new Object();
+    const fields = this.template.fields;
+    this.proccessFields(fields);
+    this.formFields = fields;
+    this.formLoaded = true;
+    this.form = new FormGroup({});
   }
 
   proccessFields(fields) {
@@ -173,19 +135,45 @@ export class FormlyComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   reset() {
-    const elements: HTMLCollection = document.getElementsByClassName('button-remove-repeat') as HTMLCollection;
+    let elements: HTMLCollection = document.getElementsByClassName('button-remove-repeat') as HTMLCollection;
     let numElems = elements.length;
-    while (numElems > 0) {
-      (elements[0] as HTMLElement).click();
-      numElems--;
+    //while (numElems > 0) {
+    for (let i = 0; i < numElems; i++) {
+      //(elements[0] as HTMLElement).click();
+    //  elements[0].remove();
+      //numElems--;
     }
-    this.options.resetModel();
+    /*
+    const elementsAdd: HTMLCollection = document.getElementsByClassName('button-add') as HTMLCollection;
+    for (let i = 0; i < elementsAdd.length; i++) {
+      (elementsAdd[i] as HTMLElement).click();
+    }
+    */
+
+   this.options.resetModel();
+
+    const repeats = this.template.repeatSections;
+    for (const repeat of repeats) {
+      const formRepeat: FormArray = this.form.get(repeat) as FormArray;
+      const numControls = formRepeat.controls.length;
+      for (let i = 0; i < numControls; i++) {
+        formRepeat.removeAt(0);
+      }
+      delete this.formData[repeat];
+    }
+    console.log(this.formData);
+    console.log(this.formFields);
+
+    /*x
+    const elementsAdd: HTMLCollection = document.getElementsByClassName('button-add') as HTMLCollection;
+    for (let i = 0; i < elementsAdd.length; i++) {
+      (elementsAdd[i] as HTMLElement).click();
+    }*/
   }
 
   onSubmit(template) {
 
-    this.submitButtonOptions.active = true;
-    this.fullLoading.emit(true);
+    this.saving = true;
 
     this.data = new Data();
     const formsData: FormData[] = this.getFiles(template);
@@ -193,26 +181,23 @@ export class FormlyComponent implements OnInit, OnChanges, OnDestroy {
     this.data.template = this.formId;
     this.data.origin = this.dependencyName;
 
-    /*
     if (this.currentId != null) {
       this.data.id = this.currentId;
     }
-    */
 
+    console.log(this.data);
     this.dataService.save(this.data)
       .subscribe(res => {
         for (let i = 0, len = formsData.length; i < len; i++) {
           this.uploadFile(formsData[i]);
         }
         this.reset();
-        this.fullLoading.emit(false);
         this.dataSaved.emit(null);
-        this.submitButtonOptions.active = false;
+        this.saving = false;
         this.notifier.notify( 'success', 'OK: El formulario ha sido guardado exitosamente.' );
       },
         error => {
-          this.fullLoading.emit(false);
-          this.submitButtonOptions.active = false;
+          this.saving = false;
           this.notifier.notify( 'error', 'ERROR: Error al guardar el formulario.' );
         });
   }
@@ -241,10 +226,77 @@ export class FormlyComponent implements OnInit, OnChanges, OnDestroy {
     return formsData;
   }
 
+  copyData($event) {
+    this.currentId = null;
+    this.loadData($event);
+  }
+
+  editData($event) {
+    this.currentId = $event;
+    this.loadData($event);
+  }
+
+  loadData(id) {
+    this.fullLoading.emit(true);
+    this.reset();
+
+    this.dataService.getById(id)
+      .subscribe(formData => {
+        for (const i in formData.data) {
+          if (formData.data[i] != null) {
+            if (this.template.repeatSections.includes(i)) {
+              for (const j in formData.data[i]) {
+                if (formData.data[i][j] != null) {
+                  if (!this.form.get(i).get(j)) {
+                    const element: HTMLElement = document.getElementById('button-add-' + i) as HTMLElement;
+                    element.click();
+                  }
+                  this.form.get(i).get(j).patchValue(formData.data[i][j]);
+                  this.formData[i][j] = formData.data[i][j];
+                }
+              }
+            } else {
+              if (this.form.get(i)) {
+                this.form.get(i).patchValue(formData.data[i]);
+                this.formData[i] = formData.data[i];
+              }
+            }
+          }
+        }
+        this.fullLoading.emit(false);
+      },
+        error => {
+          this.notifier.notify( 'error', 'ERROR: Error al cargar los datos.' );
+          this.fullLoading.emit(false);
+        });
+  }
+
+  deleteData(id) {
+    if (confirm('¿Está seguro que desea borrar el registro?')) {
+      this.fullLoading.emit(true);
+      this.dataService.delete(id)
+        .subscribe(
+          data => {
+            this.fullLoading.emit(false);
+            this.dataSaved.emit(null);
+            this.notifier.notify( 'success', 'OK: Datos borrados exitosamente.' );
+          },
+          error => {
+            this.fullLoading.emit(false);
+            this.notifier.notify( 'error', 'ERROR: Error al borrar los datos.' );
+          }
+        );
+    }
+  }
+
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-    this.valueChangesSubscription.unsubscribe();
+    this._template.unsubscribe();
+  }
+
+  onModelChanges($event) {
+    //console.log('$event', $event);
   }
 
 }

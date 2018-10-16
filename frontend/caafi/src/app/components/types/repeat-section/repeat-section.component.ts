@@ -30,21 +30,17 @@ export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy,
   }
 
   ngAfterViewInit() {
-    setTimeout(this.add(), 10000);
+    //setTimeout(() => this.add());
   }
 
   add() {
     const form = new FormGroup({}),
       i = this.fields.length;
 
-    if (!this.model[i]) {
-      this.model.push({});
-    }
-
+    this.model.push({});
     this.fields.push(this.newFields);
     this.builder.buildForm(form, this.fields[i], this.model[i], this.options);
     this.formControl.push(form);
-
   }
 
   remove(i) {
@@ -56,5 +52,10 @@ export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy,
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  onClick($event, i) {
+    console.log('$event', $event);
+    console.log('i', i);
   }
 }

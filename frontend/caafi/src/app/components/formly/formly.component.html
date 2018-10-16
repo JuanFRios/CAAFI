@@ -1,8 +1,11 @@
 <div *ngIf="formId != null" class="container">
     <form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
-        <formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form">
+        <formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form" (modelChange)="onModelChanges($event)">
             <button mat-raised-button color="primary" type="button" (click)="resetConfirmation()">Limpiar</button>
-            <progress-bar-button [options]="submitButtonOptions" type="submit"></progress-bar-button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid" class="progress-bar-button">
+                <mat-progress-bar *ngIf="saving" mode="indeterminate"></mat-progress-bar>
+                Guardar
+            </button>
         </formly-form>
     </form>
 </div>

@@ -18,7 +18,7 @@
                     <ng-container matColumnDef="copy" id="actionsCell">
                         <mat-header-cell *matHeaderCellDef class="mat-header-cell action"> </mat-header-cell>
                         <mat-cell *matCellDef="let row" class="mat-cell action">
-                            <button mat-raised-button color="primary" type="button" (click)="loadData( row.id, true )" title="Copiar">
+                            <button mat-raised-button color="primary" type="button" (click)="onCopyData( row.id )" title="Copiar">
                                 <mat-icon>file_copy</mat-icon>
                             </button>
                         </mat-cell>
@@ -27,7 +27,7 @@
                     <ng-container matColumnDef="edit" id="actionsCell">
                         <mat-header-cell *matHeaderCellDef class="mat-header-cell action"> </mat-header-cell>
                         <mat-cell *matCellDef="let row" class="mat-cell action">
-                            <button mat-raised-button color="primary" type="button" (click)="loadData( row.id )" title="Editar">
+                            <button mat-raised-button color="primary" type="button" (click)="onEditData( row.id )" title="Editar">
                                 <mat-icon>edit</mat-icon>
                             </button>
                         </mat-cell>
@@ -36,20 +36,20 @@
                     <ng-container matColumnDef="delete" id="actionsCell">
                         <mat-header-cell *matHeaderCellDef class="mat-header-cell action last"> </mat-header-cell>
                         <mat-cell *matCellDef="let row" class="mat-cell action last">
-                            <button mat-raised-button color="primary" type="button" (click)="deleteData( row.id )" title="Eliminar">
+                            <button mat-raised-button color="primary" type="button" (click)="onDeleteData( row.id )" title="Eliminar">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </mat-cell>
                     </ng-container>
 
-                    <ng-container *ngFor="let col of displayedColumnsData" matColumnDef="{{ col }}">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-header-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}">
-                            {{ displayedColumnsNames[col] }} </mat-header-cell>
-                        <mat-cell *matCellDef="let row" class="mat-cell {{ repeatSections.includes(col) ? 'repeat' : '' }}" [innerHtml]="row[col]"></mat-cell>
+                    <ng-container *ngFor="let col of template.displayedColumnsData" matColumnDef="{{ col }}">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-header-cell {{ template.repeatSections.includes(col) ? 'repeat' : '' }}">
+                            {{ template.displayedColumnsNames[col] }} </mat-header-cell>
+                        <mat-cell *matCellDef="let row" class="mat-cell {{ template.repeatSections.includes(col) ? 'repeat' : '' }}" [innerHtml]="row[col]"></mat-cell>
                     </ng-container>
 
-                    <mat-header-row *matHeaderRowDef="!isReport ? displayedColumns : displayedColumnsData"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: !isReport ? displayedColumns : displayedColumnsData"></mat-row>
+                    <mat-header-row *matHeaderRowDef="template.displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: template.displayedColumns"></mat-row>
 
                 </mat-table>
 
