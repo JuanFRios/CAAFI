@@ -135,40 +135,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
   }
 
   reset() {
-    let elements: HTMLCollection = document.getElementsByClassName('button-remove-repeat') as HTMLCollection;
-    let numElems = elements.length;
-    //while (numElems > 0) {
-    for (let i = 0; i < numElems; i++) {
-      //(elements[0] as HTMLElement).click();
-    //  elements[0].remove();
-      //numElems--;
-    }
-    /*
-    const elementsAdd: HTMLCollection = document.getElementsByClassName('button-add') as HTMLCollection;
-    for (let i = 0; i < elementsAdd.length; i++) {
-      (elementsAdd[i] as HTMLElement).click();
-    }
-    */
-
-   this.options.resetModel();
-
-    const repeats = this.template.repeatSections;
-    for (const repeat of repeats) {
-      const formRepeat: FormArray = this.form.get(repeat) as FormArray;
-      const numControls = formRepeat.controls.length;
-      for (let i = 0; i < numControls; i++) {
-        formRepeat.removeAt(0);
-      }
-      delete this.formData[repeat];
-    }
-    console.log(this.formData);
-    console.log(this.formFields);
-
-    /*x
-    const elementsAdd: HTMLCollection = document.getElementsByClassName('button-add') as HTMLCollection;
-    for (let i = 0; i < elementsAdd.length; i++) {
-      (elementsAdd[i] as HTMLElement).click();
-    }*/
+    this.options.resetModel();
   }
 
   onSubmit(template) {

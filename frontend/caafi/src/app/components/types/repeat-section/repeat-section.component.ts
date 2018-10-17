@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, OnChanges, SimpleChanges, DoCheck } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { FieldType, FormlyFormBuilder } from '@ngx-formly/core';
 import { Subject } from 'rxjs/Subject';
@@ -9,7 +9,7 @@ import * as clonedeep from 'lodash.clonedeep';
   selector: 'app-formly-repeat-section',
   templateUrl: './repeat-section.component.html'
 })
-export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy, AfterViewInit {
+export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy, AfterViewInit, OnChanges, DoCheck {
   formControl: FormArray;
   field: any;
   fields = [];
@@ -30,12 +30,33 @@ export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy,
   }
 
   ngAfterViewInit() {
-    //setTimeout(() => this.add());
+    setTimeout(() => this.add());
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['model']) {
+      console.log('changes');
+    }
+  }
+
+  ngDoCheck() {
+    /*
+    if (this.model.length === 0 && this.fields.length > 0) {
+      console.log('add');
+      this.fields = [];
+      setTimeout(() => this.add());
+    }
+    */
   }
 
   add() {
-    const form = new FormGroup({}),
-      i = this.fields.length;
+    const form = new FormGroup({});
+    let i = this.fields.length;
+
+    if (this.model.length === 0) {
+      this.fields = [];
+      i = 0;
+    }
 
     this.model.push({});
     this.fields.push(this.newFields);
@@ -52,10 +73,5 @@ export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy,
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  onClick($event, i) {
-    console.log('$event', $event);
-    console.log('i', i);
   }
 }
