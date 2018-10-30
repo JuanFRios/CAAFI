@@ -61,6 +61,7 @@ import { RouterModule } from '../../node_modules/@angular/router';
 import { NotifierModule } from 'angular-notifier';
 import { DataTableComponent } from './components/data-table/data-table.component';
 import { UtilService } from './services/util.service';
+import { PollsComponent } from './components/polls/polls.component';
 
 export function minlengthValidationMessage(err, field) {
   return `El campo ${field.templateOptions.label} debe contener al menos ${field.templateOptions.minLength} caracteres.`;
@@ -91,6 +92,7 @@ export function required(err, field) {
     FormlyComponent,
     DataTableComponent,
     TemplatesComponent,
+    PollsComponent,
     ReportComponent,
     HomeComponent,
     EvaluationComponent,
