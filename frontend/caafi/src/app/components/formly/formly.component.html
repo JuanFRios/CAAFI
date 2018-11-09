@@ -1,10 +1,14 @@
 <div *ngIf="formId != null" class="container">
     <form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
-        <formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form" (modelChange)="onModelChanges($event)">
+        <formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form">
             <button mat-raised-button color="primary" type="button" (click)="resetConfirmation()">Limpiar</button>
-            <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid" class="progress-bar-button">
+            <button *ngIf="typeSubmit" mat-raised-button color="primary" type="submit" [disabled]="!form.valid" class="progress-bar-button">
                 <mat-progress-bar *ngIf="saving" mode="indeterminate"></mat-progress-bar>
                 Guardar
+            </button>
+            <button *ngIf="!typeSubmit" mat-raised-button color="primary" type="button" [disabled]="!form.valid" (click)="buttonClick(formData)">
+                <mat-progress-bar *ngIf="saving" mode="indeterminate"></mat-progress-bar>
+                Filtrar
             </button>
         </formly-form>
     </form>

@@ -15,32 +15,34 @@
 
                 <mat-table [dataSource]="dataSource" matSort>
 
-                    <ng-container matColumnDef="copy" id="actionsCell">
-                        <mat-header-cell *matHeaderCellDef class="mat-header-cell action"> </mat-header-cell>
-                        <mat-cell *matCellDef="let row" class="mat-cell action">
-                            <button mat-raised-button color="primary" type="button" (click)="onCopyData( row.id )" title="Copiar">
-                                <mat-icon>file_copy</mat-icon>
-                            </button>
-                        </mat-cell>
-                    </ng-container>
+                    <div *ngIf="activeActions">
+                        <ng-container matColumnDef="copy" id="actionsCell">
+                            <mat-header-cell *matHeaderCellDef class="mat-header-cell action"> </mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="mat-cell action">
+                                <button mat-raised-button color="primary" type="button" (click)="onCopyData( row.id )" title="Copiar">
+                                    <mat-icon>file_copy</mat-icon>
+                                </button>
+                            </mat-cell>
+                        </ng-container>
 
-                    <ng-container matColumnDef="edit" id="actionsCell">
-                        <mat-header-cell *matHeaderCellDef class="mat-header-cell action"> </mat-header-cell>
-                        <mat-cell *matCellDef="let row" class="mat-cell action">
-                            <button mat-raised-button color="primary" type="button" (click)="onEditData( row.id )" title="Editar">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                        </mat-cell>
-                    </ng-container>
+                        <ng-container matColumnDef="edit" id="actionsCell">
+                            <mat-header-cell *matHeaderCellDef class="mat-header-cell action"> </mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="mat-cell action">
+                                <button mat-raised-button color="primary" type="button" (click)="onEditData( row.id )" title="Editar">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                            </mat-cell>
+                        </ng-container>
 
-                    <ng-container matColumnDef="delete" id="actionsCell">
-                        <mat-header-cell *matHeaderCellDef class="mat-header-cell action last"> </mat-header-cell>
-                        <mat-cell *matCellDef="let row" class="mat-cell action last">
-                            <button mat-raised-button color="primary" type="button" (click)="onDeleteData( row.id )" title="Eliminar">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                        </mat-cell>
-                    </ng-container>
+                        <ng-container matColumnDef="delete" id="actionsCell">
+                            <mat-header-cell *matHeaderCellDef class="mat-header-cell action last"> </mat-header-cell>
+                            <mat-cell *matCellDef="let row" class="mat-cell action last">
+                                <button mat-raised-button color="primary" type="button" (click)="onDeleteData( row.id )" title="Eliminar">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+                    </div>
 
                     <ng-container *ngFor="let col of template.displayedColumnsData" matColumnDef="{{ col }}">
                         <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-header-cell {{ template.repeatSections.includes(col) ? 'repeat' : '' }}">
@@ -55,11 +57,9 @@
 
                 <mat-paginator [length]="model?.countData" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 
-                <!--
-                <div *ngIf="isReport" class="export">
+                <div *ngIf="export" class="export">
                     <spinner-button [options]="exportCSVSpinnerButtonOptions" (click)="exportCSV()"></spinner-button>
                 </div>
-                -->
 
             </div>
 

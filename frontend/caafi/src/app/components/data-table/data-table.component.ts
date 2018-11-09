@@ -9,6 +9,7 @@ import { merge } from 'rxjs/observable/merge';
 import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { ExportToCsv } from 'export-to-csv';
 
 @Component({
   selector: 'app-data-table',
@@ -20,12 +21,23 @@ export class DataTableComponent implements OnInit, OnDestroy {
   @Input() formId: string;
   @Input() dependencyName: string;
   @Input() allDataAccess: boolean;
+  @Input() activeActions = true;
+  @Input() export = false;
   @Output() copyData = new EventEmitter();
   @Output() editData = new EventEmitter();
   @Output() deleteData = new EventEmitter();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('filter') filter: ElementRef;
+
+  @Input() exportCSVSpinnerButtonOptions: any = {
+    active: false,
+    text: 'Exportar CSV',
+    spinnerSize: 18,
+    raised: true,
+    buttonColor: 'primary',
+    spinnerColor: 'primary'
+  };
 
   private _template = new BehaviorSubject<any>([]);
   @Input()
@@ -124,9 +136,9 @@ export class DataTableComponent implements OnInit, OnDestroy {
       });
 
     this.dataSource.loadData(this.formId, this.dependencyName, this.allDataAccess,
-      this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
-      this.paginator.pageSize, this.template.repeatSections, this.template.dates, this.template.booleans,
-      this.template.files, this.template.namesRepeats, this.filters);
+    this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
+    this.paginator.pageSize, this.template.repeatSections, this.template.dates, this.template.booleans,
+    this.template.files, this.template.namesRepeats, this.filters);
   }
 
   getSortColumn() {
@@ -152,6 +164,58 @@ export class DataTableComponent implements OnInit, OnDestroy {
 
   onDeleteData(id) {
     this.deleteData.emit(id);
+  }
+
+  filterData(filterFormData) {
+    const urlFilters = encodeURIComponent(JSON.stringify(filterFormData));
+    this.filters = urlFilters;
+    this.dataService.count(this.formId, this.dependencyName, this.allDataAccess,
+      this.filter.nativeElement.value, urlFilters)
+    .subscribe(countData => {
+      this.model = countData;
+    },
+    error => {
+      this.notifier.notify( 'error', 'ERROR: Error al cargar los datos del formulario.' );
+    });
+
+    this.paginator.pageIndex = 0;
+    this.dataSource.loadData(this.formId, this.dependencyName, this.allDataAccess,
+      this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
+      this.paginator.pageSize, this.template.repeatSections, this.template.dates, this.template.booleans,
+      this.template.files, this.template.namesRepeats, this.filters);
+  }
+
+  exportCSV() {
+
+    this.exportCSVSpinnerButtonOptions.active = true;
+    this.exportCSVSpinnerButtonOptions.text = 'Cargando Reporte...';
+
+    this.dataService.getAllByTemplateAndDependency(this.formId, this.dependencyName,
+      this.allDataAccess, this.filter.nativeElement.value, this.getSortColumn(),
+      this.sort.direction, 0, -1, this.filters)
+      .subscribe(data => {
+        const proccessedData: Object[] = [];
+        this.dataService.processDataReport(data, [], proccessedData, null, this.template.repeatSections,
+          this.template.dates, this.template.booleans, this.template.files, this.template.namesRepeats,
+          this.template.displayedColumnsNames);
+
+          const options = {
+            filename: 'reporte-' + this.dependencyName + '-' + this.formId,
+            fieldSeparator: ';',
+            quoteStrings: '"',
+            decimalseparator: '.',
+            showLabels: true,
+            showTitle: true,
+            title: 'Reporte: ' + this.dependencyName + ' - ' + this.formId,
+            useBom: true,
+            useKeysAsHeaders: true
+          };
+          const exportToCsv = new ExportToCsv(options);
+          exportToCsv.generateCsv(proccessedData);
+
+          this.exportCSVSpinnerButtonOptions.active = false;
+          this.exportCSVSpinnerButtonOptions.text = 'Exportar CSV';
+      });
   }
 
   ngOnDestroy() {

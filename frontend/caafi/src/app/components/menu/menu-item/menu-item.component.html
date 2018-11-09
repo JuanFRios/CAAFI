@@ -5,11 +5,11 @@
         <button mat-menu-item color="primary" [matMenuTriggerFor]="menu.childMenu">
           <span>{{item.name}}</span>
     </button>
-    <app-menu-item #menu [items]="item.subItems"></app-menu-item>
+    <app-menu-item #menu [items]="item.subItems" [module]="module" [parent]="parent + '/' + item.path"></app-menu-item>
     </span>
     <!-- Handle leaf node menu items -->
     <span *ngIf="!item.subItems || item.subItems.length === 0">
-        <button mat-menu-item [routerLink]="['/' + module, parent, item.path]" routerLinkActive="active">
+        <button mat-menu-item [routerLink]="['/' + module + '/' + parent, item.path]" routerLinkActive="active">
           <span>{{item.name}}</span>
     </button>
     </span>

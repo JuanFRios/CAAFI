@@ -1,122 +1,33 @@
-import { Component, OnInit, OnDestroy, Inject, Input, ViewChild, ElementRef,
-  AfterViewInit, AfterViewChecked, AfterContentInit, AfterContentChecked } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
-import { ConfigService } from '../../services/config.service';
-import { DataService } from '../../services/data.service';
-import { FileService } from '../../services/file.service';
-import { ListService } from '../../services/list.service';
-import { Template } from '../../common/template';
-import { Dependency } from '../../common/dependency';
-import { Data } from '../../common/data';
-import { Form } from '../../common/form';
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
-import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
-import { ActivatedRoute } from '@angular/router';
-import { MatTableModule } from '@angular/material/table';
-import { MatSort, MatPaginator, MatTableDataSource } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { takeUntil, startWith, tap, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { ChangeDetectorRef } from '@angular/core';
-import { LoginService } from '../../services/login.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
-import { merge } from 'rxjs/observable/merge';
-import { fromEvent } from 'rxjs/observable/fromEvent';
-import { ExportToCsv } from 'export-to-csv';
-import { baseURL } from '../../common/baseurl';
 import { httpBaseURL } from '../../common/baseurl';
-import { FormlyComponent } from '../formly/formly.component';
 import { UtilService } from '../../services/util.service';
 import { NotifierService } from 'angular-notifier';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-polls',
   templateUrl: './polls.component.html',
   styleUrls: ['./polls.component.css']
 })
-export class PollsComponent implements OnInit, OnDestroy {
-
-  /*
-  onDestroy$ = new Subject<void>();
-  sub: any;
-  errorMessage: string[] = [];
-  exito = false;
-  cargando = false;
-  //form: FormGroup;
-  formFields: Array<FormlyFieldConfig>;
-  formData: Object;
-  data: Data;
-  //dependencies: Dependency[];
-  activeDependency: Dependency;
-  lists: String[][] = [];
-  options: FormlyFormOptions = {};
-  variables: Object = {};
-  takeUntil = takeUntil;
-  startWith = startWith;
-  tap = tap;
-  tableColumns: String[];
-  loading = false;
-  model: Data;
-  dataSource: ModelDataSource;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('filter') filter: ElementRef;
-  paginatorSize = 0;
-  displayedColumns = ['copy', 'edit', 'delete'];
-  displayedColumnsData = [];
-  displayedColumnsNames = [];
-  currentId: string = null;
-  repeatSections = [];
-  namesRepeats = {};
-  dates = [];
-  booleans = [];
-  files = [];
-  tapPaginator: Subscription;
-  sortChange: Subscription;
-  filterEvent: Subscription;
-  isReport: boolean;
-  loadingReport = true;
-  filters: string;
-  showForm = true;
-  activeForm: Form;
-  routePath: string;
-  errorMessageEncuesta: string[] = [];
-  exitoEncuesta = false;
-  cargandoEncuesta = false;
-  pollId: string;
-  */
+export class PollsComponent implements OnInit {
 
   private readonly notifier: NotifierService;
-  menuItems: any;
-  activeModule: string;
   formId: string;
   formName: string;
   dependencyId: string;
   fullLoading: boolean;
-  navigationSubscription;
   dependencyName: string;
   varFields;
   fields: any;
   template: any;
-
-  /*
-  @Input() exportCSVSpinnerButtonOptions: any = {
-    active: false,
-    text: 'Exportar CSV',
-    spinnerSize: 18,
-    raised: true,
-    buttonColor: 'primary',
-    spinnerColor: 'primary'
-  };
-  */
+  public = false;
 
   constructor(
-    private route: ActivatedRoute,
-    private configService: ConfigService,
     private templatesService: TemplatesService,
     private utilService: UtilService,
-    private listService: ListService,
+    private loginService: LoginService,
     notifierService: NotifierService,
     public router: Router
   ) {
@@ -125,94 +36,27 @@ export class PollsComponent implements OnInit, OnDestroy {
     this.varFields = {};
   }
 
-  ngOnInit() {
+  ngOnInit() {}
 
-    const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
-    this.activeModule = urlTree.root.children['primary'].segments[0].path;
-
-    this.navigationSubscription = this.route.params.subscribe(params => {
-      this.formId = this.route.snapshot.paramMap.get('form');
-      this.dependencyId = this.route.snapshot.paramMap.get('dependency');
-
-      this.loadMenu(this.activeModule);
-
-      if (this.formId != null) {
-        this.loadTemplate();
-      }
-    });
-
-    /*
-    //this.isReport = this.route.snapshot.routeConfig.path === 'reportes' ? true : false;
-    //const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
-    //this.routePath = urlTree.root.children['primary'].segments[0].path;
-    //if (this.routePath === 'encuestas' && this.route.snapshot.paramMap.get('id') != null) {
-    //  this.pollId = this.route.snapshot.paramMap.get('id');
-    //}
-    */
-
-    /*
-    this.sub = this.route.params.subscribe(params => {
-      console.log(params);
-      this.loadConfig();
-    });
-
-    //this.dataSource = new ModelDataSource(this.dataService);
-    */
-  }
-
-  /*
-  ngAfterViewInit() {
-    if (this.pollId) {
-      console.log(this.activeForm);
-      const af = new Form();
-      af.path = this.pollId;
-      const dep = new Dependency('name', []);
-      //this.loadFormById(this.pollId);
-      setTimeout(() => {
-        //this.loadForm(af, dep);
-      });
-    }
-  }
-  */
-
-  /**
-   * Loads the menu of an especified module
-   * @param module module to load the menu
-   */
-  loadMenu(module: string) {
-    this.configService.getByName(module).subscribe(
-      config => {
-        this.menuItems = config.value;
-        this.getDependencyName();
-      },
-      error => {
-        console.log('ERROR: ', error);
-      }
-    );
-  }
-
-  getDependencyName(): void {
-    for (const dependency of this.menuItems) {
-      if (dependency.path === this.dependencyId) {
-        this.dependencyName = dependency.name;
-        for (const form of dependency.subItems) {
-          if (form.path === this.formId) {
-            this.formName = form.name;
-          }
-        }
-      }
+  onSelectMenuItem($event) {
+    if ($event.formId != null) {
+      this.formId = $event.formId;
+      this.dependencyName = $event.dependencyName;
+      this.formName = $event.formName;
+      this.dependencyId = $event.dependencyId;
+      this.loadTemplate($event.formId);
     }
   }
 
   /**
    * Loads an specified template from DB
    */
-  loadTemplate() {
+  loadTemplate(formId) {
     this.toggleLoading(true);
 
-    this.templatesService.getByName(this.formId)
+    this.templatesService.getByName(formId)
       .subscribe(template => {
-        this.loadTemplateFeatures(template);
+        this.utilService.loadTemplateFeatures(template);
         this.template = template;
         this.toggleLoading(false);
       },
@@ -222,47 +66,6 @@ export class PollsComponent implements OnInit, OnDestroy {
         });
   }
 
-  loadTemplateFeatures(template) {
-    template['displayedColumns'] = ['copy', 'edit', 'delete'];
-    template['displayedColumnsData'] = [];
-    template['displayedColumnsNames'] = [];
-    template['repeatSections'] = [];
-    template['namesRepeats'] = {};
-    template['dates'] = [];
-    template['booleans'] = [];
-    template['files'] = [];
-
-    this.getTemplateFeatures(template, template.fields, ['key', 'type'], '');
-  }
-
-  getTemplateFeatures(template, fields, keys, path) {
-    for (const i in fields) {
-      if (typeof fields[i] === 'object') {
-        this.getTemplateFeatures(template, fields[i], keys, path + '[\'' + i + '\']');
-      } else if (this.utilService.arrayContains(i, keys)) {
-        if (i === 'key' && !path.includes('fieldArray') && !path.includes('options')) {
-          template.displayedColumns.push(fields[i]);
-          template.displayedColumnsData.push(fields[i]);
-          if (fields['type'] === 'repeat') {
-            template.displayedColumnsNames[fields[i]] = fields.sectionName;
-            template.repeatSections.push(fields[i]);
-            for (const j of fields['fieldArray']['fieldGroup']) {
-              template.namesRepeats[j.key] = j.templateOptions.label;
-            }
-          } else {
-            template.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
-          }
-        } else if (i === 'type' && fields[i] === 'datepicker') {
-          template.dates.push(fields['key']);
-        } else if (i === 'type' && fields[i] === 'checkbox') {
-          template.booleans.push(fields['key']);
-        } else if (i === 'type' && fields[i] === 'file') {
-          template.files.push(fields['key']);
-        }
-      }
-    }
-  }
-
   /**
    * Displays the loading
    */
@@ -270,540 +73,20 @@ export class PollsComponent implements OnInit, OnDestroy {
     this.fullLoading = $event;
   }
 
-  ngOnDestroy() {
-    if (this.navigationSubscription) {
-      this.navigationSubscription.unsubscribe();
-    }
-  }
-
-  /*
-  loadDataPage() {
-
-    this.dataService.count(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
-      this.filter.nativeElement.value, this.filters)
-      .subscribe(countData => {
-        this.model = countData;
-      },
-        error => this.errorMessage.push(error));
-
-    this.dataSource.loadData(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
-      this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
-      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.files, this.namesRepeats, this.filters);
-  }
-
-  loadConfig() {
-    this.configService.getTemplateConfig('dependencias')
-      .subscribe(form => {
-        //this.dependencies = form.value;
-      },
-        error => this.errorMessage.push(error));
-  }
-
-  //loadForm(activeForm: Form, dependency: Dependency) {
-    /*
-  loadForm($event) {
-
-    console.log('REceived emitt loading...', $event);
-
-    this.loading = true;
-    this.errorMessage = [];
-    this.exito = false;
-    this.cargando = false;
-    this.data = new Data();
-    this.displayedColumns = ['copy', 'edit', 'delete'];
-    this.displayedColumnsData = [];
-    this.displayedColumnsNames = [];
-    this.currentId = null;
-    this.repeatSections = [];
-    this.namesRepeats = {};
-    this.dates = [];
-    this.booleans = [];
-    this.files = [];
-
-    if (this.options.resetModel) {
-      this.options.resetModel();
-    }
-
-    this.activeDependency = dependency;
-    this.activeForm = activeForm;
-    this.form = new FormGroup({});
-
-    this.templatesService.getByName(activeForm.path)
-      .subscribe(template => {
-
-        this.variables = template.variables;
-
-        this.form = new FormGroup({});
-
-        this.formData = new Object();
-
-        this.lists = [];
-
-        this.tableColumns = template.table;
-
-        let fields = template.fields;
-        if (this.isReport) {
-          fields = template.report;
-        }
-        this.showForm = fields && fields.length > 0 ? true : false;
-
-        this.proccessFields(fields);
-        this.getList(this.lists, 0, fields);
-
-        this.formFields = fields;
-        this.loading = false;
-        //this.loadDataTable();
-        this.form = new FormGroup({});
-      },
-      error => {
-        this.errorMessage.push(error);
-        this.activeForm = null;
-        this.loading = false;
-      });
-
-  }
-
-  loadFormById(idForm: string) {
-
-    this.loading = true;
-    this.errorMessage = [];
-    this.exito = false;
-    this.cargando = false;
-    this.data = new Data();
-    this.currentId = null;
-    this.repeatSections = [];
-    this.namesRepeats = {};
-    this.dates = [];
-    this.booleans = [];
-    this.files = [];
-
-    if (this.options.resetModel) {
-      this.options.resetModel();
-    }
-
-    this.form = new FormGroup({});
-
-    this.templatesService.getByName(idForm)
-      .subscribe(template => {
-
-        this.variables = template.variables;
-        this.form = new FormGroup({});
-        this.formData = new Object();
-        this.lists = [];
-        const fields = template.fields;
-        this.showForm = fields && fields.length > 0 ? true : false;
-
-        this.proccessFields(fields);
-        this.getList(this.lists, 0, fields);
-
-        this.formFields = fields;
-        this.loading = false;
-        this.form = new FormGroup({});
-      },
-      error => {
-        this.errorMessage.push(error);
-        this.activeForm = null;
-        this.loading = false;
-      });
-  }
-
-  proccessFields(fields) {
-
-    // Proceess Validators
-    this.evalJSFromJSON(fields, ['pattern', 'defaultValue', 'optionsDB', 'label',
-      'templateOptions?disabled', 'onInit', 'onDestroy', 'hideExpression', 'variable', 'watcher'], '');
-  }
-  */
-
-  /**
-   * Eval all javascript strings from db
-   */
-
-   /*
-  evalJSFromJSON(fields, keys, path) {
-    for (const i in fields) {
-      if (typeof fields[i] === 'object') {
-        this.evalJSFromJSON(fields[i], keys, path + '[\'' + i + '\']');
-      } else if (this.arrayContains(i, keys)) {
-        try {
-          // pendiente refactor en esta parte
-          if (i === 'optionsDB') {
-            path = path + '[\'options\']';
-            this.lists.push([path, fields[i]]);
-          } else if (i === 'templateOptions?disabled') {
-            fields[i.replace('?', '.')] = fields[i];
-            delete fields[i];
-          } else if (i === 'variable') {
-            if (!this.options['formState']) {
-              this.options['formState'] = {};
-            }
-            this.options['formState'][fields[i]] = 0;
-          } else {
-            fields[i] = eval(fields[i]); // no-eval
-          }
-        } catch (e) { }
-      }
-    }
-  }
-
-  onSubmit(template) {
-
-    this.errorMessage = [];
-    this.exito = false;
-    this.cargando = true;
-    this.loading = true;
-
-    this.data = new Data();
-    const formsData: FormData[] = this.getFiles(template);
-    this.data.data = template;
-    this.data.template = this.activeForm.path;
-    this.data.origin = this.activeDependency.name;
-
-    if (this.currentId != null) {
-      this.data.id = this.currentId;
-    }
-
-    this.dataService.save(this.data)
-      .subscribe(res => {
-        for (let i = 0, len = formsData.length; i < len; i++) {
-          this.uploadFile(formsData[i]);
-        }
-        this.loadDataTable();
-        this.reset();
-        this.exito = true;
-        this.cargando = false;
-        this.loading = false;
-      },
-        error => {
-          this.errorMessage.push(error);
-          this.loading = false;
-        });
-  }
-
-  loadData(id, isCopy) {
-    this.loading = true;
-    this.reset();
-
-    this.dataService.getById(id)
-      .subscribe(formData => {
-        if (!isCopy) {
-          this.currentId = formData.id;
-        } else {
-          this.currentId = null;
-        }
-        for (const i in formData.data) {
-          if (formData.data[i] != null) {
-            if (this.repeatSections.includes(i)) {
-              for (const j in formData.data[i]) {
-                if (formData.data[i][j] != null) {
-                  if (!this.form.get(i).get(j)) {
-                    const element: HTMLElement = document.getElementById('button-add-' + i) as HTMLElement;
-                    element.click();
-                  }
-                  this.form.get(i).get(j).patchValue(formData.data[i][j]);
-                  this.formData[i][j] = formData.data[i][j];
-                }
-              }
-            } else {
-              if (this.form.get(i)) {
-                this.form.get(i).patchValue(formData.data[i]);
-                this.formData[i] = formData.data[i];
-              }
-            }
-          }
-        }
-        this.loading = false;
-      },
-        error => {
-          this.errorMessage = error;
-          this.loading = false;
-        });
-  }
-
-  deleteData(id) {
-    if (confirm('¿Está seguro que desea borrar el registro?')) {
-      this.dataService.delete(id)
-        .subscribe(
-          data => {
-            this.loadDataTable();
-          },
-          error => {
-            this.errorMessage = error;
-          }
-        );
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
-  }
-
-  arrayContains(needle, arrhaystack) {
-    return (arrhaystack.indexOf(needle) > -1);
-  }
-
-  getFiles(template) {
-    const formsData: FormData[] = [];
-    for (const i in template) {
-      if (template[i] && template[i][0] && typeof template[i][0].name === 'string' && template[i].length > 0) {
-        const file: File = template[i][0];
-        const formData: FormData = new FormData();
-        const fecha_actual = new Date();
-        const ano = fecha_actual.getFullYear();
-        const mes = fecha_actual.getMonth() + 1;
-        const dia = fecha_actual.getDate();
-        const formato_fecha = '_' + ano + '-' + mes + '-' + dia;
-        const nombre_archivo = i + formato_fecha;
-        template[i] = nombre_archivo + '.pdf';
-        formData.append('file', file, nombre_archivo);
-        formsData.push(formData);
-      }
-    }
-    return formsData;
-  }
-
-  uploadFile(file) {
-    this.fileService.upload(file);
-  }
-
-  getList(list, current, fields) {
-    if (this.lists.length > 0) {
-      if (list.length > current) {
-        this.configService.getByName(list[current][1])
-          .subscribe(confi => {
-            eval('fields' + list[current][0] + ' = ' + JSON.stringify(confi.value)); // no-eval
-            current++;
-            this.getList(list, current, fields);
-          });
-      }
-    }
-  }
-
-  loadDataTable() {
-
-    this.loadTemplateFeatures().then(dataRetorno => {
-      const urlFilters = encodeURIComponent(JSON.stringify({}));
-
-      this.dataService.count(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
-        '', urlFilters)
-      .subscribe(countData => {
-        this.model = countData;
-      },
-      error => this.errorMessage.push(error));
-
-      this.dataSource.loadData(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
-        '', 'savedDate', 'desc', 0, 5, this.repeatSections, this.dates, this.booleans, this.files, this.namesRepeats, urlFilters);
-
-      if (this.sortChange) {
-        this.sortChange.unsubscribe();
-      }
-      this.sortChange = this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-
-      if (this.tapPaginator) {
-        this.tapPaginator.unsubscribe();
-      }
-      this.paginator.pageIndex = 0;
-      this.tapPaginator = merge(this.sort.sortChange, this.paginator.page)
-        .pipe(
-          tap(() => this.loadDataPage())
-        )
-        .subscribe();
-
-      // server-side search
-      if (this.filterEvent) {
-        this.filterEvent.unsubscribe();
-      }
-      this.filterEvent = fromEvent(this.filter.nativeElement, 'keyup')
-        .pipe(
-          debounceTime(150),
-          distinctUntilChanged(),
-          tap(() => {
-            this.paginator.pageIndex = 0;
-            this.loadDataPage();
-          })
-        )
-        .subscribe();
-    });
-  }
-
-  loadTemplateFeatures() {
-
-    return new Promise( resolve => {
-
-      this.dataSource.loading(true);
-
-      this.displayedColumns = ['copy', 'edit', 'delete'];
-      this.displayedColumnsData = [];
-      this.displayedColumnsNames = [];
-      this.repeatSections = [];
-      this.namesRepeats = {};
-      this.dates = [];
-      this.booleans = [];
-      this.files = [];
-
-      this.templatesService.getByName(this.activeForm.path)
-        .subscribe(form => {
-
-          this.getTemplateFeatures(form.fields, ['key', 'type'], '');
-          this.dataSource.loading(false);
-
-          resolve();
-
-        },
-        error => {
-          this.errorMessage.push(error);
-          this.loading = false;
-        });
-    });
-  }
-
-  getTemplateFeatures(fields, keys, path) {
-    for (const i in fields) {
-      if (typeof fields[i] === 'object') {
-        this.getTemplateFeatures(fields[i], keys, path + '[\'' + i + '\']');
-      } else if (this.arrayContains(i, keys)) {
-        if (i === 'key' && !path.includes('fieldArray') && !path.includes('options')) {
-          this.displayedColumns.push(fields[i]);
-          this.displayedColumnsData.push(fields[i]);
-          if (fields['type'] === 'repeat') {
-            this.displayedColumnsNames[fields[i]] = fields.sectionName;
-            this.repeatSections.push(fields[i]);
-            for (const j of fields['fieldArray']['fieldGroup']) {
-              this.namesRepeats[j.key] = j.templateOptions.label;
-            }
-          } else {
-            this.displayedColumnsNames[fields[i]] = fields.templateOptions.label;
-          }
-        } else if (i === 'type' && fields[i] === 'datepicker') {
-          this.dates.push(fields['key']);
-        } else if (i === 'type' && fields[i] === 'checkbox') {
-          this.booleans.push(fields['key']);
-        } else if (i === 'type' && fields[i] === 'file') {
-          this.files.push(fields['key']);
-        }
-      }
-    }
-  }
-
-  resetConfirmation() {
-    if (confirm('Esta acción limpiará el formulario. ¿Desea continuar?')) {
-      this.reset();
-    }
-  }
-
-  reset() {
-    this.currentId = null;
-
-    const elements: HTMLCollection = document.getElementsByClassName('button-remove-repeat') as HTMLCollection;
-    let numElems = elements.length;
-    while (numElems > 0) {
-      (elements[0] as HTMLElement).click();
-      numElems--;
-    }
-
-    this.options.resetModel();
-    this.filters = '';
-
-    if (this.isReport) {
-      this.loadDataPage();
-    }
-  }
-
-  exportCSV() {
-
-    this.exportCSVSpinnerButtonOptions.active = true;
-    this.exportCSVSpinnerButtonOptions.text = 'Cargando Reporte...';
-
-    this.dataService.getAllByTemplateAndDependency(this.activeForm.path, this.activeDependency.name,
-      this.activeForm.allDataAccess, this.filter.nativeElement.value, this.getSortColumn(),
-      this.sort.direction, 0, -1, this.filters)
-      .subscribe(data => {
-        const proccessedData: Object[] = [];
-        this.dataService.processDataReport(data, [], proccessedData, null, this.repeatSections,
-          this.dates, this.booleans, this.files, this.namesRepeats, this.displayedColumnsNames);
-
-          const options = {
-            filename: 'reporte-' + this.activeDependency.name + '-' + this.activeForm.path,
-            fieldSeparator: ';',
-            quoteStrings: '"',
-            decimalseparator: '.',
-            showLabels: true,
-            showTitle: true,
-            title: 'Reporte: ' + this.activeDependency.name + ' - ' + this.activeForm.path,
-            useBom: true,
-            useKeysAsHeaders: true
-          };
-          const exportToCsv = new ExportToCsv(options);
-          exportToCsv.generateCsv(proccessedData);
-
-          this.exportCSVSpinnerButtonOptions.active = false;
-          this.exportCSVSpinnerButtonOptions.text = 'Exportar CSV';
-      });
-  }
-
-  getSortColumn() {
-    let sortColumn = 'savedDate';
-    if (this.sort.active != null && this.sort.active.length > 0
-      && this.sort.direction != null && this.sort.direction.length > 0) {
-      sortColumn = 'data.' + this.sort.active;
-    }
-    return sortColumn;
-  }
-
-  filterData(filterFormData) {
-    console.log('filterFormData', filterFormData);
-    const urlFilters = encodeURIComponent(JSON.stringify(filterFormData));
-    this.filters = urlFilters;
-    this.dataService.count(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
-      this.filter.nativeElement.value, urlFilters)
-    .subscribe(countData => {
-      this.model = countData;
-    },
-    error => this.errorMessage.push(error));
-
-    this.paginator.pageIndex = 0;
-    this.dataSource.loadData(this.activeForm.path, this.activeDependency.name, this.activeForm.allDataAccess,
-      this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
-      this.paginator.pageSize, this.repeatSections, this.dates, this.booleans, this.files, this.namesRepeats,
-      urlFilters);
-  }
-
-  downloadFile() {
-    //window['windowDownloadFile'] = () => {
-      console.log('download');
-    //};
-  }
-
-  enviarEncuesta(emails) {
-    this.cargandoEncuesta = true;
-    this.templatesService.senTemplateByEmail(this.activeForm.path, emails, httpBaseURL + '/encuestas/' + this.activeForm.path)
+  sendPoll(emails) {
+    this.fullLoading = true;
+    this.templatesService.senTemplateByEmail(this.formName, emails, httpBaseURL + '/encuestas/' +
+      this.dependencyId + '/' + this.formId)
     .subscribe(result => {
       if (result.response === 'OK') {
-        this.exitoEncuesta = true;
+        this.notifier.notify( 'success', 'OK: Configuración encuesta guardada.' );
       }
-      this.cargandoEncuesta = false;
+      this.fullLoading = false;
     },
     error => {
-      this.errorMessageEncuesta.push(error);
-      this.cargandoEncuesta = false;
+      this.notifier.notify( 'error', 'ERROR: Error al guardar la configuracón de la encuesta.' );
+      this.fullLoading = false;
     });
   }
-  */
-
- enviarEncuesta(emails) {
-  this.fullLoading = true;
-  this.templatesService.senTemplateByEmail(this.formName, emails, httpBaseURL + '/encuestas/' + this.dependencyId + '/' + this.formId)
-  .subscribe(result => {
-    if (result.response === 'OK') {
-      this.notifier.notify( 'success', 'OK: Configuración encuesta guardada.' );
-    }
-    this.fullLoading = false;
-  },
-  error => {
-    this.notifier.notify( 'error', 'ERROR: Error al guardar la configuracón de la encuesta.' );
-    this.fullLoading = false;
-  });
-}
 
 }

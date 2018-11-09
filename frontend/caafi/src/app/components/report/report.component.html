@@ -1,49 +1,22 @@
+<!-- Menu -->
 <div>
-	<button mat-button [matMenuTriggerFor]="main_menu">
-		<i class="material-icons">more_vert</i>
-		<span *ngIf="!activeForm">Seleccione formulario
-		</span>
-		<span *ngIf="activeForm" class="titleform"> {{activeDependency.name+ " - " +activeForm }}</span>
-	</button>
+    <app-menu (selectedItem)="onSelectMenuItem($event)"></app-menu>
+</div>
 
-	<mat-menu #main_menu="matMenu">
-		<ng-container *ngFor="let mainItem of dependencies">
-			<button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ mainItem.name }}</button>
-			<mat-menu #sub_menu="matMenu">
-				<button *ngFor="let subItem of mainItem.forms" mat-menu-item (click)="loadForm(subItem , mainItem)">{{ subItem.name }}</button>
-			</mat-menu>
-		</ng-container>
-	</mat-menu>
+<div *ngIf="template != null">
+    <!-- Formly -->
+    <div>
+        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="templateFilters" [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)" (buttonClicked)="dataTable.filterData($event)" (reseted)="dataTable.refresh($event)"></app-formly>
+    </div>
 
-	<div class="container">
+    <!-- Data Table -->
+    <div>
+        <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="false" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
+    </div>
 
-		<div *ngIf="activeForm">
-			<form [formGroup]="form" (ngSubmit)="onSubmit(formData)">
-				<formly-form [model]="formData" [fields]="formFields" [options]="options" [form]="form">
-					<!--<button mat-raised-button color="primary" type="button"
-				(click)="loadData()">Load Data</button>-->
-					<button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">
-						Consultar</button>
-				</formly-form>
-			</form>
-			<div [hidden]="!cargando">
-				<mat-spinner></mat-spinner>
-				<h4>Consultando...</h4>
-			</div>
-			<div *ngIf="errorMessage" class="error">
-				<p *ngFor="let error of errorMessage">{{error}}</p>
-			</div>
-			<div *ngIf="configObject.data.length >0">
-					<input class="form-control form-control-sm mr-sm-2 mb-3 mb-sm-0" #search (keyup)="myTable.gtSearch(search.value)" placeholder="buscar en tabla...">
-				<generic-table [gtClasses]="'blueTable'" [gtSettings]="configObject.settings" #myTable [gtFields]="configObject.fields" [gtData]="configObject.data" [gtOptions]="{highlightSearch:true}" ></generic-table>
-				<div class="text-center">
-						<gt-table-info class="form-text text-muted mb-2" [genericTable]="myTable"></gt-table-info>
-						<gt-pagination [gtClasses]="'pagination pagination-sm justify-content-center'" [genericTable]="myTable"></gt-pagination>
-						<a  mat-button (click) = "myTable.exportCSV('reporte.csv')">Descargar <span><img src="./assets/img/excel.png" height=30 ></span></a>
-				</div>
-			
-			</div>
-		</div>
-		<ngx-loading [show]="loading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
-	</div>
+    <!-- Loading -->
+    <ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
+
+    <!-- Notifier -->
+    <notifier-container></notifier-container>
 </div>

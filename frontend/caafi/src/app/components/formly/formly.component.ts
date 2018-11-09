@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChildren, QueryList } from '@angular/core';
-import { TemplatesService } from '../../services/templates.service';
-import { FormGroup, FormArray } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { Data } from '../../common/data';
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import { takeUntil, startWith, tap } from 'rxjs/operators';
@@ -22,8 +21,11 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
   @Input() formId: string;
   @Input() dependencyName: string;
+  @Input() typeSubmit = true;
   @Output() fullLoading = new EventEmitter();
   @Output() dataSaved = new EventEmitter();
+  @Output() buttonClicked = new EventEmitter();
+  @Output() reseted = new EventEmitter();
 
   @ViewChildren('repeat') components: QueryList<RepeatTypeComponent>;
 
@@ -53,7 +55,6 @@ export class FormlyComponent implements OnInit, OnDestroy {
   saving: boolean;
 
   constructor(
-    private templatesService: TemplatesService,
     private dataService: DataService,
     private fileService: FileService,
     private listService: ListService,
@@ -136,6 +137,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
   reset() {
     this.options.resetModel();
+    this.reseted.emit(null);
   }
 
   onSubmit(template) {
@@ -152,7 +154,6 @@ export class FormlyComponent implements OnInit, OnDestroy {
       this.data.id = this.currentId;
     }
 
-    console.log(this.data);
     this.dataService.save(this.data)
       .subscribe(res => {
         for (let i = 0, len = formsData.length; i < len; i++) {
@@ -256,14 +257,14 @@ export class FormlyComponent implements OnInit, OnDestroy {
     }
   }
 
+  buttonClick(formData) {
+    this.buttonClicked.emit(formData);
+  }
+
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
     this._template.unsubscribe();
-  }
-
-  onModelChanges($event) {
-    //console.log('$event', $event);
   }
 
 }

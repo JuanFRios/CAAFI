@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -17,7 +17,6 @@ export class MenuItemComponent implements OnInit {
     public router: Router
   ) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
 }
