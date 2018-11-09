@@ -27,7 +27,7 @@ export class PollsComponent implements OnInit {
   constructor(
     private templatesService: TemplatesService,
     private utilService: UtilService,
-    private loginService: LoginService,
+    public loginService: LoginService,
     notifierService: NotifierService,
     public router: Router
   ) {
