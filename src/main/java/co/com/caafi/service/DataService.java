@@ -85,22 +85,65 @@ public class DataService {
 				HashMap<String,Object> result = new ObjectMapper().readValue(filters, HashMap.class);
 				filtersWhere = "true";
 				for (Entry<String, Object> entry : result.entrySet()) {
-					if(entry.getValue() != null && !((String)entry.getValue()).isEmpty()) {
+					if(entry.getValue() != null) {
 						String[] entryKey = entry.getKey().split("-");
 						String type = entryKey[0];
 						String name = entryKey[1];
 						switch(type) {
 						case "tea": // Text Equals All
-							filtersWhere += " && JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + (String) entry.getValue() + "\\\".toLowerCase() )!=-1";
+							if(!((String)entry.getValue()).isEmpty()) {
+								filtersWhere += " && JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + (String) entry.getValue() + "\\\".toLowerCase() ) != -1";
+							}
 							break;
 						case "tge": // Text Greater or Equals than
-							filtersWhere += " && this.data." + name + " >= \\\"" + (String) entry.getValue() + "\\\"";
+							if(!((String)entry.getValue()).isEmpty()) {
+								filtersWhere += " && this.data." + name + " >= \\\"" + (String) entry.getValue() + "\\\"";
+							}
 							break;
 						case "tle": // Text Less or Equals than
-							filtersWhere += " && this.data." + name + " <= \\\"" + (String) entry.getValue() + "\\\"";
+							if(!((String)entry.getValue()).isEmpty()) {
+								filtersWhere += " && this.data." + name + " <= \\\"" + (String) entry.getValue() + "\\\"";
+							}
 							break;
 						case "te": // Text Equals
-							filtersWhere += " && this.data." + name + " == \\\"" + (String) entry.getValue() + "\\\"";
+							if(!((String)entry.getValue()).isEmpty()) {
+								filtersWhere += " && this.data." + name + " == \\\"" + (String) entry.getValue() + "\\\"";
+							}
+							break;
+						case "tl": // Text Like
+							if(!((String)entry.getValue()).isEmpty()) {
+								filtersWhere += " && this.data." + name + ".toLowerCase().indexOf( \\\"" + (String) entry.getValue() + "\\\".toLowerCase() ) != -1";
+							}
+							break;
+						case "tll": // Text Like List
+							List<String> list = (List<String>) entry.getValue();
+							if(!list.isEmpty()) {
+								filtersWhere += " && ( false";
+								for(String listItem : list) {
+									filtersWhere += " || (this.data." + name + " ? JSON.stringify(this.data." + name + ").toLowerCase().indexOf( \\\"" + listItem + "\\\".toLowerCase() ) != -1 : false)";
+								}
+								filtersWhere += " )";
+							}
+							break;
+						case "dge": // Date Greater or Equals than
+							if(!((String)entry.getValue()).isEmpty()) {
+								filtersWhere += " && new Date(this.data." + name + ").getTime() >= new Date(\\\"" + (String) entry.getValue() + "\\\").getTime()";
+							}
+							break;
+						case "dle": // Date Less or Equals than
+							if(!((String)entry.getValue()).isEmpty()) {
+								filtersWhere += " && new Date(this.data." + name + ").getTime() <= new Date(\\\"" + (String) entry.getValue() + "\\\").getTime()";
+							}
+							break;
+						case "nge": // Number Greater or Equals than
+							if(!((String)entry.getValue()).isEmpty()) {
+								filtersWhere += " && this.data." + name + " >= " + (String) entry.getValue();
+							}
+							break;
+						case "nle": // Number Less or Equals than
+							if(!((String)entry.getValue()).isEmpty()) {
+								filtersWhere += " && this.data." + name + " <= " + (String) entry.getValue();
+							}
 							break;
 						default:
 							filtersWhere += " && true";

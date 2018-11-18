@@ -49,7 +49,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.configService.getByName(module).subscribe(
       config => {
         this.menuItems = config.value;
-        this.breadcrumb = this.getItemNames(this.menuItems);
+        this.getItemNames(this.menuItems);
+        this.breadcrumb = this.getBreadcrumb(this.menuItems);
         this.emitSelectedItem();
       },
       error => {
@@ -68,21 +69,33 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.selectedItem.emit(menuData);
   }
 
-  getItemNames(menuItems): string {
-    let breadcrumb = '';
+  getItemNames(menuItems) {
     for (const menuItem of menuItems) {
-      breadcrumb += menuItem.name;
       if (menuItem.path === this.dependencyId) {
         this.dependencyName = menuItem.name;
       }
       if (menuItem.path === this.formId) {
         this.formName = menuItem.name;
       }
-      if (menuItem.subItems != null) {
-        breadcrumb += ' - ' + this.getItemNames(menuItem.subItems);
+    }
+  }
+
+  getBreadcrumb(menuItems): string {
+    const breadcrumbs = {};
+    this.loop(menuItems, [], breadcrumbs);
+    let breadcrumb;
+    this.formId != null ? breadcrumb = breadcrumbs[this.formId].map(o => o).join(' - ') : breadcrumb = '';
+    return breadcrumb;
+  }
+
+  loop(menuItems, path, breadcrumbs) {
+    for (let i = 0; i < menuItems.length; i++) {
+      if (menuItems[i].subItems) {
+        this.loop(menuItems[i].subItems, [...path, menuItems[i].name], breadcrumbs);
+      } else {
+        breadcrumbs[menuItems[i].path] = [...path, menuItems[i].name];
       }
     }
-    return breadcrumb;
   }
 
   ngOnDestroy() {

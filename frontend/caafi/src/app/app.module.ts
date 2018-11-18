@@ -25,7 +25,7 @@ import { FormlyMaterialModule } from '@ngx-formly/material';
 import { DatepickerTypeComponent } from './components/types/datepicker/datepicker.component';
 import { VariableTypeComponent } from './components/types/variable/variable.component';
 import { RepeatTypeComponent } from './components/types/repeat-section/repeat-section.component';
-import { FormlyFieldFile } from './components/types/file-upload/file.component';
+import { FormlyFieldFileComponent } from './components/types/file-upload/file.component';
 import { FileValueAccessor } from './components/types/file-upload/file-value-accessor';
 
 import { AppRoutingModule } from './app-routing/app-routing.module';
@@ -100,7 +100,7 @@ export function required(err, field) {
     VariableTypeComponent,
     RepeatTypeComponent,
     FileValueAccessor,
-    FormlyFieldFile,
+    FormlyFieldFileComponent,
     TooltipWrapperComponent,
     SafePipe
   ],
@@ -124,7 +124,7 @@ export function required(err, field) {
           }
         },
         { name: 'repeat', component: RepeatTypeComponent },
-        { name: 'file', component: FormlyFieldFile },
+        { name: 'file', component: FormlyFieldFileComponent },
         {
           name: 'variable',
           component: VariableTypeComponent,
