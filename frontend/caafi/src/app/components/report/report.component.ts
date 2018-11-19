@@ -18,6 +18,8 @@ export class ReportComponent implements OnInit {
   dependencyName: string;
   template: any;
   templateFilters: any;
+  allDataAccess = false;
+  noDependency = false;
 
   constructor(
     private templatesService: TemplatesService,
@@ -35,6 +37,8 @@ export class ReportComponent implements OnInit {
     if ($event.formId != null) {
       this.formId = $event.formId;
       this.dependencyName = $event.dependencyName;
+      this.allDataAccess = $event.allDataAccess;
+      this.noDependency = $event.noDependency;
       this.loadReport($event.formId);
     }
   }

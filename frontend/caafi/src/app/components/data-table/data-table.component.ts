@@ -20,7 +20,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
 
   @Input() formId: string;
   @Input() dependencyName: string;
-  @Input() allDataAccess: boolean;
+  @Input() allDataAccess = false;
   @Input() activeActions = true;
   @Input() export = false;
   @Output() copyData = new EventEmitter();

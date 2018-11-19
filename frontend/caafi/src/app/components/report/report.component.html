@@ -6,12 +6,13 @@
 <div *ngIf="template != null">
     <!-- Formly -->
     <div>
-        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="templateFilters" [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)" (buttonClicked)="dataTable.filterData($event)" (reseted)="dataTable.refresh($event)"></app-formly>
+        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="templateFilters" [noDependency]="noDependency" [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)" (buttonClicked)="dataTable.filterData($event)"
+            (reseted)="dataTable.refresh($event)"></app-formly>
     </div>
 
     <!-- Data Table -->
     <div>
-        <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="false" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
+        <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="allDataAccess" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
     </div>
 
     <!-- Loading -->

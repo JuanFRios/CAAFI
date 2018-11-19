@@ -22,6 +22,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   dependencyName: string;
   menuItems: any;
   breadcrumb = '';
+  allDataAccess = false;
+  noDependency = false;
 
   constructor(
     private configService: ConfigService,
@@ -66,6 +68,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     menuData['dependencyId'] = this.dependencyId;
     menuData['formName'] = this.formName;
     menuData['dependencyName'] = this.dependencyName;
+    menuData['allDataAccess'] = this.allDataAccess;
+    menuData['noDependency'] = this.noDependency;
     this.selectedItem.emit(menuData);
   }
 
@@ -73,9 +77,15 @@ export class MenuComponent implements OnInit, OnDestroy {
     for (const menuItem of menuItems) {
       if (menuItem.path === this.dependencyId) {
         this.dependencyName = menuItem.name;
+        if (menuItem.noDependency) {
+          this.noDependency = menuItem.noDependency;
+        }
       }
       if (menuItem.path === this.formId) {
         this.formName = menuItem.name;
+        if (menuItem.allDataAccess) {
+          this.allDataAccess = menuItem.allDataAccess;
+        }
       }
     }
   }
