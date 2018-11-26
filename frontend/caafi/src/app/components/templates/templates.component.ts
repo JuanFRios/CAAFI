@@ -18,6 +18,7 @@ export class TemplatesComponent implements OnInit {
   varFields;
   fields: any;
   template: any;
+  allDataAccess = false;
 
   constructor(
     private templatesService: TemplatesService,
@@ -36,6 +37,7 @@ export class TemplatesComponent implements OnInit {
     if ($event.formId != null) {
       this.formId = $event.formId;
       this.dependencyName = $event.dependencyName;
+      this.allDataAccess = $event.allDataAccess;
       this.loadTemplate($event.formId);
     }
   }

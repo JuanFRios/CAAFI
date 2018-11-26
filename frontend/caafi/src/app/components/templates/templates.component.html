@@ -11,7 +11,7 @@
 
     <!-- Data Table -->
     <div>
-        <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="false" [template]="template" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
+        <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="allDataAccess" [template]="template" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
     </div>
 
     <!-- Loading -->

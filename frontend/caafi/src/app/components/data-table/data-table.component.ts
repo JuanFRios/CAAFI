@@ -38,6 +38,14 @@ export class DataTableComponent implements OnInit, OnDestroy {
     buttonColor: 'primary',
     spinnerColor: 'primary'
   };
+  @Input() refreshSpinnerButtonOptions: any = {
+    active: false,
+    text: 'Refrescar',
+    spinnerSize: 18,
+    raised: true,
+    buttonColor: 'primary',
+    spinnerColor: 'primary'
+  };
 
   private _template = new BehaviorSubject<any>([]);
   @Input()
@@ -151,7 +159,9 @@ export class DataTableComponent implements OnInit, OnDestroy {
   }
 
   refresh($event) {
+    this.exportCSVSpinnerButtonOptions.active = true;
     this.loadDataTable();
+    this.exportCSVSpinnerButtonOptions.active = false;
   }
 
   onCopyData(id) {

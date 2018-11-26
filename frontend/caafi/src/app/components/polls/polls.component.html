@@ -4,27 +4,34 @@
 </div>
 
 <div *ngIf="template != null">
-    <!-- Formly -->
-    <div>
-        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="template" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)"></app-formly>
-    </div>
-
-    <div class="container" *ngIf="loginService.isLogIn()">
+    <div *ngIf="loginService.isLogIn();else public_content">
+        <!-- Formly -->
+        <div>
+            <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="template" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)"></app-formly>
+        </div>
 
         <!-- Data Table -->
         <div>
             <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
         </div>
 
-        <hr>
-        <h4>Configuración de la Encuesta</h4>
-        <div class="container-formPollEmails">
-            <mat-form-field>
-                <textarea matInput #poll_emails placeholder="Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
-            </mat-form-field>
+        <div class="container">
+            <hr>
+            <h4>Configuración de la Encuesta</h4>
+            <div class="container-formPollEmails">
+                <mat-form-field>
+                    <textarea matInput #poll_emails placeholder="Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
+                </mat-form-field>
+            </div>
+            <button mat-raised-button color="primary" type="button" (click)="sendPoll(poll_emails.value)">Enviar encuesta</button>
         </div>
-        <button mat-raised-button color="primary" type="button" (click)="sendPoll(poll_emails.value)">Enviar encuesta</button>
     </div>
+    <ng-template #public_content>
+        <!-- Formly -->
+        <div>
+            <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="template" (fullLoading)="toggleLoading($event)"></app-formly>
+        </div>
+    </ng-template>
 
     <!-- Loading -->
     <ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
