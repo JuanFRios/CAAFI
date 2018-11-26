@@ -56,7 +56,7 @@ export class PollsComponent implements OnInit {
 
     this.templatesService.getByName(formId)
       .subscribe(template => {
-        this.utilService.loadTemplateFeatures(template);
+        this.utilService.loadTemplateFeatures(template, false);
         this.template = template;
         this.toggleLoading(false);
       },

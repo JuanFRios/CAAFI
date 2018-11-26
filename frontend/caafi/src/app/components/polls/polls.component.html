@@ -10,6 +10,12 @@
     </div>
 
     <div class="container" *ngIf="loginService.isLogIn()">
+
+        <!-- Data Table -->
+        <div>
+            <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
+        </div>
+
         <hr>
         <h4>Configuración de la Encuesta</h4>
         <div class="container-formPollEmails">
