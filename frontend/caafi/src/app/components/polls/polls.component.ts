@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
 import { Router } from '@angular/router';
-import { httpBaseURL } from '../../common/baseurl';
+// import { httpBaseURL } from '../../common/baseurl';
 import { UtilService } from '../../services/util.service';
 import { NotifierService } from 'angular-notifier';
 import { LoginService } from '../../services/login.service';
@@ -75,7 +75,7 @@ export class PollsComponent implements OnInit {
 
   sendPoll(emails) {
     this.fullLoading = true;
-    this.templatesService.senTemplateByEmail(this.formName, emails, httpBaseURL + '/encuestas/' +
+    this.templatesService.senTemplateByEmail(this.formName, emails, 'http://ingenieria2.udea.edu.co/caafi' + '/encuestas/' +
       this.dependencyId + '/' + this.formId)
     .subscribe(result => {
       if (result.response === 'OK') {
