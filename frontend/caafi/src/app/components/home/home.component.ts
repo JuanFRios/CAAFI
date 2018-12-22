@@ -41,6 +41,7 @@ export class HomeComponent implements OnInit {
     this.clave = "";
     this.loginService.check()
       .subscribe(usuario => {
+        console.log('redirect to formularios')
         this.router.navigate(['/formularios']);
       });
 

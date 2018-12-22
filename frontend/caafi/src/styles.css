@@ -1,4 +1,16 @@
+/***** IMPORTS *****/
+
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "../node_modules/angular-notifier/styles/core.css";
+@import "../node_modules/angular-notifier/styles/themes/theme-material.css";
+@import "../node_modules/angular-notifier/styles/types/type-default.css";
+@import "../node_modules/angular-notifier/styles/types/type-error.css";
+@import "../node_modules/angular-notifier/styles/types/type-info.css";
+@import "../node_modules/angular-notifier/styles/types/type-success.css";
+@import "../node_modules/angular-notifier/styles/types/type-warning.css";
+
+/***** STYLES *****/
+
 .mat-elevation-z0 {
     box-shadow: 0 0 0 0 rgba(0, 0, 0, .2), 0 0 0 0 rgba(0, 0, 0, .14), 0 0 0 0 rgba(0, 0, 0, .12)
 }
@@ -1959,6 +1971,7 @@ button.btn-agregar {
     width: 31%;
     padding: 0 10px;
 }
+
 .w-50 {
     width: 47%;
 }
@@ -2156,6 +2169,7 @@ span.gt-highlight-search {
 #cdk-overlay-0 .mat-menu-panel {
     max-height: calc(100vh - 198px) !important;
 }
+
 .mat-menu-item {
     font-size: 14px;
 }
@@ -2166,4 +2180,9 @@ body {
 
 a.download-link {
     cursor: pointer;
+}
+
+.title-label {
+    width: 100%;
+    margin-bottom: 10px;
 }

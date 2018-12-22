@@ -1,18 +1,8 @@
-import { Component, OnInit, OnDestroy, Inject, Input, ViewChild, ElementRef } from '@angular/core';
-//import { DotObject } from 'dot-object';
+import { Component, OnInit } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
-import { ConfigService } from '../../services/config.service';
-import { DataService } from '../../services/data.service';
-import { FileService } from '../../services/file.service';
-import { Template } from '../../common/template';
-import { Dependency } from '../../common/dependency';
-import { Data } from '../../common/data';
-import { Form } from '../../common/form';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { FormlyFieldConfig } from '@ngx-formly/core';
-import { ActivatedRoute } from '@angular/router';
-import { FormlyFormOptions } from '@ngx-formly/core';
-import { GtConfig } from 'angular-generic-table';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NotifierService } from 'angular-notifier';
+import { UtilService } from '../../services/util.service';
 
 @Component({
   selector: 'app-report',
@@ -21,244 +11,66 @@ import { GtConfig } from 'angular-generic-table';
 })
 
 export class ReportComponent implements OnInit {
-  id: string;
-  private sub: any;
-  errorMessage: string[] = [];
-  exito: boolean = false;
-  cargando: boolean = false;
-  form: FormGroup;
-  formFields: Array<FormlyFieldConfig>;
-  formData: Object;
-  private data: Data;
-  data2: Array<any> = [];
-  configObject: GtConfig<any>;
-  dependencies: Dependency[];
-  activeDependency: Dependency;
-  activeForm: string;
-  lists: String[][] = [];
-  formName: string;
-  options: FormlyFormOptions = {};
-  public loading = false;
-  originFormName: string;
-  settings: any;
-  fields: any;
-  tableResult: any = { data: {} };
 
-
+  private readonly notifier: NotifierService;
+  fullLoading: boolean;
+  formId: string;
+  dependencyName: string;
+  template: any;
+  templateFilters: any;
+  allDataAccess = false;
+  noDependency = false;
 
   constructor(
     private templatesService: TemplatesService,
-    private dataService: DataService,
-    private route: ActivatedRoute,
-    private configService: ConfigService,
-    private fileService: FileService
-  ) { }
-
-  ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-      this.id = params['id'];
-
-      this.loadConfig();
-    });
-  }
-  loadConfig() {
-    this.form = new FormGroup({});
-    this.configService.getTemplateConfig("reportes")
-      .subscribe(form => {
-        this.dependencies = form.value;
-      },
-        error => this.errorMessage.push(error));
+    private utilService: UtilService,
+    notifierService: NotifierService,
+    public router: Router
+  ) {
+    this.notifier = notifierService;
+    this.fullLoading = false;
   }
 
+  ngOnInit() {}
 
-  flatten(data) {
-    var result = {};
-    function recurse(cur, prop) {
-      if (Object(cur) !== cur) {
-        result[prop] = cur;
-      } else if (Array.isArray(cur)) {
-        result[prop] = { $all: cur };
-      } else {
-        var isEmpty = true;
-        for (var p in cur) {
-          isEmpty = false;
-          recurse(cur[p], prop ? prop + "." + p : p);
-        }
-        if (isEmpty && prop)
-          result[prop] = {};
-      }
+  onSelectMenuItem($event) {
+    if ($event.formId != null) {
+      this.formId = $event.formId;
+      this.dependencyName = $event.dependencyName;
+      this.allDataAccess = $event.allDataAccess;
+      this.noDependency = $event.noDependency;
+      this.loadReport($event.formId);
     }
-    recurse(data, "");
-    return result;
-  }
-
-
-  loadForm(form1: Form, depent: Dependency) {
-
-    this.loading = true;
-    this.errorMessage = [];
-    this.exito = false;
-    this.cargando = false;
-    this.data = new Data();
-    this.configObject = {
-      settings: [],
-      data: [],
-      fields: []
-    }
-    this.originFormName = form1.template;
-    this.settings = form1.config.settings;
-    this.fields = form1.config.fields;
-    if (this.options.resetModel) {
-      this.options.resetModel();
-    };
-
-    this.activeDependency = depent;
-    this.form = new FormGroup({});
-    this.templatesService.getByName(form1.path)
-      .subscribe(form => {
-        this.activeForm = form1.name;
-        this.formData = new Object();
-        this.formName = form.name;
-
-        this.lists = [];
-        this.proccessFields(form.fields);
-        if (this.lists.length > 0) {
-          this.getList(this.lists, 0, form.fields);
-        } else {
-          this.formFields = form.fields;
-          this.loading = false;
-        }
-      },
-        error => {
-          this.errorMessage.push(error);
-          this.activeForm = null;
-          this.loading = false;
-        });
-  }
-
-  proccessFields(fields) {
-
-    // Proceess Validators
-    this.evalJSFromJSON(fields, ["pattern", "defaultValue", "optionsDB"], "");
   }
 
   /**
-   * Eval all javascript strings from db
+   * Loads an specified report from DB
    */
-  evalJSFromJSON(fields, keys, path) {
-    for (var i in fields) {
-      if (typeof fields[i] == "object") {
-        this.evalJSFromJSON(fields[i], keys, path + "['" + i + "']");
-      } else if (this.arrayContains(i, keys)) {
-        try {
-          // pendiente refactor en esta parte
-          if (i == "optionsDB") {
-            //fields["options"] = eval(fields[i]);
-            path = path + "['options']";
-            this.lists.push([path, fields[i]]);
-          } else {
-            fields[i] = eval(fields[i]);
-          }
-        } catch (e) {
-          console.log("El campo " + i + ":" + fields[i] + " no representa una cadena javascript. Error: " + e.message);
-        }
-      }
-    }
-  }
+  loadReport(formId) {
+    this.toggleLoading(true);
 
-  onSubmit(template) {
-    this.errorMessage = [];
-    this.exito = false;
-    this.cargando = true;
-    this.data = new Data();
-    this.data2 = [];
-    this.configObject = {
-      settings: [],
-      data: [],
-      fields: []
-    }
-
-    if (!(Object.keys(template).length === 0)) {
-      this.data.data = template;
-    }
-    this.data.template = this.originFormName;
-
-
-    this.fields.forEach(element => {
-      if (!(typeof element.value === "undefined")) {
-        element.value = eval("(" + element.value + ")");
-      }
-      if (!(typeof element.render === "undefined")) {
-        element.render = eval("(" + element.render + ")");
-      }
-      this.tableResult.data[`${element.objectKey}`] = 1;
-    });
-    //this.data.origin = this.activeDependencie.name;
-    this.dataService.getByJson(JSON.stringify(this.flatten(this.data)),
-      JSON.stringify(this.tableResult))
-      .subscribe(res => {
-        res.forEach(element => {
-          this.data2.push(element.data)
-        });
-        this.configObject = {
-          settings: this.settings,
-          data: this.data2,
-          fields: this.fields
-        }
-        this.exito = true;
-        this.cargando = false;
+    this.templatesService.getByName(formId)
+      .subscribe(template => {
+        const templateData = this.utilService.deepCopy(template);
+        this.utilService.loadTemplateFeatures(templateData, false);
+        this.template = templateData;
+        const templateForm = this.utilService.deepCopy(template);
+        templateForm.fields = templateForm.report;
+        this.utilService.loadTemplateFeatures(templateForm);
+        this.templateFilters = templateForm;
+        this.toggleLoading(false);
       },
-        error => this.errorMessage.push(error));
+        error => {
+          this.toggleLoading(false);
+          this.notifier.notify( 'error', 'ERROR: Error al cargar el formulario.' );
+      });
   }
 
-  loadData() {
-    this.dataService.getById(1)
-      .subscribe(formData => {
-        this.formData = formData.data;
-      },
-        error => this.errorMessage = error);
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
-  }
-
-  arrayContains(needle, arrhaystack) {
-    return (arrhaystack.indexOf(needle) > -1);
-  }
-
-  getFiles(template) {
-    var formsData: FormData[] = [];
-    for (var i in template) {
-      if (template[i][0] && typeof template[i][0].name == "string" && template[i].length > 0) {
-        let file: File = template[i][0];
-        let formData: FormData = new FormData();
-        const fecha_actual = new Date();
-        const ano = fecha_actual.getFullYear();
-        const mes = fecha_actual.getMonth() + 1;
-        const dia = fecha_actual.getDate();
-        const formato_fecha = "_" + ano + "-" + mes + "-" + dia;
-        let nombre_archivo = i + formato_fecha;
-        template[i] = nombre_archivo + ".pdf";
-        formData.append('file', file, nombre_archivo);
-        formsData.push(formData);
-      }
-    }
-    return formsData;
-  }
-
-  getList(list, current, fields) {
-    if (list.length > current) {
-      this.configService.getByName(list[current][1])
-        .subscribe(confi => {
-          eval("fields" + list[current][0] + " = " + JSON.stringify(confi.value));
-          current++;
-          this.getList(list, current, fields);
-        });
-    } else {
-      this.formFields = fields;
-      this.loading = false;
-    }
+  /**
+   * Displays the loading
+   */
+  toggleLoading($event) {
+    this.fullLoading = $event;
   }
 
 }

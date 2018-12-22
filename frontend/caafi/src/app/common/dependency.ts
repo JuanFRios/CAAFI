@@ -4,6 +4,7 @@ export class Dependency {
     name: string;
     forms: Form[];
     formsReport: Form[];
+    polls: Form[];
 
     constructor(name: string, forms: Form[]) {
         this.name = name;

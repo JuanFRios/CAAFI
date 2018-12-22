@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, OnChanges, SimpleChanges, DoCheck } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { FieldType, FormlyFormBuilder } from '@ngx-formly/core';
 import { Subject } from 'rxjs/Subject';
@@ -6,12 +6,12 @@ import { takeUntil, startWith, tap } from 'rxjs/operators';
 import * as clonedeep from 'lodash.clonedeep';
 
 @Component({
-  selector: 'formly-repeat-section',
+  selector: 'app-formly-repeat-section',
   templateUrl: './repeat-section.component.html'
 })
-export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy {
+export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy, AfterViewInit, OnChanges, DoCheck {
   formControl: FormArray;
-  field:any;
+  field: any;
   fields = [];
   onDestroy$ = new Subject<void>();
 
@@ -24,23 +24,44 @@ export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy 
   }
 
   ngOnInit() {
-    if (this.model) {
+    if (this.model != null && this.model.length > 0) {
       setTimeout(() => this.model.map(() => this.add()));
     }
   }
 
-  add() {
-    const form = new FormGroup({}),
-      i = this.fields.length;
+  ngAfterViewInit() {
+    setTimeout(() => this.add());
+  }
 
-    if (!this.model[i]) {
-      this.model.push({});
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['model']) {
+      console.log('changes');
+    }
+  }
+
+  ngDoCheck() {
+    /*
+    if (this.model.length === 0 && this.fields.length > 0) {
+      console.log('add');
+      this.fields = [];
+      setTimeout(() => this.add());
+    }
+    */
+  }
+
+  add() {
+    const form = new FormGroup({});
+    let i = this.fields.length;
+
+    if (this.model.length === 0) {
+      this.fields = [];
+      i = 0;
     }
 
+    this.model.push({});
     this.fields.push(this.newFields);
     this.builder.buildForm(form, this.fields[i], this.model[i], this.options);
     this.formControl.push(form);
-
   }
 
   remove(i) {

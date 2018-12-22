@@ -20,13 +20,10 @@ public class ExceptionHandlingController {
 	protected Logger logger;
 	
 	@Autowired
-	@Qualifier("caafiMailSender")
 	private EmailService emailService;
 
 	public ExceptionHandlingController() {
-
 		logger = LoggerFactory.getLogger(getClass());
-		emailService = new EmailService();
 	}
 
 	@ExceptionHandler(value = { Exception.class, RuntimeException.class })

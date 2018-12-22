@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReportComponent } from './report.component';
+import { FormlyComponent } from './formly.component';
 
-describe('TemplatesComponent', () => {
-  let component: ReportComponent;
-  let fixture: ComponentFixture<ReportComponent>;
+describe('FormlyComponent', () => {
+  let component: FormlyComponent;
+  let fixture: ComponentFixture<FormlyComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ReportComponent ]
+      declarations: [ FormlyComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ReportComponent);
+    fixture = TestBed.createComponent(FormlyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

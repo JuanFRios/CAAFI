@@ -1,0 +1,19 @@
+<div *ngIf="isVisible">
+    <button mat-button [matMenuTriggerFor]="main_menu">
+        <i class="material-icons">more_vert</i>
+        <span *ngIf="formId == null">Seleccione una dependencia académica o administrativa</span>
+        <span *ngIf="formId != null" class="titleform">{{ breadcrumb }}</span>
+    </button>
+
+    <mat-menu #main_menu="matMenu">
+        <ng-container *ngFor="let menuItem of menuItems">
+            <span *ngIf="menuItem.subItems && menuItem.subItems.length > 0">
+                <button mat-menu-item [matMenuTriggerFor]="menu.childMenu">{{ menuItem.name }}</button>
+                <app-menu-item #menu [items]="menuItem.subItems" [module]="activeModule" [parent]="menuItem.path"></app-menu-item>
+            </span>
+            <span *ngIf="!menuItem.subItems || menuItem.subItems.length === 0">
+                <button mat-menu-item [routerLink]="['/', activeModule, menuItem.path]" routerLinkActive="active">{{ menuItem.name }}</button>
+            </span>
+        </ng-container>
+    </mat-menu>
+</div>

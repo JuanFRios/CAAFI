@@ -1,28 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
 import { Router } from '@angular/router';
+import { httpBaseURL } from '../../common/baseurl';
 import { UtilService } from '../../services/util.service';
 import { NotifierService } from 'angular-notifier';
+import { LoginService } from '../../services/login.service';
 
 @Component({
-  selector: 'app-templates',
-  templateUrl: './templates.component.html',
-  styleUrls: ['./templates.component.css']
+  selector: 'app-polls',
+  templateUrl: './polls.component.html',
+  styleUrls: ['./polls.component.css']
 })
-export class TemplatesComponent implements OnInit {
+export class PollsComponent implements OnInit {
 
   private readonly notifier: NotifierService;
   formId: string;
+  formName: string;
+  dependencyId: string;
   fullLoading: boolean;
   dependencyName: string;
   varFields;
   fields: any;
   template: any;
-  allDataAccess = false;
+  public = false;
 
   constructor(
     private templatesService: TemplatesService,
     private utilService: UtilService,
+    public loginService: LoginService,
     notifierService: NotifierService,
     public router: Router
   ) {
@@ -37,7 +42,8 @@ export class TemplatesComponent implements OnInit {
     if ($event.formId != null) {
       this.formId = $event.formId;
       this.dependencyName = $event.dependencyName;
-      this.allDataAccess = $event.allDataAccess;
+      this.formName = $event.formName;
+      this.dependencyId = $event.dependencyId;
       this.loadTemplate($event.formId);
     }
   }
@@ -50,7 +56,7 @@ export class TemplatesComponent implements OnInit {
 
     this.templatesService.getByName(formId)
       .subscribe(template => {
-        this.utilService.loadTemplateFeatures(template);
+        this.utilService.loadTemplateFeatures(template, false);
         this.template = template;
         this.toggleLoading(false);
       },
@@ -65,6 +71,22 @@ export class TemplatesComponent implements OnInit {
    */
   toggleLoading($event) {
     this.fullLoading = $event;
+  }
+
+  sendPoll(emails) {
+    this.fullLoading = true;
+    this.templatesService.senTemplateByEmail(this.formName, emails, httpBaseURL + '/encuestas/' +
+      this.dependencyId + '/' + this.formId)
+    .subscribe(result => {
+      if (result.response === 'OK') {
+        this.notifier.notify( 'success', 'OK: Configuración encuesta guardada.' );
+      }
+      this.fullLoading = false;
+    },
+    error => {
+      this.notifier.notify( 'error', 'ERROR: Error al guardar la configuracón de la encuesta.' );
+      this.fullLoading = false;
+    });
   }
 
 }

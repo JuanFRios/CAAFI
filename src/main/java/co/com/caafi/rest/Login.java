@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import co.com.caafi.model.StringResponse;
+
 @RestController
 @RequestMapping(path = "rest/account")
 public class Login {
@@ -26,8 +28,8 @@ public class Login {
 	
 	@CrossOrigin
 	@RequestMapping(path ="/check", method = RequestMethod.GET)
-	public String checkUser(HttpSession session) {
-		return session.getId();
+	public StringResponse checkUser(HttpSession session) {
+		return new StringResponse(session.getId());
 	}
 	
 }
