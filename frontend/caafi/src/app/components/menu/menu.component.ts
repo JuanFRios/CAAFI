@@ -2,6 +2,8 @@ import { Component, OnInit, Output, EventEmitter, Input, OnDestroy } from '@angu
 import { ConfigService } from '../../services/config.service';
 import { NotifierService } from 'angular-notifier';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Module } from '../../common/module';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-menu',
@@ -15,6 +17,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   private readonly notifier: NotifierService;
   activeModule: string;
+  activeModuleName: string;
   navigationSubscription;
   formId: string;
   dependencyId: string;
@@ -24,23 +27,35 @@ export class MenuComponent implements OnInit, OnDestroy {
   breadcrumb = '';
   allDataAccess = false;
   noDependency = false;
+  lista_modulos: Module[];
 
   constructor(
     private configService: ConfigService,
+    public loginService: LoginService,
     private route: ActivatedRoute,
     public router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
-    const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
-    this.activeModule = urlTree.root.children['primary'].segments[0].path;
+    this.configService.getByName('LISTA_MODULOS')
+      .subscribe(confi => {
+        this.lista_modulos = confi.value;
 
-    this.navigationSubscription = this.route.params.subscribe(params => {
-      this.formId = this.route.snapshot.paramMap.get('form');
-      this.dependencyId = this.route.snapshot.paramMap.get('dependency');
+        const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
+        this.activeModule = urlTree.root.children['primary'].segments[0].path;
+        for (let i = 0; i < confi.value.length; i++) {
+          if (confi.value[i].path === this.activeModule) {
+            this.activeModuleName = confi.value[i].name;
+            break;
+          }
+        }
 
-      this.loadMenu(this.activeModule);
-    });
+        this.navigationSubscription = this.route.params.subscribe(params => {
+          this.formId = this.route.snapshot.paramMap.get('form');
+          this.dependencyId = this.route.snapshot.paramMap.get('dependency');
+          this.loadMenu(this.activeModule);
+        });
+      });
   }
 
   /**
@@ -92,20 +107,37 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   getBreadcrumb(menuItems): string {
     const breadcrumbs = {};
-    this.loop(menuItems, [], breadcrumbs);
+    this.loop(menuItems, [], breadcrumbs, '');
     let breadcrumb;
-    this.formId != null ? breadcrumb = breadcrumbs[this.formId].map(o => o).join(' - ') : breadcrumb = '';
+    this.formId != null ? breadcrumb = breadcrumbs[this.formId + ':' + this.dependencyId].map(o => o).join(' - ') : breadcrumb = '';
     return breadcrumb;
   }
 
-  loop(menuItems, path, breadcrumbs) {
+  loop(menuItems, path, breadcrumbs, root) {
     for (let i = 0; i < menuItems.length; i++) {
       if (menuItems[i].subItems) {
-        this.loop(menuItems[i].subItems, [...path, menuItems[i].name], breadcrumbs);
+        if (root === '') {
+          this.loop(menuItems[i].subItems, [...path, menuItems[i].name], breadcrumbs, menuItems[i].path);
+        } else {
+          this.loop(menuItems[i].subItems, [...path, menuItems[i].name], breadcrumbs, root);
+        }
       } else {
-        breadcrumbs[menuItems[i].path] = [...path, menuItems[i].name];
+        if (root === '') {
+          breadcrumbs[menuItems[i].path + ':' + menuItems[i].path] = [...path, menuItems[i].name];
+        } else {
+          breadcrumbs[menuItems[i].path + ':' + root] = [...path, menuItems[i].name];
+        }
       }
     }
+  }
+
+  logOut() {
+    this.loginService.logOut()
+      .subscribe(usuario => {
+        console.log(usuario);
+      });
+    localStorage.removeItem('tokenUser');
+    this.router.navigate(['/home']);
   }
 
   ngOnDestroy() {

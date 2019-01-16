@@ -9,29 +9,3 @@
     <p>Comité de Autoevaluación y Acreditación de la Facultad de Ingeniería</p>
   </div>
 </div>
-<mat-toolbar color="primary">
-  <div *ngIf="loginService.isLogIn()">
-    <button mat-icon-button [matMenuTriggerFor]="menu">
-      <i class="material-icons">apps</i>
-      <span>Módulo de {{ moduloActivo }}</span>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item *ngFor="let modulo of lista_modulos" routerLink="{{ modulo.path}}" routerLinkActive="active" (click)="cambiarModuloActivo( modulo.name )">
-        <span> {{ modulo.name }} </span>
-      </button>
-    </mat-menu>
-  </div>
-
-  <a *ngIf="!loginService.isLogIn()" mat-button routerLink="/home">
-    <span>
-      <img src="./assets/img/logo-caafi.png" height=30>
-    </span>
-  </a>
-  <span class="flex-spacer"></span>
-  <a *ngIf="loginService.isLogIn()" mat-button (click)="logOut()">
-    <span>
-      <img src="./assets/img/logout.png" height=30>
-    </span>
-  </a>
-
-</mat-toolbar>

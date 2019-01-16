@@ -16,5 +16,5 @@ export const routes: Routes = [
   { path: 'encuestas', component: PollsComponent, canActivate: [AuthGuard] },
   { path: 'encuestas/:dependency/:form', component: PollsComponent },
   { path: 'encuestas/:dependency/:type/:form', component: PollsComponent, canActivate: [AuthGuard] },
-  { path: '**', redirectTo: 'formularios' },
+  { path: '**', redirectTo: 'home' },
 ];

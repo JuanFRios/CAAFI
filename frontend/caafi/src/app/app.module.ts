@@ -48,7 +48,6 @@ import { FileService } from './services/file.service';
 import { ListService } from './services/list.service';
 
 import { HttpClientModule } from '@angular/common/http';
-import { HttpModule } from '@angular/http';
 import { TooltipWrapperComponent } from './components/wrappers/tooltip/tooltip-wrapper.component';
 
 import { AppComponent } from './app.component';
@@ -162,7 +161,6 @@ export function required(err, field) {
     MatProgressBarModule,
     LoadingModule,
     HttpClientModule,
-    HttpModule,
     RestangularModule.forRoot(RestangularConfigFactory),
     MatProgressButtons,
     RouterModule,

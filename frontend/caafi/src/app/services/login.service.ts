@@ -2,18 +2,14 @@ import { Injectable } from '@angular/core';
 import {
     CanActivate, Router,
     ActivatedRouteSnapshot,
-    RouterStateSnapshot,
-    CanActivateChild,
-    NavigationExtras,
-    CanLoad, Route
+    RouterStateSnapshot
 } from '@angular/router';
 import { LoginData } from '../common/loginData';
-import { Observable } from 'rxjs/Observable';
-import { RestangularModule, Restangular } from 'ngx-restangular';
-import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import { Headers, Response } from '@angular/http';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/catch';
 import { baseURL } from '../common/baseurl';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class LoginService implements CanActivate {
@@ -21,11 +17,11 @@ export class LoginService implements CanActivate {
     redirectUrl: string;
     loginUser: any;
 
-    constructor(private restangular: Restangular, public http: Http, private router: Router) { }
+    constructor(public http: HttpClient, private router: Router) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
-        return new Promise<boolean>((resolve, reject) => {
-            this.check().subscribe(tokenUser => {
+        return new Promise<boolean>((resolve) => {
+            this.check().subscribe(() => {
                 if (this.isLogIn()) {
                     console.log('Is Login', localStorage.getItem('tokenUser'));
                     resolve(true);
@@ -33,7 +29,7 @@ export class LoginService implements CanActivate {
                     this.router.navigate(['/home']);
                     resolve(false);
                 }
-            }, error => {
+            }, () => {
                 if (localStorage.getItem('tokenUser')) {
                     localStorage.removeItem('tokenUser');
                 }
@@ -48,22 +44,20 @@ export class LoginService implements CanActivate {
     }
 
     login(data: LoginData) {
-        let headers = new Headers();
-        headers.append('Accept', 'application/json')
-        // creating base64 encoded String from user name and password
-        var base64Credential: string = btoa(data.username + ':' + data.password);
-
-        headers.append("Authorization", "Basic " + base64Credential);
-        headers.append("X-Requested-With", "XMLHttpRequest");
-        let options = new RequestOptions();
-        options.withCredentials = true
-        options.headers = headers;
-        return this.http.get(baseURL + "/account/login", options)
+        const base64Credential: string = btoa(data.username + ':' + data.password);
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/json')
+            .set('Authorization', 'Basic ' + base64Credential)
+            .set('X-Requested-With', 'XMLHttpRequest');
+        const options: Object = {};
+        options['withCredentials'] = true;
+        options['headers'] = headers;
+        return this.http.get(baseURL + '/account/login', options)
             .map((response: Response) => {
                 // login successful if there's a jwt token in the response
-                let user = response.json().user;// the returned user object is a
+                const user = response['user']; // the returned user object is a
                 // principal object
-                localStorage.setItem('tokenUser', response.json().token);
+                localStorage.setItem('tokenUser', response['token']);
                 if (user) {
                     // store user details in local storage to keep user logged in
                     // between page refreshes
@@ -73,30 +67,29 @@ export class LoginService implements CanActivate {
     }
 
     logOut() {
-        let options = new RequestOptions();
-        options.withCredentials = true
+        const options: Object = {};
+        options['withCredentials'] = true;
 
-        return this.http.get(baseURL + "/account/logout", options)
-            .map((response: Response) => {
+        return this.http.get(baseURL + '/account/logout', options)
+            .map(() => {
             });
     }
 
     check() {
-        let options = new RequestOptions();
-        options.withCredentials = true
-        let headers = new Headers();
-        headers.append("X-Requested-With", "XMLHttpRequest");
-        options.headers = headers;
-        return this.http.get(baseURL + "/account/check", options)
+        let headers = new HttpHeaders();
+        headers = headers.set('X-Requested-With', 'XMLHttpRequest');
+        const options: Object = {};
+        options['withCredentials'] = true;
+        options['headers'] = headers;
+        return this.http.get(baseURL + '/account/check', options)
             .map((response: Response) => {
-                console.log('response.json', response.json());
-                return response.json().response;
+                return response['response'];
             });
     }
 
     checkStatus() {
-        this.check().subscribe(usuario => {
-        }, error => {
+        this.check().subscribe(() => {
+        }, () => {
             if (localStorage.getItem('tokenUser')) {
                 localStorage.removeItem('tokenUser');
                 this.router.navigate(['/home']);
