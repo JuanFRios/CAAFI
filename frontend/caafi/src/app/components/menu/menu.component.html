@@ -25,8 +25,8 @@
 <div *ngIf="isVisible">
     <button mat-button [matMenuTriggerFor]="main_menu">
         <i class="material-icons">more_vert</i>
-        <span *ngIf="formId == null">Seleccione una dependencia académica o administrativa</span>
-        <span *ngIf="formId != null" class="titleform">{{ breadcrumb }}</span>
+        <span *ngIf="formId == null && dependencyId == null">Seleccione una dependencia académica o administrativa</span>
+        <span *ngIf="formId != null || dependencyId != null" class="titleform">{{ breadcrumb }}</span>
     </button>
 
     <mat-menu #main_menu="matMenu">

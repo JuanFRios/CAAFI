@@ -28,6 +28,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   allDataAccess = false;
   noDependency = false;
   lista_modulos: Module[];
+  evaluationDoc = '';
 
   constructor(
     private configService: ConfigService,
@@ -85,6 +86,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     menuData['dependencyName'] = this.dependencyName;
     menuData['allDataAccess'] = this.allDataAccess;
     menuData['noDependency'] = this.noDependency;
+    menuData['evaluationDoc'] = this.evaluationDoc;
     this.selectedItem.emit(menuData);
   }
 
@@ -94,6 +96,9 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.dependencyName = menuItem.name;
         if (menuItem.noDependency) {
           this.noDependency = menuItem.noDependency;
+        }
+        if (menuItem.evaluationDoc) {
+          this.evaluationDoc = menuItem.evaluationDoc;
         }
       }
       if (menuItem.path === this.formId) {
@@ -109,7 +114,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     const breadcrumbs = {};
     this.loop(menuItems, [], breadcrumbs, '');
     let breadcrumb;
-    this.formId != null ? breadcrumb = breadcrumbs[this.formId + ':' + this.dependencyId].map(o => o).join(' - ') : breadcrumb = '';
+    this.formId != null ? breadcrumb = breadcrumbs[this.formId + ':' + this.dependencyId].map(o => o).join(' - ') :
+      breadcrumb = breadcrumbs[this.dependencyId + ':' + this.dependencyId].map(o => o).join(' - ');
     return breadcrumb;
   }
 

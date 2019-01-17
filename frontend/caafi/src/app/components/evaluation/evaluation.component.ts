@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfigService } from '../../services/config.service';
 import { Dependency } from '../../common/dependency';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-evaluation',
@@ -16,31 +14,20 @@ export class EvaluationComponent implements OnInit {
   sub: any;
   loading: false;
 
-  constructor(
-    private configService: ConfigService,
-    private route: ActivatedRoute
-  ) { }
+  constructor() { }
 
-  ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-      this.loadConfig();
-    });
-  }
+  ngOnInit() {}
 
-  loadConfig() {
-    this.configService.getTemplateConfig('dependencias')
-      .subscribe(form => {
-        this.dependencies = form.value;
-      },
-        error => this.errorMessage.push(error));
+  onSelectMenuItem($event) {
+    if ($event.dependencyId != null) {
+      const dependency = new Dependency($event.dependencyId, null);
+      dependency['evaluationDoc'] = $event.evaluationDoc;
+      this.load(dependency);
+    }
   }
 
   load(dependency: Dependency) {
     this.activeDependency = dependency;
-  }
-
-  onLoad() {
-    console.log('loaded');
   }
 
 }
