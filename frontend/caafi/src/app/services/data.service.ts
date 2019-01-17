@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Data } from '../common/data';
 import { Dependency } from '../common/dependency';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { RestangularModule, Restangular } from 'ngx-restangular';
 import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 import { baseURL } from '../common/baseurl';

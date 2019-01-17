@@ -288,7 +288,7 @@
     font-size: 12px
 }
 
-.mat-input-container {
+.mat-form-field {
     font: 400 inherit/1.125 Roboto, "Helvetica Neue", sans-serif
 }
 
@@ -1155,8 +1155,12 @@
     color: rgba(0, 0, 0, .38)
 }
 
-.mat-focused .mat-input-placeholder {
+.mat-focused .mat-input-placeholder,
+.mat-form-field.mat-focused .mat-form-field-label {
     color: #0a351c
+}
+.mat-form-field.mat-focused.mat-form-field-invalid .mat-form-field-label {
+    color: #f44336;
 }
 
 .mat-focused .mat-input-placeholder.mat-accent {
@@ -1180,8 +1184,21 @@ input.mat-input-element:-webkit-autofill+.mat-input-placeholder .mat-placeholder
     background-color: rgba(0, 0, 0, .12)
 }
 
-.mat-input-ripple {
-    background-color: #0a351c
+.mat-input-ripple,
+.mat-form-field.mat-focused .mat-form-field-ripple {
+    background-color: #0a351c;
+}
+.mat-form-field.mat-focused.mat-form-field-invalid .mat-form-field-ripple {
+    background-color: #f44336;
+}
+.mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+    color: #0a351c;
+}
+.mat-form-field.mat-focused.mat-form-field-invalid.mat-primary .mat-select-arrow {
+    color: #f44336;
+}
+.mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+    color: #0a351c;
 }
 
 .mat-input-ripple.mat-accent {
@@ -1670,7 +1687,7 @@ input.mat-input-element:-webkit-autofill+.mat-input-placeholder .mat-placeholder
     min-width: 320px;
 }
 
-.mat-input-container {
+.mat-form-field {
     margin: 0 20px 20px 0;
 }
 
@@ -2185,4 +2202,8 @@ a.download-link {
 .title-label {
     width: 100%;
     margin-bottom: 10px;
+}
+
+.form-button {
+    margin-right: 10px !important;
 }

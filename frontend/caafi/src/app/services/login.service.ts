@@ -6,8 +6,8 @@ import {
 } from '@angular/router';
 import { LoginData } from '../common/loginData';
 import { Headers, Response } from '@angular/http';
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/catch';
+
+
 import { baseURL } from '../common/baseurl';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 

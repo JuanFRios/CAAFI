@@ -13,7 +13,8 @@ import {
   MatPaginatorModule,
   MatTooltipModule,
   MatSortModule,
-  MatProgressBarModule
+  MatProgressBarModule,
+  MatNativeDateModule
  } from '@angular/material';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { LoadingModule } from 'ngx-loading';
@@ -22,7 +23,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { GenericTableModule } from 'angular-generic-table';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
-import { DatepickerTypeComponent } from './components/types/datepicker/datepicker.component';
+import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { VariableTypeComponent } from './components/types/variable/variable.component';
 import { RepeatTypeComponent } from './components/types/repeat-section/repeat-section.component';
 import { FormlyFieldFileComponent } from './components/types/file-upload/file.component';
@@ -55,7 +56,7 @@ import { SafePipe } from './safe.pipe';
 import { MenuComponent } from './components/menu/menu.component';
 import { MenuItemComponent } from './components/menu/menu-item/menu-item.component';
 import { FormlyComponent } from './components/formly/formly.component';
-import { MatProgressButtons } from 'mat-progress-buttons';
+import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import { RouterModule } from '../../node_modules/@angular/router';
 import { NotifierModule } from 'angular-notifier';
 import { DataTableComponent } from './components/data-table/data-table.component';
@@ -95,7 +96,6 @@ export function required(err, field) {
     ReportComponent,
     HomeComponent,
     EvaluationComponent,
-    DatepickerTypeComponent,
     VariableTypeComponent,
     RepeatTypeComponent,
     FileValueAccessor,
@@ -112,16 +112,6 @@ export function required(err, field) {
     GenericTableModule,
     FormlyModule.forRoot({
       types: [
-        {
-          name: 'datepicker',
-          component: DatepickerTypeComponent,
-          defaultOptions: {
-            defaultValue: new Date(),
-            templateOptions: {
-              datepickerOptions: {}
-            }
-          }
-        },
         { name: 'repeat', component: RepeatTypeComponent },
         { name: 'file', component: FormlyFieldFileComponent },
         {
@@ -146,6 +136,8 @@ export function required(err, field) {
         { name: 'tooltip', component: TooltipWrapperComponent },
       ],
     }),
+    MatNativeDateModule,
+    FormlyMatDatepickerModule,
     FormlyMaterialModule,
     BrowserAnimationsModule,
     MaterialModule,
@@ -162,7 +154,7 @@ export function required(err, field) {
     LoadingModule,
     HttpClientModule,
     RestangularModule.forRoot(RestangularConfigFactory),
-    MatProgressButtons,
+    MatProgressButtonsModule,
     RouterModule,
     NotifierModule.withConfig({
       position: {

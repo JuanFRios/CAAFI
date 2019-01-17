@@ -8,9 +8,9 @@
             <div class="mat-container mat-elevation-z8">
 
                 <div class="table-header">
-                    <mat-input-container>
+                    <mat-form-field>
                         <input matInput placeholder="Filtro" #filter data-column="tituloArticulo">
-                    </mat-input-container>
+                    </mat-form-field>
                 </div>
 
                 <mat-table [dataSource]="dataSource" matSort>
@@ -58,7 +58,7 @@
                 <mat-paginator [length]="model?.countData" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 
                 <div *ngIf="export" class="export">
-                    <spinner-button [options]="exportCSVSpinnerButtonOptions" (click)="exportCSV()"></spinner-button>
+                    <mat-spinner-button [options]="exportCSVSpinnerButtonOptions" (click)="exportCSV()"></mat-spinner-button>
                 </div>
                 <!--
                 <spinner-button [options]="refreshSpinnerButtonOptions" (click)="refresh()"></spinner-button>

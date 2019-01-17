@@ -4,11 +4,8 @@ import { DataService } from '../../services/data.service';
 import { NotifierService } from 'angular-notifier';
 import { Data } from '../../common/data';
 import { MatSort, MatPaginator } from '@angular/material';
-import { Subscription } from 'rxjs/Subscription';
-import { merge } from 'rxjs/observable/merge';
+import { Subscription ,  merge ,  fromEvent ,  BehaviorSubject } from 'rxjs';
 import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { fromEvent } from 'rxjs/observable/fromEvent';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { ExportToCsv } from 'export-to-csv';
 
 @Component({
@@ -36,7 +33,8 @@ export class DataTableComponent implements OnInit, OnDestroy {
     spinnerSize: 18,
     raised: true,
     buttonColor: 'primary',
-    spinnerColor: 'primary'
+    spinnerColor: 'primary',
+    disabled: false
   };
   @Input() refreshSpinnerButtonOptions: any = {
     active: false,
@@ -124,6 +122,9 @@ export class DataTableComponent implements OnInit, OnDestroy {
       this.dataService.count(this.formId, this.dependencyName, this.allDataAccess, '', urlFilters)
       .subscribe(countData => {
         this.model = countData;
+
+        this.disableExportButon(countData.countData);
+
         resolve();
       },
       error => {
@@ -138,6 +139,8 @@ export class DataTableComponent implements OnInit, OnDestroy {
       this.filter.nativeElement.value, this.filters)
       .subscribe(countData => {
         this.model = countData;
+
+        this.disableExportButon(countData.countData);
       },
       error => {
         this.notifier.notify( 'error', 'ERROR: Error al cargar los datos del formulario.' );
@@ -183,6 +186,8 @@ export class DataTableComponent implements OnInit, OnDestroy {
       this.filter.nativeElement.value, urlFilters)
     .subscribe(countData => {
       this.model = countData;
+
+      this.disableExportButon(countData.countData);
     },
     error => {
       this.notifier.notify( 'error', 'ERROR: Error al cargar los datos del formulario.' );
@@ -226,6 +231,14 @@ export class DataTableComponent implements OnInit, OnDestroy {
           this.exportCSVSpinnerButtonOptions.active = false;
           this.exportCSVSpinnerButtonOptions.text = 'Exportar CSV';
       });
+  }
+
+  disableExportButon(numberData) {
+    if (numberData <= 0) {
+      this.exportCSVSpinnerButtonOptions.disabled = true;
+    } else {
+      this.exportCSVSpinnerButtonOptions.disabled = false;
+    }
   }
 
   ngOnDestroy() {

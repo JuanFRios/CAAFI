@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Config } from '../common/config';
 import { RestangularModule, Restangular } from 'ngx-restangular';
 
