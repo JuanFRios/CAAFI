@@ -70,6 +70,10 @@ export class LoginService implements CanActivate {
         const options: Object = {};
         options['withCredentials'] = true;
 
+        if (localStorage.getItem('tokenUser')) {
+            localStorage.removeItem('tokenUser');
+        }
+
         return this.http.get(baseURL + '/account/logout', options)
             .map(() => {
             });
