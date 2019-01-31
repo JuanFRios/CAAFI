@@ -13,8 +13,9 @@ export const routes: Routes = [
   { path: 'reportes', component: ReportComponent, canActivate: [AuthGuard] },
   { path: 'reportes/:dependency/:form', component: ReportComponent, canActivate: [AuthGuard] },
   { path: 'autoevaluacion', component: EvaluationComponent, canActivate: [AuthGuard] },
+  { path: 'autoevaluacion/:dependency', component: EvaluationComponent, canActivate: [AuthGuard] },
   { path: 'encuestas', component: PollsComponent, canActivate: [AuthGuard] },
   { path: 'encuestas/:dependency/:form', component: PollsComponent },
   { path: 'encuestas/:dependency/:type/:form', component: PollsComponent, canActivate: [AuthGuard] },
-  { path: '**', redirectTo: 'formularios' },
+  { path: '**', redirectTo: 'home' },
 ];

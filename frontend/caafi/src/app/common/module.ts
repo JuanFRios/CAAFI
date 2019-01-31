@@ -1,8 +1,8 @@
-export class Module{
+export class Module {
     name: string;
-	path: string;
+    path: string;
 
-    constructor( name: string, path: string){
+    constructor( name: string, path: string) {
         this.name = name;
         this.path = path;
     }

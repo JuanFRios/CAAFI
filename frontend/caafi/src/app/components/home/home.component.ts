@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MaterialModule } from '../../material.module'
+import { MaterialModule } from '../../material.module';
 import {
   ActivatedRoute,
   Router,
@@ -37,16 +37,12 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.nombre_usuario = "";
-    this.clave = "";
+    this.nombre_usuario = '';
+    this.clave = '';
     this.loginService.check()
       .subscribe(usuario => {
-        console.log('redirect to formularios')
         this.router.navigate(['/formularios']);
       });
-
-
-
   }
 
 
