@@ -13,7 +13,7 @@ export class ConfigService {
     return this.restangular.one('config/byname', name).get();
   }
   getTemplateConfig(name: string): Observable<Config> {
-    return this.restangular.one('config//template/role', name).get();
+    return this.restangular.one('config/template/role', name).get();
   }
 
 }

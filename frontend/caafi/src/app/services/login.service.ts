@@ -21,10 +21,15 @@ export class LoginService implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
         return new Promise<boolean>((resolve) => {
-            this.check().subscribe(() => {
+            this.check().subscribe((response) => {
                 if (this.isLogIn()) {
-                    console.log('Is Login', localStorage.getItem('tokenUser'));
-                    resolve(true);
+                    if (response === localStorage.getItem('tokenUser')) {
+                        resolve(true);
+                    } else {
+                        localStorage.removeItem('tokenUser');
+                        this.router.navigate(['/home']);
+                        resolve(false);
+                    }
                 } else {
                     this.router.navigate(['/home']);
                     resolve(false);
