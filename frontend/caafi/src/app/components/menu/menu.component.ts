@@ -64,7 +64,7 @@ export class MenuComponent implements OnInit, OnDestroy {
    * @param module module to load the menu
    */
   loadMenu(module: string) {
-    this.configService.getByName(module).subscribe(
+    this.configService.getTemplateConfig(module).subscribe(
       config => {
         this.menuItems = config.value;
         this.getItemNames(this.menuItems);
