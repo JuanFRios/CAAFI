@@ -202,3 +202,11 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 .container-formPollEmails>* {
     width: 100%;
 }
+
+.container-rangePoll {
+    display: flex;
+    flex-direction: column;
+}   
+.container-rangePoll>* {
+    width: 100%;
+}

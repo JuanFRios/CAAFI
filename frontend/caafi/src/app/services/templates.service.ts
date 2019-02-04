@@ -20,4 +20,8 @@ export class TemplatesService {
     return this.restangular.all('template/sendtemplatebymail/' + template).post({'emails': emails, 'url': url});
   }
 
+  saveTemplateConfig(data: Template): Observable<any> {
+    return this.restangular.all('template').post(data);
+  }
+
 }

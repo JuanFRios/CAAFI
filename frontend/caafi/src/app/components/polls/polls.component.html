@@ -20,10 +20,17 @@
             <h4>Configuración de la Encuesta</h4>
             <div class="container-formPollEmails">
                 <mat-form-field>
-                    <textarea matInput #poll_emails placeholder="Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
+                    <textarea matInput #poll_emails [(ngModel)]="emails" placeholder="Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
                 </mat-form-field>
             </div>
-            <button mat-raised-button color="primary" type="button" (click)="sendPoll(poll_emails.value)">Enviar encuesta</button>
+            <div class="container-rangePoll">
+                <mat-form-field>
+                    <input matInput placeholder="Rango de activación" [(ngModel)]="dateTimeRange" [selectMode]="'range'" [owlDateTimeTrigger]="dtRange1" [owlDateTime]="dtRange1">
+                    <owl-date-time #dtRange1></owl-date-time>
+                </mat-form-field>
+            </div>
+            <button mat-raised-button color="primary" type="button" (click)="savePoll()">Guardar configuración</button>
+            <button mat-raised-button color="primary" type="button" (click)="sendPoll(poll_emails.value)">Guardar configuración y enviar encuesta</button>
         </div>
     </div>
     <ng-template #public_content>

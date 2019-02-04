@@ -8,4 +8,5 @@ export class Template {
   fields: Array<FormlyFieldConfig>;
   table: String[];
   report: Array<FormlyFieldConfig>;
+  config: Object;
 }
