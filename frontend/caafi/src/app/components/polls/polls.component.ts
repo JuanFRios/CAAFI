@@ -79,37 +79,46 @@ export class PollsComponent implements OnInit {
   }
 
   savePoll() {
-    this.fullLoading = true;
-    const data: Template = new Template();
-    data.name = this.formId;
-    data.config = new Object();
-    data.config['emails'] = this.emails;
-    data.config['dateRange'] = this.dateTimeRange;
-    this.templatesService.saveTemplateConfig(data)
-    .subscribe(result => {
-      if (result.response > 0) {
-        this.notifier.notify( 'success', 'OK: Configuración encuesta guardada.' );
-      }
-      this.fullLoading = false;
-    },
-    error => {
-      this.notifier.notify( 'error', 'ERROR: Error al guardar la configuracón de la encuesta.' );
-      this.fullLoading = false;
+    return new Promise(resolve => {
+      this.fullLoading = true;
+      const data: Template = new Template();
+      data.name = this.formId;
+      data.config = new Object();
+      data.config['emails'] = this.emails;
+      data.config['dateRange'] = this.dateTimeRange;
+      this.templatesService.saveTemplateConfig(data)
+      .subscribe(result => {
+        if (result.response > 0) {
+          this.notifier.notify( 'success', 'OK: Configuración encuesta guardada.' );
+        }
+        this.fullLoading = false;
+        resolve();
+      },
+      error => {
+        this.notifier.notify( 'error', 'ERROR: Error al guardar la configuracón de la encuesta.' );
+        this.fullLoading = false;
+      });
     });
   }
 
-  sendPoll(emails) {
+  saveAndSendPoll() {
+    this.savePoll().then(result => {
+      this.sendPoll();
+    });
+  }
+
+  sendPoll() {
     this.fullLoading = true;
-    this.templatesService.senTemplateByEmail(this.formName, emails, httpBaseURL + '/encuestas/' +
+    this.templatesService.senTemplateByEmail(this.formName, this.emails, httpBaseURL + '/encuestas/' +
       this.dependencyId + '/' + this.formId)
     .subscribe(result => {
       if (result.response === 'OK') {
-        this.notifier.notify( 'success', 'OK: Configuración encuesta guardada.' );
+        this.notifier.notify( 'success', 'OK: Encuesta enviada satisfactoriamente.' );
       }
       this.fullLoading = false;
     },
     error => {
-      this.notifier.notify( 'error', 'ERROR: Error al guardar la configuracón de la encuesta.' );
+      this.notifier.notify( 'error', 'ERROR: Error al enviar la encuesta.' );
       this.fullLoading = false;
     });
   }
