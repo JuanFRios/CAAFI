@@ -72,14 +72,17 @@ export class LoginService implements CanActivate {
     }
 
     logOut() {
+        let headers = new HttpHeaders();
+        headers = headers.set('X-Requested-With', 'XMLHttpRequest');
         const options: Object = {};
         options['withCredentials'] = true;
+        options['headers'] = headers;
 
         if (localStorage.getItem('tokenUser')) {
             localStorage.removeItem('tokenUser');
         }
 
-        return this.http.get(baseURL + '/account/logout', options)
+        return this.http.post(baseURL + '/account/logout', options)
             .map(() => {
             });
     }

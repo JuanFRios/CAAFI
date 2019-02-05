@@ -2,18 +2,28 @@ package co.com.caafi.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+	
+	/*
+	@Bean
+    CorsFilter corsFilter() {
+        CorsFilter filter = new CorsFilter();
+        return filter;
+    }
+    */
 
 	@Autowired
 	CustomAuthenticationProvider customAuthenticationProvider;
@@ -21,7 +31,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
-		http.cors().and()
+		http
+		.cors().and()
+		//.addFilterBefore(corsFilter(), SessionManagementFilter.class)
 		// starts authorizing configurations
 		.authorizeRequests()
 		// ignoring the guest's urls "
@@ -31,13 +43,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
       /* "/logout" will log the user out by invalidating the HTTP Session,
        * cleaning up any {link rememberMe()} authentication that was configured, */
 		.logout()
-        .permitAll()
-		.logoutRequestMatcher(new AntPathRequestMatcher("/rest/account/logout", "GET"))
+		.logoutRequestMatcher(new AntPathRequestMatcher("/rest/account/logout"))
         .and()
 		// enabling the basic authentication
 		.httpBasic().and()
 		// disabling the CSRF - Cross Site Request Forgery
-		.csrf().disable();
+		.csrf().disable()
+		.anonymous().disable();
 	}
 
 	@Autowired

@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.mongodb.WriteResult;
@@ -56,4 +57,12 @@ public class TemplateService {
 		WriteResult result = mongoTemplate.updateFirst(query, update, Template.class);
 		return new StringResponse(result == null ? "0" : result.getN() + "");
     }
+	
+	@Scheduled(cron = "0 0 1 * * ?", zone="America/Bogota")
+	public void scheduleTaskSendPolls() {
+	  
+	    long now = System.currentTimeMillis() / 1000;
+	    System.out.println(
+	      "schedule tasks using cron jobs - " + now);
+	}
 }
