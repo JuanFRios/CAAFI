@@ -23,6 +23,7 @@ public class Template {
 	private Date endDate;
 	private String role;
 	private List<String> table;
+	private boolean isPublic;
 
 	public String getId() {
 		return id;
@@ -118,6 +119,14 @@ public class Template {
 
 	public void setConfig(Map<String, Object> config) {
 		this.config = config;
+	}
+
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	public void setPublic(boolean isPublic) {
+		this.isPublic = isPublic;
 	}
 
 }

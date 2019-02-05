@@ -36,6 +36,10 @@ public class TemplateService {
 	public Template findByName(String name) {
 		return this.templateRepository.findByName(name).get(0);
 	}
+	
+	public Template findPublicTemplateByName(String name) {
+		return this.templateRepository.findByNameAndIsPublic(name, true).get(0);
+	}
 
 	public List<Template> findAll() {
 		return this.templateRepository.findAll();

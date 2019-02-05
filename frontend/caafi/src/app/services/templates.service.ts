@@ -16,6 +16,10 @@ export class TemplatesService {
     return this.restangular.one('template/byname', name).get();
   }
 
+  getPublicTemplateByName(name: string): Observable<Template> {
+    return this.restangular.one('template/public/byname', name).get();
+  }
+
   senTemplateByEmail(template: string, emails: string, url: string): Observable<any> {
     return this.restangular.all('template/sendtemplatebymail/' + template).post({'emails': emails, 'url': url});
   }

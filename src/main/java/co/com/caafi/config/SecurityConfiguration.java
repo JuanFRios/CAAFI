@@ -37,19 +37,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// starts authorizing configurations
 		.authorizeRequests()
 		// ignoring the guest's urls "
-		.antMatchers("/rest/account/check","/rest/account/login").permitAll()
+		.antMatchers("/rest/account/check","/rest/account/login", "/rest/**/public/**").permitAll()
 		// authenticate all remaining URLS
 		.anyRequest().authenticated().and()
       /* "/logout" will log the user out by invalidating the HTTP Session,
        * cleaning up any {link rememberMe()} authentication that was configured, */
 		.logout()
+		.permitAll()
 		.logoutRequestMatcher(new AntPathRequestMatcher("/rest/account/logout"))
         .and()
 		// enabling the basic authentication
 		.httpBasic().and()
 		// disabling the CSRF - Cross Site Request Forgery
-		.csrf().disable()
-		.anonymous().disable();
+		.csrf().disable();
+		//.anonymous().disable();
 	}
 
 	@Autowired

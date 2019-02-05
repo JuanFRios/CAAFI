@@ -42,6 +42,12 @@ public class TemplateResource {
 	}
 	
 	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/public/byname/{name}", method = RequestMethod.GET)
+	public Template findPublicTemplateByName(@PathVariable String name) {
+		return templateService.findPublicTemplateByName(name);
+	}
+	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/sendtemplatebymail/{template}", method = RequestMethod.POST, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public StringResponse sendTemplateByMail(@PathVariable String template, @RequestBody String json) throws JSONException {
