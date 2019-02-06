@@ -25,6 +25,10 @@ public class ConfigService {
 	public Config findByName(String name) {
 		return this.configRepository.findByName(name);
 	}
+	
+	public Config findPublicConfigByName(String name) {
+		return this.configRepository.findByNameAndIsPublic(name, true);
+	}
 
 	public ConfigTemplate findTemplateConfigByRol(User user,String name) {
 		ConfigTemplate config = this.configTemplateRepository.findByName(name);

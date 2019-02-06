@@ -10,15 +10,21 @@ export class ListService {
       private configService: ConfigService
     ) { }
 
-    getList(listName): Observable<any[]> {
-        return from(this.getListFromDB(listName));
+    getList(listName, isPublic = false): Observable<any[]> {
+        return from(this.getListFromDB(listName, isPublic));
     }
 
-    getListFromDB(listName): Promise<any[]> {
+    getListFromDB(listName, isPublic = false): Promise<any[]> {
         return new Promise(resolve => {
-            this.configService.getByName(listName).subscribe(confi => {
-                resolve(eval(JSON.stringify(confi.value)));
-            });
+            if (!isPublic) {
+                this.configService.getByName(listName).subscribe(confi => {
+                    resolve(eval(JSON.stringify(confi.value)));
+                });
+            } else {
+                this.configService.getPublicConfigByName(listName).subscribe(confi => {
+                    resolve(eval(JSON.stringify(confi.value)));
+                });
+            }
         });
     }
 }

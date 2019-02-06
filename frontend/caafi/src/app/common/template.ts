@@ -9,4 +9,5 @@ export class Template {
   table: String[];
   report: Array<FormlyFieldConfig>;
   config: Object;
+  isPublic: boolean;
 }

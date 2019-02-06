@@ -11,6 +11,7 @@ import { DataService } from '../../services/data.service';
 import { FileService } from '../../services/file.service';
 import { UtilService } from '../../services/util.service';
 import { RepeatTypeComponent } from '../types/repeat-section/repeat-section.component';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-formly',
@@ -60,6 +61,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
     private fileService: FileService,
     private listService: ListService,
     private utilService: UtilService,
+    private loginService: LoginService,
     public dialog: MatDialog,
     notifierService: NotifierService,
   ) {
@@ -148,6 +150,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
     this.data = new Data();
     const formsData: FormData[] = this.getFiles(template);
     this.data.data = template;
+    this.data.isPublic = !this.loginService.isLogIn();
     this.data.template = this.formId;
     this.data.origin = this.dependencyName;
 
