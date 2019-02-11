@@ -106,11 +106,24 @@ export class MenuComponent implements OnInit, OnDestroy {
         if (menuItem.evaluationDoc) {
           this.evaluationDoc = menuItem.evaluationDoc;
         }
+        if (menuItem.subItems && menuItem.subItems.length > 0) {
+          this.getFormNames(menuItem.subItems);
+        }
+        break;
       }
-      if (menuItem.path === this.formId) {
-        this.formName = menuItem.name;
-        if (menuItem.allDataAccess) {
-          this.allDataAccess = menuItem.allDataAccess;
+    }
+  }
+
+  getFormNames(menuItems) {
+    for (const menuItem of menuItems) {
+      if (menuItem.subItems && menuItem.subItems.length > 0) {
+        this.getFormNames(menuItems);
+      } else {
+        if (menuItem.path === this.formId) {
+          this.formName = menuItem.name;
+          if (menuItem.allDataAccess) {
+            this.allDataAccess = menuItem.allDataAccess;
+          }
         }
       }
     }

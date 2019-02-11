@@ -27,4 +27,12 @@ export class ListService {
             }
         });
     }
+
+    getListValues(list) {
+        const valueList = [];
+        for (let i = 0; i < list.length; i++) {
+            valueList.push(list[i].value);
+        }
+        return valueList;
+    }
 }

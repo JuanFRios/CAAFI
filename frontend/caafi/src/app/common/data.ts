@@ -5,4 +5,5 @@ export class Data {
   data: Object;
   countData: number;
   isPublic: boolean;
+  login: boolean;
 }

@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChildren
 import { FormGroup } from '@angular/forms';
 import { Data } from '../../common/data';
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
-import { takeUntil, startWith, tap } from 'rxjs/operators';
+import { pairwise, takeUntil, startWith, tap } from 'rxjs/operators';
 import { Subject, Subscription, BehaviorSubject } from '../../../../node_modules/rxjs';
 import { NotifierService } from 'angular-notifier';
 import { MatDialog } from '@angular/material';
@@ -150,7 +150,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
     this.data = new Data();
     const formsData: FormData[] = this.getFiles(template);
     this.data.data = template;
-    this.data.isPublic = !this.loginService.isLogIn();
+    this.data.login = this.loginService.isLogIn();
     this.data.template = this.formId;
     this.data.origin = this.dependencyName;
 
