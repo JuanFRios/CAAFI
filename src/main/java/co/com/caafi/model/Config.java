@@ -9,6 +9,7 @@ public class Config {
 	private String id;
 	private String name;
 	private Object value;
+	private boolean isPublic;
 
 	public String getId() {
 		return id;
@@ -32,6 +33,14 @@ public class Config {
 
 	public void setValue(Object value) {
 		this.value = value;
+	}
+
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	public void setPublic(boolean isPublic) {
+		this.isPublic = isPublic;
 	}
 
 }

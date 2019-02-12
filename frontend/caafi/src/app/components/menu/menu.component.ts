@@ -38,25 +38,31 @@ export class MenuComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.configService.getByName('LISTA_MODULOS')
-      .subscribe(confi => {
-        this.lista_modulos = confi.value;
+    if (this.loginService.isLogIn()) {
+      this.configService.getByName('LISTA_MODULOS')
+        .subscribe(confi => {
+          this.lista_modulos = confi.value;
 
-        const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
-        this.activeModule = urlTree.root.children['primary'].segments[0].path;
-        for (let i = 0; i < confi.value.length; i++) {
-          if (confi.value[i].path === this.activeModule) {
-            this.activeModuleName = confi.value[i].name;
-            break;
+          const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
+          this.activeModule = urlTree.root.children['primary'].segments[0].path;
+          for (let i = 0; i < confi.value.length; i++) {
+            if (confi.value[i].path === this.activeModule) {
+              this.activeModuleName = confi.value[i].name;
+              break;
+            }
           }
-        }
 
-        this.navigationSubscription = this.route.params.subscribe(params => {
-          this.formId = this.route.snapshot.paramMap.get('form');
-          this.dependencyId = this.route.snapshot.paramMap.get('dependency');
-          this.loadMenu(this.activeModule);
-        });
-      });
+          this.navigationSubscription = this.route.params.subscribe(params => {
+            this.formId = this.route.snapshot.paramMap.get('form');
+            this.dependencyId = this.route.snapshot.paramMap.get('dependency');
+            this.loadMenu(this.activeModule);
+          });
+        },
+        error => {
+          console.log('ERROR: ', error);
+        }
+      );
+    }
   }
 
   /**
@@ -100,11 +106,24 @@ export class MenuComponent implements OnInit, OnDestroy {
         if (menuItem.evaluationDoc) {
           this.evaluationDoc = menuItem.evaluationDoc;
         }
+        if (menuItem.subItems && menuItem.subItems.length > 0) {
+          this.getFormNames(menuItem.subItems);
+        }
+        break;
       }
-      if (menuItem.path === this.formId) {
-        this.formName = menuItem.name;
-        if (menuItem.allDataAccess) {
-          this.allDataAccess = menuItem.allDataAccess;
+    }
+  }
+
+  getFormNames(menuItems) {
+    for (const menuItem of menuItems) {
+      if (menuItem.subItems && menuItem.subItems.length > 0) {
+        this.getFormNames(menuItems);
+      } else {
+        if (menuItem.path === this.formId) {
+          this.formName = menuItem.name;
+          if (menuItem.allDataAccess) {
+            this.allDataAccess = menuItem.allDataAccess;
+          }
         }
       }
     }

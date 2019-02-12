@@ -4,4 +4,6 @@ export class Data {
   origin: string;
   data: Object;
   countData: number;
+  isPublic: boolean;
+  login: boolean;
 }
