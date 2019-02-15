@@ -27,6 +27,9 @@ public class DataService {
 
     @Autowired
     MongoTemplate mongoTemplate;
+    
+    @Autowired
+    TemplateService templateService;
 
     public FormData findById(String id) {
         return this.dataRepository.findById(id);
@@ -52,6 +55,15 @@ public class DataService {
         data.setCreator(user.getDocument());
         return this.dataRepository.save(data);
     }
+    
+    public FormData save(FormData data) {
+	    	if(this.templateService.findByName(data.getTemplate()).isPublic()) {
+	    		data.setCreator("public");
+	    		return this.dataRepository.save(data);
+	    } else {
+	    		return null;
+	    }
+	}
 
 	public List<FormData> findByTemplate(String template, String dependency, String filter,
 			String sortColumn, String sortOrder, int pageNumber, int pageSize, String filters) {

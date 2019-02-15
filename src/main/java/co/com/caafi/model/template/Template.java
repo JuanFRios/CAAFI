@@ -17,11 +17,13 @@ public class Template {
 	private String description;
 	private List<Map<String, Object>> fields;
 	private List<Map<String, Object>> report;
+	private Map<String, Object> config;
 	private Map<String, Object> variables;
 	private Date startDate;
 	private Date endDate;
 	private String role;
 	private List<String> table;
+	private boolean isPublic;
 
 	public String getId() {
 		return id;
@@ -109,6 +111,22 @@ public class Template {
 
 	public void setReport(List<Map<String, Object>> report) {
 		this.report = report;
+	}
+
+	public Map<String, Object> getConfig() {
+		return config;
+	}
+
+	public void setConfig(Map<String, Object> config) {
+		this.config = config;
+	}
+
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	public void setPublic(boolean isPublic) {
+		this.isPublic = isPublic;
 	}
 
 }

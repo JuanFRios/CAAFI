@@ -15,6 +15,7 @@ public class FormData {
 	private Object data;
 	private Date savedDate;
 	private long countData;
+	private boolean isLogin;
 
 	public FormData() {
 		this.savedDate = new Date();
@@ -91,6 +92,14 @@ public class FormData {
 
 	public void setCountData(long countData) {
 		this.countData = countData;
+	}
+
+	public boolean isLogin() {
+		return isLogin;
+	}
+
+	public void setLogin(boolean isLogin) {
+		this.isLogin = isLogin;
 	}
 
 }

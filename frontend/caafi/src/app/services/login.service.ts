@@ -21,10 +21,15 @@ export class LoginService implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
         return new Promise<boolean>((resolve) => {
-            this.check().subscribe(() => {
+            this.check().subscribe((response) => {
                 if (this.isLogIn()) {
-                    console.log('Is Login', localStorage.getItem('tokenUser'));
-                    resolve(true);
+                    if (response === localStorage.getItem('tokenUser')) {
+                        resolve(true);
+                    } else {
+                        localStorage.removeItem('tokenUser');
+                        this.router.navigate(['/home']);
+                        resolve(false);
+                    }
                 } else {
                     this.router.navigate(['/home']);
                     resolve(false);
@@ -67,14 +72,17 @@ export class LoginService implements CanActivate {
     }
 
     logOut() {
+        let headers = new HttpHeaders();
+        headers = headers.set('X-Requested-With', 'XMLHttpRequest');
         const options: Object = {};
         options['withCredentials'] = true;
+        options['headers'] = headers;
 
         if (localStorage.getItem('tokenUser')) {
             localStorage.removeItem('tokenUser');
         }
 
-        return this.http.get(baseURL + '/account/logout', options)
+        return this.http.post(baseURL + '/account/logout', options)
             .map(() => {
             });
     }

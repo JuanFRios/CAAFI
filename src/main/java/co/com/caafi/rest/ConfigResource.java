@@ -25,6 +25,12 @@ public class ConfigResource {
 	public Config findByName(@PathVariable String name) {
 		return this.configService.findByName(name);
 	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/public/byname/{name}", method = RequestMethod.GET)
+	public Config findPublicConfigByName(@PathVariable String name) {
+		return this.configService.findPublicConfigByName(name);
+	}
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/template/role/{name}", method = RequestMethod.GET)

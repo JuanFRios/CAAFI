@@ -10,6 +10,7 @@ import co.com.caafi.model.Config;
 import co.com.caafi.model.ConfigTemplate;
 import co.com.caafi.model.Dependency;
 import co.com.caafi.model.Form;
+import co.com.caafi.model.Item;
 import co.com.caafi.model.User;
 import co.com.caafi.repository.ConfigRepository;
 import co.com.caafi.repository.ConfigTemplateRepository;
@@ -24,24 +25,27 @@ public class ConfigService {
 	public Config findByName(String name) {
 		return this.configRepository.findByName(name);
 	}
+	
+	public Config findPublicConfigByName(String name) {
+		return this.configRepository.findByNameAndIsPublic(name, true);
+	}
 
 	public ConfigTemplate findTemplateConfigByRol(User user,String name) {
 		ConfigTemplate config = this.configTemplateRepository.findByName(name);
-		List<Dependency> result = new ArrayList<>();
-		config.getValue().forEach(x -> {
-			if (hasRole(x.getRole(), user.getRoles())) {
-				List<Form> form = new ArrayList<>();
-				x.getForms().forEach(y -> {
-					if (hasRole(y.getRole(), user.getRoles())) {
-						form.add(y);
-					}
-				});
-				x.setForms(form);
-				result.add(x);
-			}
-		});
-		config.setValue(result);
+		List<Item> items = getItemsByRole(config.getValue(), user);
+		config.setValue(items);
 		return config;
+	}
+
+	private List<Item> getItemsByRole(List<Item> items, User user) {
+		List<Item> itemsByRole = new ArrayList<>();
+		for(Item item : items) {
+			if(hasRole(item.getRole(), user.getRoles())) {
+				item.setSubItems(item.getSubItems() == null ? null : getItemsByRole(item.getSubItems(), user));
+				itemsByRole.add(item);
+			}
+		}
+		return itemsByRole;
 	}
 
 	private boolean hasRole(List<String> resource, List<String> roles) {

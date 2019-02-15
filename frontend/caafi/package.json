@@ -36,6 +36,7 @@
     "hammerjs": "^2.0.8",
     "mat-progress-buttons": "7.0.10",
     "moment": "^2.22.2",
+    "ng-pick-datetime": "^5.2.6",
     "ngx-loading": "^1.0.14",
     "ngx-restangular": "4.0.1",
     "rxjs": "^6.3.3",

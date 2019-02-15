@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DateTimeAdapter } from 'ng-pick-datetime';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'My First Angular App';
+  constructor(dateTimeAdapter: DateTimeAdapter<any>) {
+    dateTimeAdapter.setLocale('es-CO');
+  }
 }

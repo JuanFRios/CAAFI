@@ -8,6 +8,7 @@
 @import "../node_modules/angular-notifier/styles/types/type-info.css";
 @import "../node_modules/angular-notifier/styles/types/type-success.css";
 @import "../node_modules/angular-notifier/styles/types/type-warning.css";
+@import "~ng-pick-datetime/assets/style/picker.min.css";
 
 /***** STYLES *****/
 
