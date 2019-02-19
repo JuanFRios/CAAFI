@@ -39,6 +39,7 @@
         "ngx-loading": "^1.0.14",
         "ngx-restangular": "4.0.1",
         "rxjs": "^6.3.3",
+        "rxjs-compat": "^6.3.3",
         "tslib": "^1.9.0",
         "zone.js": "^0.8.28"
     },
