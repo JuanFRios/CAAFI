@@ -11,8 +11,20 @@
     </div>
 
     <!-- Data Table -->
-    <div>
+    <div *ngIf="dependenciesReport == null">
         <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="allDataAccess" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
+    </div>
+
+    <div *ngIf="dependenciesReport != null">
+        <mat-tab-group (selectChange)="dependencyTabSelectionChanged($event)">
+            <mat-tab *ngFor="let dependencyReport of dependenciesReport; let i = index" [label]="dependencyReport.label">
+                <mat-tab-group (selectChange)="formTabSelectionChanged($event)">
+                    <mat-tab *ngFor="let formReport of dependencyReport.forms; let j = index" [label]="formReport.name">
+                        <app-data-table *ngIf="i==0 && j==0" #dataTable [formId]="formReport.path" [dependencyName]="dependencyReport.path" [allDataAccess]="true" [template]="template" [activeActions]="false" [export]="true"></app-data-table>
+                    </mat-tab>
+                </mat-tab-group>
+            </mat-tab>
+        </mat-tab-group>
     </div>
 
     <!-- Loading -->

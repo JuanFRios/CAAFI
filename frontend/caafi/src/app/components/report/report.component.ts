@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ComponentFactory, ComponentFactoryResolver, AfterViewInit } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotifierService } from 'angular-notifier';
 import { UtilService } from '../../services/util.service';
+import { ListService } from '../../services/list.service';
+import { DataTableComponent } from '../data-table/data-table.component';
 
 @Component({
   selector: 'app-report',
@@ -12,6 +14,8 @@ import { UtilService } from '../../services/util.service';
 
 export class ReportComponent implements OnInit {
 
+  dataTableComponentFactory: ComponentFactory<DataTableComponent>;
+
   private readonly notifier: NotifierService;
   fullLoading: boolean;
   formId: string;
@@ -20,18 +24,28 @@ export class ReportComponent implements OnInit {
   templateFilters: any;
   allDataAccess = false;
   noDependency = false;
+  dependenciesReport = null;
 
   constructor(
     private templatesService: TemplatesService,
     private utilService: UtilService,
     notifierService: NotifierService,
-    public router: Router
+    public router: Router,
+    private listService: ListService,
+    private componentFactoryResolver: ComponentFactoryResolver
   ) {
     this.notifier = notifierService;
     this.fullLoading = false;
+
+    this.listService.dependencyList$.subscribe(
+      dependencies => {
+        this.dependenciesReport = dependencies;
+      });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.dataTableComponentFactory = this.componentFactoryResolver.resolveComponentFactory(DataTableComponent);
+  }
 
   onSelectMenuItem($event) {
     if ($event.formId != null) {

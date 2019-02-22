@@ -11,6 +11,7 @@ export const routes: Routes = [
   { path: 'formularios', component: TemplatesComponent, canActivate: [AuthGuard] },
   { path: 'formularios/:dependency/:form', component: TemplatesComponent, canActivate: [AuthGuard] },
   { path: 'reportes', component: ReportComponent, canActivate: [AuthGuard] },
+  { path: 'reportes/:form', component: ReportComponent, canActivate: [AuthGuard] },
   { path: 'reportes/:dependency/:form', component: ReportComponent, canActivate: [AuthGuard] },
   { path: 'autoevaluacion', component: EvaluationComponent, canActivate: [AuthGuard] },
   { path: 'autoevaluacion/:dependency', component: EvaluationComponent, canActivate: [AuthGuard] },

@@ -131,12 +131,16 @@ export class MenuComponent implements OnInit, OnDestroy {
     const breadcrumbs = {};
     this.loop(menuItems, [], breadcrumbs, '');
     let breadcrumb;
-    if (this.formId != null) {
+    if (this.formId != null && this.dependencyId != null) {
       breadcrumb = breadcrumbs[this.formId + ':' + this.dependencyId].map(o => o).join(' - ');
-    } else {
+    } else if (this.dependencyId != null) {
       if (breadcrumbs[this.dependencyId + ':' + this.dependencyId]) {
         breadcrumb = breadcrumbs[this.dependencyId + ':' + this.dependencyId].map(o => o).join(' - ');
       }
+    } else if (this.formId != null) {
+      breadcrumb = breadcrumbs[this.formId + ':' + this.formId].map(o => o).join(' - ');
+    } else {
+      breadcrumb = '';
     }
     return breadcrumb;
   }

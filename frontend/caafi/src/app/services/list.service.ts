@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable ,  from } from 'rxjs';
+import { Observable ,  from, ReplaySubject, Subject } from 'rxjs';
 import { ConfigService } from './config.service';
 
 @Injectable()
 export class ListService {
+
+    private dependencyList = new Subject<any[]>();
+    dependencyList$ = this.dependencyList.asObservable();
 
     constructor(
       private configService: ConfigService
@@ -33,5 +36,18 @@ export class ListService {
             valueList.push(list[i].value);
         }
         return valueList;
+    }
+
+    getDependencyList(): Observable<any[]> {
+        return from(this.getDependencyListFromDB());
+    }
+
+    getDependencyListFromDB(): Promise<any[]> {
+        return new Promise(resolve => {
+            this.configService.getDependencyList().subscribe(confi => {
+                this.dependencyList.next(confi.value);
+                resolve(eval(JSON.stringify(confi.value)));
+            });
+        });
     }
 }

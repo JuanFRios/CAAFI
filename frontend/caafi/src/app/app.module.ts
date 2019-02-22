@@ -14,7 +14,8 @@ import {
   MatTooltipModule,
   MatSortModule,
   MatProgressBarModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatTabsModule
  } from '@angular/material';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { LoadingModule } from 'ngx-loading';
@@ -212,6 +213,7 @@ export function required(err, field) {
     MatPaginatorModule,
     MatSidenavModule,
     MatSortModule,
+    MatTabsModule,
     AppRoutingModule,
     MatTooltipModule,
     MatProgressBarModule,

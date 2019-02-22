@@ -21,4 +21,8 @@ export class ConfigService {
     return this.restangular.one('config/template/role', name).get();
   }
 
+  getDependencyList(): Observable<Config> {
+    return this.restangular.one('config/reportdependencies').get();
+  }
+
 }
