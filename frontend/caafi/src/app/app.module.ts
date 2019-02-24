@@ -248,6 +248,7 @@ export function required(err, field) {
       UtilService,
       {provide: OwlDateTimeIntl, useClass: DefaultIntl}
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [DataTableComponent]
 })
 export class AppModule { }

@@ -2185,7 +2185,7 @@ span.gt-highlight-search {
 }
 
 #cdk-overlay-0 .mat-menu-panel {
-    max-height: calc(100vh - 198px) !important;
+    max-height: calc(100vh - 180px) !important;
 }
 
 .mat-menu-item {
