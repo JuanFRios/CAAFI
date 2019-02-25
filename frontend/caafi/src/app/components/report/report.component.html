@@ -11,16 +11,19 @@
     </div>
 
     <!-- Data Table -->
-    <div *ngIf="dependenciesReport == null">
+    <div *ngIf="!noReport">
         <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="allDataAccess" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
     </div>
 
-    <div *ngIf="dependenciesReport != null">
-        <mat-tab-group (selectChange)="dependencyTabSelectionChanged($event)">
+    <div *ngIf="noReport">
+        <mat-tab-group (selectedTabChange)="dependencyTabSelectionChanged($event)">
             <mat-tab *ngFor="let dependencyReport of dependenciesReport; let i = index" [label]="dependencyReport.label">
-                <mat-tab-group (selectChange)="formTabSelectionChanged($event)">
+                <mat-tab-group (selectedTabChange)="formTabSelectionChanged($event)">
                     <mat-tab *ngFor="let formReport of dependencyReport.forms; let j = index" [label]="formReport.name">
-                        <app-data-table *ngIf="i==0 && j==0" #dataTable [formId]="formReport.path" [dependencyName]="dependencyReport.path" [allDataAccess]="true" [template]="template" [activeActions]="false" [export]="true"></app-data-table>
+                        <app-container id="{{ 'container-' + dependencyReport.path + '-' + formReport.path }}" 
+                        name="{{ 'container-' + dependencyReport.path + '-' + formReport.path }}"
+                        [formId]="formReport.path" [dependencyName]="dependencyReport.label" [allDataAccess]="true" 
+                        [activeActions]="false" [export]="true"></app-container>
                     </mat-tab>
                 </mat-tab-group>
             </mat-tab>

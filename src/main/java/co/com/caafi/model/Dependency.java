@@ -12,6 +12,7 @@ public class Dependency {
 	private boolean evaluationItem;
 	private String evaluationDoc;
 	private boolean noDependency;
+	private boolean noReport;
 
 	public String getName() {
 		return name;
@@ -75,6 +76,14 @@ public class Dependency {
 
 	public void setPolls(List<Form> polls) {
 		this.polls = polls;
+	}
+
+	public boolean isNoReport() {
+		return noReport;
+	}
+
+	public void setNoReport(boolean noReport) {
+		this.noReport = noReport;
 	}
 
 }

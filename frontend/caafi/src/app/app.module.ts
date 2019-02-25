@@ -64,6 +64,7 @@ import { NotifierModule } from 'angular-notifier';
 import { DataTableComponent } from './components/data-table/data-table.component';
 import { UtilService } from './services/util.service';
 import { PollsComponent } from './components/polls/polls.component';
+import { ContainerComponent } from './components/container/container.component';
 
 // here is the default text string
 export class DefaultIntl extends OwlDateTimeIntl {
@@ -159,6 +160,7 @@ export function required(err, field) {
     TemplatesComponent,
     PollsComponent,
     ReportComponent,
+    ContainerComponent,
     HomeComponent,
     EvaluationComponent,
     VariableTypeComponent,

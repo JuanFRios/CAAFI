@@ -11,6 +11,7 @@ public class Item {
 	private boolean noDependency;
 	private List<String> role;
 	private List<Item> subItems;
+	private boolean noReport;
 	
 	public String getName() {
 		return name;
@@ -53,5 +54,11 @@ public class Item {
 	}
 	public void setSubItems(List<Item> subItems) {
 		this.subItems = subItems;
+	}
+	public boolean isNoReport() {
+		return noReport;
+	}
+	public void setNoReport(boolean noReport) {
+		this.noReport = noReport;
 	}
 }
