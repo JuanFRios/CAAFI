@@ -6,7 +6,6 @@ import { NotifierService } from 'angular-notifier';
 import { UtilService } from '../../services/util.service';
 import { ListService } from '../../services/list.service';
 import { DataTableComponent } from '../data-table/data-table.component';
-import { Data } from 'src/app/common/data';
 import { ContainerComponent } from '../container/container.component';
 import { Observable } from 'rxjs';
 import { MatTabChangeEvent } from '@angular/material';
@@ -31,7 +30,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   noDependency = false;
   dependenciesReport = null;
   noReport = false;
-  componentRef: ComponentRef<DataTableComponent>;
+  //componentRef: ComponentRef<DataTableComponent>;
 
   @ViewChildren(ContainerComponent) containers: QueryList<ContainerComponent>;
 
@@ -128,19 +127,19 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     const factory: ComponentFactory<DataTableComponent> = this.resolver.resolveComponentFactory(DataTableComponent);
     setTimeout(() => {
       this.loadReportTemplate(container.formId).then(resolve => {
-        this.componentRef = containerRef.createComponent(factory);
-        this.componentRef.instance.formId = container.formId;
-        this.componentRef.instance.activeActions = container.activeActions;
-        this.componentRef.instance.allDataAccess = container.allDataAccess;
-        this.componentRef.instance.dependencyName = container.dependencyName;
-        this.componentRef.instance.export = container.export;
-        this.componentRef.instance.template = resolve;
+        const componentRef = containerRef.createComponent(factory);
+        componentRef.instance.formId = container.formId;
+        componentRef.instance.activeActions = container.activeActions;
+        componentRef.instance.allDataAccess = container.allDataAccess;
+        componentRef.instance.dependencyName = container.dependencyName;
+        componentRef.instance.export = container.export;
+        componentRef.instance.template = resolve;
       });
     });
   }
 
   ngOnDestroy() {
-    this.componentRef.destroy();
+    //this.componentRef.destroy();
   }
 
   public ngAfterViewInit(): void {
