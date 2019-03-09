@@ -9,6 +9,7 @@ export class ContainerComponent implements OnInit, OnDestroy {
 
   @Input() name: string;
   @Input() formId: string;
+  @Input() dependencyId: string;
   @Input() dependencyName: string;
   @Input() allDataAccess = false;
   @Input() activeActions = true;

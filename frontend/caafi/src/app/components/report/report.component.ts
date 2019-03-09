@@ -16,7 +16,7 @@ import { MatTabChangeEvent } from '@angular/material';
   styleUrls: ['./report.component.css']
 })
 
-export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ReportComponent implements OnInit, OnDestroy {
 
   dataTableComponentFactory: ComponentFactory<DataTableComponent>;
 
@@ -28,9 +28,10 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   templateFilters: any;
   allDataAccess = false;
   noDependency = false;
-  dependenciesReport = null;
+  dependenciesReport: any[] = null;
   noReport = false;
-  //componentRef: ComponentRef<DataTableComponent>;
+  indexDependenciesTab = 0;
+  indexReportsTab = 0;
 
   @ViewChildren(ContainerComponent) containers: QueryList<ContainerComponent>;
 
@@ -71,8 +72,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
    * Loads an specified report from DB
    */
   loadReport(formId): Promise<any[]> {
+    this.toggleLoading(true);
     return new Promise(resolve => {
-      this.toggleLoading(true);
       this.templatesService.getByName(formId)
         .subscribe(template => {
           const templateData = this.utilService.deepCopy(template);
@@ -94,8 +95,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loadReportTemplate(formId): Promise<any> {
+    this.toggleLoading(true);
     return new Promise(resolve => {
-      this.toggleLoading(true);
       this.templatesService.getByName(formId)
         .subscribe(template => {
           const templateData = this.utilService.deepCopy(template);
@@ -119,10 +120,9 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     this.fullLoading = $event;
   }
 
-  createDataTable(indexTab) {
-    const containersArray = this.containers.toArray();
-    const container = containersArray[indexTab];
-    const containerRef = containersArray[indexTab].viewContainerRef;
+  createDataTable() {
+    const container = this.getContainer();
+    const containerRef = container.viewContainerRef;
     containerRef.clear();
     const factory: ComponentFactory<DataTableComponent> = this.resolver.resolveComponentFactory(DataTableComponent);
     setTimeout(() => {
@@ -138,24 +138,29 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngOnDestroy() {
-    //this.componentRef.destroy();
-  }
-
-  public ngAfterViewInit(): void {
-    this.containers.changes.subscribe((comps: QueryList<ContainerComponent>) => {
-      if (this.containers != null && this.containers.length > 0) {
-        this.createDataTable(0);
+  getContainer(): any {
+    const containersArray = this.containers.toArray();
+    const dependencyId = this.dependenciesReport[this.indexDependenciesTab].path;
+    const formId = this.dependenciesReport[this.indexDependenciesTab].forms[this.indexReportsTab].path;
+    for (const container of containersArray) {
+      if (container.dependencyId === dependencyId && container.formId === formId) {
+        return container;
       }
-    });
+    }
+    return null;
   }
 
-  dependencyTabSelectionChanged($event) {
-    console.log($event);
+  ngOnDestroy() {}
+
+  dependencyTabSelectionChanged(event) {
+    this.indexDependenciesTab = event.index;
+    this.indexReportsTab = 0;
+    this.createDataTable();
   }
 
-  formTabSelectionChanged($event) {
-    this.createDataTable($event.index);
+  formTabSelectionChanged(event: MatTabChangeEvent) {
+    this.indexReportsTab = event.index;
+    this.createDataTable();
   }
 
 }
