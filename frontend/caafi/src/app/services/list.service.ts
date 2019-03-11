@@ -50,4 +50,16 @@ export class ListService {
             });
         });
     }
+
+    getDependencyListById(dependency: string): Observable<any[]> {
+        return from(this.getDependencyListFromDBById(dependency));
+    }
+
+    getDependencyListFromDBById(dependency: string): Promise<any[]> {
+        return new Promise(resolve => {
+            this.configService.getDependencyListById(dependency).subscribe(confi => {
+                resolve(eval(JSON.stringify(confi.value)));
+            });
+        });
+    }
 }

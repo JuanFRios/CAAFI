@@ -62,8 +62,11 @@ public class ConfigService {
 		return false;
 	}
 	
-	public Config findReportDependencies() {
+	public Config findReportDependencies(String dependency) {
 		Config reports =  this.configRepository.findByName("reportes");
+		if(dependency != null) {
+			return getDependencyFromReports((List<?>) reports.getValue(), dependency);
+		}
 		return getDependenciesFromReports((List<?>) reports.getValue());
 	}
 
@@ -71,7 +74,28 @@ public class ConfigService {
 		Config reportDependencies = new Config();
 		List<Map<String, Object>> value = new ArrayList<Map<String, Object>>();
 		for(int i = 0; i < reports.size(); i++) {
-			if (((Boolean) ((Map<?,?>)reports.get(i)).get("noReport")) == null || !((Boolean) ((Map<?,?>)reports.get(i)).get("noReport"))) {
+			if (((Boolean) ((Map<?,?>)reports.get(i)).get("noReport")) == null || 
+					!((Boolean) ((Map<?,?>)reports.get(i)).get("noReport"))) {
+				Map<String, Object> reportItem = new HashMap<String, Object>();
+				String nameReport = (String) ((Map<?,?>)reports.get(i)).get("name");
+				reportItem.put("label", nameReport);
+				reportItem.put("value", (String) ((Map<?,?>)reports.get(i)).get("path"));
+				reportItem.put("path", (String) ((Map<?,?>)reports.get(i)).get("path"));
+				List<?> forms = (List<?>) ((Map<?,?>)reports.get(i)).get("subItems");
+				reportItem.put("forms", forms);
+				value.add(reportItem);
+			}
+		}
+		reportDependencies.setValue(value);
+		return reportDependencies;
+	}
+	
+	private Config getDependencyFromReports(List<?> reports, String dependency) {
+		Config reportDependencies = new Config();
+		List<Map<String, Object>> value = new ArrayList<Map<String, Object>>();
+		for(int i = 0; i < reports.size(); i++) {
+			if (dependency != null && 
+					dependency.equals((String) ((Map<?,?>)reports.get(i)).get("path"))) {
 				Map<String, Object> reportItem = new HashMap<String, Object>();
 				String nameReport = (String) ((Map<?,?>)reports.get(i)).get("name");
 				reportItem.put("label", nameReport);
@@ -80,6 +104,7 @@ public class ConfigService {
 				List<?> forms = (List<?>) ((Map<?,?>)reports.get(i)).get("subItems");
 				reportItem.put("forms", forms);
 				value.add(reportItem);
+				break;
 			}
 		}
 		reportDependencies.setValue(value);

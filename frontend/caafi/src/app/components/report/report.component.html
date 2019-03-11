@@ -6,8 +6,10 @@
 <div *ngIf="template != null">
     <!-- Formly -->
     <div *ngIf="templateFilters.fields != null">
-        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="templateFilters" [noDependency]="noDependency" [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)" (buttonClicked)="dataTable.filterData($event)"
-            (reseted)="dataTable.refresh($event)"></app-formly>
+        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" 
+        [template]="templateFilters" [noDependency]="noDependency" 
+        [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (buttonClicked)="filterData($event)"
+        (reseted)="resetFilters($event)"></app-formly>
     </div>
 
     <!-- Data Table -->
@@ -26,6 +28,9 @@
                         [activeActions]="false" [export]="true"></app-container>
                     </mat-tab>
                 </mat-tab-group>
+                <div class="container">
+                    <mat-spinner-button [options]="exportCSVSpinnerButtonOptions" (click)="exportCSV()"></mat-spinner-button>
+                </div>
             </mat-tab>
         </mat-tab-group>
     </div>

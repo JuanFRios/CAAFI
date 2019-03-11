@@ -7,6 +7,7 @@ import { MatSort, MatPaginator } from '@angular/material';
 import { Subscription ,  merge ,  fromEvent ,  BehaviorSubject } from 'rxjs';
 import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ExportToCsv } from 'export-to-csv';
+import { ExcelService } from '../../services/excel.service';
 
 @Component({
   selector: 'app-data-table',
@@ -29,7 +30,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
-    text: 'Exportar CSV',
+    text: 'Exportar',
     spinnerSize: 18,
     raised: true,
     buttonColor: 'primary',
@@ -65,6 +66,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
 
   constructor(
     private dataService: DataService,
+    private excelService: ExcelService,
   ) {}
 
   ngOnInit() {
@@ -122,9 +124,6 @@ export class DataTableComponent implements OnInit, OnDestroy {
       this.dataService.count(this.formId, this.dependencyName, this.allDataAccess, '', urlFilters)
       .subscribe(countData => {
         this.model = countData;
-
-        this.disableExportButon(countData.countData);
-
         resolve();
       },
       error => {
@@ -139,8 +138,6 @@ export class DataTableComponent implements OnInit, OnDestroy {
       this.filter.nativeElement.value, this.filters)
       .subscribe(countData => {
         this.model = countData;
-
-        this.disableExportButon(countData.countData);
       },
       error => {
         this.notifier.notify( 'error', 'ERROR: Error al cargar los datos del formulario.' );
@@ -186,8 +183,6 @@ export class DataTableComponent implements OnInit, OnDestroy {
       this.filter.nativeElement.value, urlFilters)
     .subscribe(countData => {
       this.model = countData;
-
-      this.disableExportButon(countData.countData);
     },
     error => {
       this.notifier.notify( 'error', 'ERROR: Error al cargar los datos del formulario.' );
@@ -213,23 +208,9 @@ export class DataTableComponent implements OnInit, OnDestroy {
         this.dataService.processDataReport(data, [], proccessedData, null, this.template.repeatSections,
           this.template.dates, this.template.booleans, this.template.files, this.template.namesRepeats,
           this.template.displayedColumnsNames);
-
-          const options = {
-            filename: 'reporte-' + this.dependencyName + '-' + this.formId,
-            fieldSeparator: ';',
-            quoteStrings: '"',
-            decimalseparator: '.',
-            showLabels: true,
-            showTitle: true,
-            title: 'Reporte: ' + this.dependencyName + ' - ' + this.formId,
-            useBom: true,
-            useKeysAsHeaders: true
-          };
-          const exportToCsv = new ExportToCsv(options);
-          exportToCsv.generateCsv(proccessedData);
-
+          this.excelService.exportAsExcelFile(proccessedData, 'reporte-' + this.dependencyName + '-' + this.formId, this.formId);
           this.exportCSVSpinnerButtonOptions.active = false;
-          this.exportCSVSpinnerButtonOptions.text = 'Exportar CSV';
+          this.exportCSVSpinnerButtonOptions.text = 'Exportar';
       });
   }
 

@@ -25,4 +25,8 @@ export class ConfigService {
     return this.restangular.one('config/reportdependencies').get();
   }
 
+  getDependencyListById(dependency: string): Observable<Config> {
+    return this.restangular.one('config/reportdependency/' + dependency).get();
+  }
+
 }

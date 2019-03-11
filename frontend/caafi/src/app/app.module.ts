@@ -65,6 +65,7 @@ import { DataTableComponent } from './components/data-table/data-table.component
 import { UtilService } from './services/util.service';
 import { PollsComponent } from './components/polls/polls.component';
 import { ContainerComponent } from './components/container/container.component';
+import { ExcelService } from './services/excel.service';
 
 // here is the default text string
 export class DefaultIntl extends OwlDateTimeIntl {
@@ -248,6 +249,7 @@ export function required(err, field) {
       FileService,
       ListService,
       UtilService,
+      ExcelService,
       {provide: OwlDateTimeIntl, useClass: DefaultIntl}
   ],
   bootstrap: [AppComponent],
