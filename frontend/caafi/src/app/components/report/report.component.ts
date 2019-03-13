@@ -45,6 +45,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   @ViewChildren(ContainerComponent) containers: QueryList<ContainerComponent>;
+  @ViewChild(DataTableComponent) activeDataTable: DataTableComponent;
 
   constructor(
     private templatesService: TemplatesService,
@@ -197,19 +198,27 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   filterData(event) {
-    if (event['te-dependencia'] !== null) {
-      this.listService.getDependencyListById(event['te-dependencia']).subscribe(
-        dependencies => {
-          this.dependenciesReport = dependencies;
-        });
+    if (!this.noReport) {
+      this.activeDataTable.filterData(event);
+    } else {
+      if (event['te-dependencia'] != null) {
+        this.listService.getDependencyListById(event['te-dependencia']).subscribe(
+          dependencies => {
+            this.dependenciesReport = dependencies;
+          });
+      }
     }
   }
 
   resetFilters(event) {
-    this.listService.getDependencyList().subscribe(
-      dependencies => {
-        this.dependenciesReport = dependencies;
-      });
+    if (!this.noReport) {
+      this.activeDataTable.refresh(event);
+    } else {
+      this.listService.getDependencyList().subscribe(
+        dependencies => {
+          this.dependenciesReport = dependencies;
+        });
+    }
   }
 
 }
