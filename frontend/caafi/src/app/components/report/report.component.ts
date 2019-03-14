@@ -147,9 +147,34 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
           componentRef.instance.dependencyName = container.dependencyName;
           componentRef.instance.export = container.export;
           componentRef.instance.template = resolve;
+          container.activeDataTable = componentRef.instance;
         });
       });
     }
+  }
+
+  createDataTableById(dependencyId, formId) {
+    return new Promise(resolve => {
+      const container = this.getContainerById(dependencyId, formId);
+      if (container != null) {
+        const containerRef = container.viewContainerRef;
+        containerRef.clear();
+        const factory: ComponentFactory<DataTableComponent> = this.resolver.resolveComponentFactory(DataTableComponent);
+        setTimeout(() => {
+          this.loadReportTemplate(container.formId).then(res => {
+            const componentRef = containerRef.createComponent(factory);
+            componentRef.instance.formId = container.formId;
+            componentRef.instance.activeActions = container.activeActions;
+            componentRef.instance.allDataAccess = container.allDataAccess;
+            componentRef.instance.dependencyName = container.dependencyName;
+            componentRef.instance.export = container.export;
+            componentRef.instance.template = resolve;
+            container.activeDataTable = componentRef.instance;
+            resolve();
+          });
+        });
+      }
+    });
   }
 
   getContainer(): any {
@@ -164,6 +189,32 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     return null;
+  }
+
+  getContainerById(dependencyId, formId): any {
+    const containersArray = this.containers.toArray();
+    if (this.dependenciesReport != null) {
+      for (const container of containersArray) {
+        if (container.dependencyId === dependencyId && container.formId === formId) {
+          return container;
+        }
+      }
+    }
+    return null;
+  }
+
+  getContainersDependency(): Array<ContainerComponent> {
+    const arrayContainers = new Array<ContainerComponent>();
+    const containersArray = this.containers.toArray();
+    if (this.dependenciesReport != null) {
+      const dependencyId = this.dependenciesReport[this.indexDependenciesTab].path;
+      for (const container of containersArray) {
+        if (container.dependencyId === dependencyId) {
+          arrayContainers.push(container);
+        }
+      }
+    }
+    return arrayContainers;
   }
 
   ngOnDestroy() {}
@@ -183,8 +234,24 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     this.createDataTable();
   }
 
-  exportCSV() {
-
+  exportCSV(event) {
+    console.log(event);
+    const containers = this.getContainersDependency();
+    const proccessedData = new Array<Object[]>();
+    for (const container of containers) {
+      if (container.activeDataTable != null) {
+        container.exportDataTableData().subscribe(response => {
+          console.log(response);
+        });
+      } else {
+        /*
+        this.createDataTableById(container.dependencyId, container.formId).then(resolve => {
+          console.log(resolve);
+        });
+        */
+      }
+    }
+    console.log(containers);
   }
 
   public ngAfterViewInit(): void {

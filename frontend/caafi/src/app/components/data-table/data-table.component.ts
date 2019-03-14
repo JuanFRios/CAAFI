@@ -214,6 +214,21 @@ export class DataTableComponent implements OnInit, OnDestroy {
       });
   }
 
+  externalExportReport() {
+    return new Promise(resolve => {
+      const proccessedData: Object[] = [];
+      this.dataService.getAllByTemplateAndDependency(this.formId, this.dependencyName,
+        this.allDataAccess, this.filter.nativeElement.value, this.getSortColumn(),
+        this.sort.direction, 0, -1, this.filters)
+        .subscribe(data => {
+          this.dataService.processDataReport(data, [], proccessedData, null, this.template.repeatSections,
+            this.template.dates, this.template.booleans, this.template.files, this.template.namesRepeats,
+            this.template.displayedColumnsNames);
+            resolve(proccessedData);
+        });
+    });
+  }
+
   disableExportButon(numberData) {
     if (numberData <= 0) {
       this.exportCSVSpinnerButtonOptions.disabled = true;
