@@ -9,6 +9,9 @@ import { DataTableComponent } from '../data-table/data-table.component';
 import { ContainerComponent } from '../container/container.component';
 import { Observable } from 'rxjs';
 import { MatTabChangeEvent } from '@angular/material';
+import { DataService } from '../../services/data.service';
+import { ExcelService } from '../../services/excel.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-report',
@@ -33,6 +36,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   indexDependenciesTab = 0;
   indexReportsTab = 0;
   firstLoad = true;
+  filters: String = '';
+  filter: String = '';
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -54,7 +59,9 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     public router: Router,
     private listService: ListService,
     private componentFactoryResolver: ComponentFactoryResolver,
-    private resolver: ComponentFactoryResolver
+    private resolver: ComponentFactoryResolver,
+    private dataService: DataService,
+    private excelService: ExcelService
   ) {
     this.notifier = notifierService;
     this.fullLoading = false;
@@ -147,30 +154,28 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
           componentRef.instance.dependencyName = container.dependencyName;
           componentRef.instance.export = container.export;
           componentRef.instance.template = resolve;
+          componentRef.instance.filters = this.filters;
+          componentRef.instance.extFilter = this.filter;
           container.activeDataTable = componentRef.instance;
         });
       });
     }
   }
 
-  createDataTableById(dependencyId, formId) {
+  createDataTableById(dependencyId, formId): Promise<DataTableComponent> {
     return new Promise(resolve => {
       const container = this.getContainerById(dependencyId, formId);
       if (container != null) {
-        const containerRef = container.viewContainerRef;
-        containerRef.clear();
-        const factory: ComponentFactory<DataTableComponent> = this.resolver.resolveComponentFactory(DataTableComponent);
         setTimeout(() => {
-          this.loadReportTemplate(container.formId).then(res => {
-            const componentRef = containerRef.createComponent(factory);
-            componentRef.instance.formId = container.formId;
-            componentRef.instance.activeActions = container.activeActions;
-            componentRef.instance.allDataAccess = container.allDataAccess;
-            componentRef.instance.dependencyName = container.dependencyName;
-            componentRef.instance.export = container.export;
-            componentRef.instance.template = resolve;
-            container.activeDataTable = componentRef.instance;
-            resolve();
+          this.loadReportTemplate(container.formId).then(template => {
+            const dataTable: DataTableComponent = new DataTableComponent(this.dataService, this.excelService);
+            dataTable.formId = container.formId;
+            dataTable.activeActions = container.activeActions;
+            dataTable.allDataAccess = container.allDataAccess;
+            dataTable.dependencyName = container.dependencyName;
+            dataTable.export = container.export;
+            dataTable.template = template;
+            resolve(dataTable);
           });
         });
       }
@@ -220,13 +225,13 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {}
 
   dependencyTabSelectionChanged(event) {
-    if (!this.firstLoad) {
+    //if (!this.firstLoad) {
       this.indexDependenciesTab = event.index;
       this.indexReportsTab = 0;
       this.createDataTable();
-    } else {
-      this.firstLoad = false;
-    }
+    //} else {
+    //  this.firstLoad = false;
+    //}
   }
 
   formTabSelectionChanged(event: MatTabChangeEvent) {
@@ -235,43 +240,65 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   exportCSV(event) {
-    console.log(event);
     const containers = this.getContainersDependency();
-    const proccessedData = new Array<Object[]>();
+    const shetNames = new Array();
+    const jsonArray = new Array();
     for (const container of containers) {
-      if (container.activeDataTable != null) {
-        container.exportDataTableData().subscribe(response => {
-          console.log(response);
+      this.createDataTableById(container.dependencyId, container.formId).then(dataTable => {
+        dataTable.externalExportReport().then(data => {
+          shetNames.push(container.formId.substring(0, 31));
+          jsonArray.push(data);
+          if (jsonArray.length === containers.length) {
+            this.excelService.exportAsExcelFileMultipleSheets(jsonArray, 'reporte-' + container.dependencyId, shetNames);
+          }
         });
-      } else {
-        /*
-        this.createDataTableById(container.dependencyId, container.formId).then(resolve => {
-          console.log(resolve);
-        });
-        */
-      }
+      });
     }
-    console.log(containers);
+
   }
 
   public ngAfterViewInit(): void {
     this.containers.changes.subscribe((comps: QueryList<ContainerComponent>) => {
       this.containers.reset(comps.toArray());
-      this.indexDependenciesTab = 0;
-      this.indexReportsTab = 0;
-      this.createDataTable();
+      //this.indexDependenciesTab = 0;
+      //this.indexReportsTab = 0;
+      //this.createDataTable();
     });
   }
-
 
   filterData(event) {
     if (!this.noReport) {
       this.activeDataTable.filterData(event);
     } else {
+      console.log(event);
+      const jsonFilters = {};
+      if (event['tea-grupoInvestigacion'] != null) {
+        jsonFilters['tea-grupoInvestigacion'] = event['tea-grupoInvestigacion'];
+      }
+      if (event['tle-semestre'] != null) {
+        jsonFilters['tle-semestre'] = event['tle-semestre'];
+      }
+      if (event['tge-semestre'] != null) {
+        jsonFilters['tge-semestre'] = event['tge-semestre'];
+      }
+      if (event['te-semestre'] != null) {
+        jsonFilters['te-semestre'] = event['te-semestre'];
+      }
+      if (event['tea-'] != null) {
+        this.filter = event['tea-'];
+      }
+      const urlFilters = encodeURIComponent(JSON.stringify(jsonFilters));
+      this.filters = urlFilters;
       if (event['te-dependencia'] != null) {
         this.listService.getDependencyListById(event['te-dependencia']).subscribe(
           dependencies => {
             this.dependenciesReport = dependencies;
+          });
+      } else {
+        this.listService.getDependencyList().subscribe(
+          dependencies => {
+            this.dependenciesReport = dependencies;
+            this.createDataTable();
           });
       }
     }
@@ -281,11 +308,13 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.noReport) {
       this.activeDataTable.refresh(event);
     } else {
+      this.filters = '';
+      this.filter = '';
       this.listService.getDependencyList().subscribe(
         dependencies => {
           this.dependenciesReport = dependencies;
+          this.createDataTable();
         });
     }
   }
-
 }

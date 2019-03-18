@@ -63,6 +63,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
   tapPaginator: Subscription;
   filterEvent: Subscription;
   filters: string;
+  extFilter: string;
 
   constructor(
     private dataService: DataService,
@@ -79,11 +80,19 @@ export class DataTableComponent implements OnInit, OnDestroy {
   loadDataTable() {
     this.dataSource = new ModelDataSource(this.dataService);
 
-    const urlFilters = encodeURIComponent(JSON.stringify({}));
+    let urlFilters = encodeURIComponent(JSON.stringify({}));
+    if (this.filters != null) {
+      urlFilters = this.filters;
+    }
+
+    let filter = '';
+    if (this.extFilter != null) {
+      filter = this.extFilter;
+    }
 
     this.countData(urlFilters).then(result => {
       this.dataSource.loadData(this.formId, this.dependencyName, this.allDataAccess,
-        '', 'savedDate', 'desc', 0, 5, this.template.repeatSections, this.template.dates,
+        filter, 'savedDate', 'desc', 0, 5, this.template.repeatSections, this.template.dates,
         this.template.booleans, this.template.files, this.template.namesRepeats, urlFilters).then(loadResult => {
           if (this.sortChange) {
             this.sortChange.unsubscribe();
@@ -121,7 +130,11 @@ export class DataTableComponent implements OnInit, OnDestroy {
 
   countData(urlFilters) {
     return new Promise(resolve => {
-      this.dataService.count(this.formId, this.dependencyName, this.allDataAccess, '', urlFilters)
+      let filter = '';
+      if (this.extFilter != null) {
+        filter = this.extFilter;
+      }
+      this.dataService.count(this.formId, this.dependencyName, this.allDataAccess, filter, urlFilters)
       .subscribe(countData => {
         this.model = countData;
         resolve();
@@ -134,8 +147,15 @@ export class DataTableComponent implements OnInit, OnDestroy {
 
   loadDataPage() {
 
+    let filter = '';
+    if (this.filter != null) {
+      filter = this.filter.nativeElement.value;
+    } else {
+      filter = this.extFilter;
+    }
+
     this.dataService.count(this.formId, this.dependencyName, this.allDataAccess,
-      this.filter.nativeElement.value, this.filters)
+      filter, this.filters)
       .subscribe(countData => {
         this.model = countData;
       },
@@ -144,7 +164,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
       });
 
     this.dataSource.loadData(this.formId, this.dependencyName, this.allDataAccess,
-    this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
+    filter, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
     this.paginator.pageSize, this.template.repeatSections, this.template.dates, this.template.booleans,
     this.template.files, this.template.namesRepeats, this.filters);
   }
@@ -208,7 +228,8 @@ export class DataTableComponent implements OnInit, OnDestroy {
         this.dataService.processDataReport(data, [], proccessedData, null, this.template.repeatSections,
           this.template.dates, this.template.booleans, this.template.files, this.template.namesRepeats,
           this.template.displayedColumnsNames);
-          this.excelService.exportAsExcelFile(proccessedData, 'reporte-' + this.dependencyName + '-' + this.formId, this.formId);
+          this.excelService.exportAsExcelFile(proccessedData,
+            'reporte-' + this.dependencyName + '-' + this.formId, this.formId);
           this.exportCSVSpinnerButtonOptions.active = false;
           this.exportCSVSpinnerButtonOptions.text = 'Exportar';
       });
@@ -218,8 +239,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
     return new Promise(resolve => {
       const proccessedData: Object[] = [];
       this.dataService.getAllByTemplateAndDependency(this.formId, this.dependencyName,
-        this.allDataAccess, this.filter.nativeElement.value, this.getSortColumn(),
-        this.sort.direction, 0, -1, this.filters)
+        this.allDataAccess, '', 'savedDate', '', 0, -1, this.filters)
         .subscribe(data => {
           this.dataService.processDataReport(data, [], proccessedData, null, this.template.repeatSections,
             this.template.dates, this.template.booleans, this.template.files, this.template.namesRepeats,
