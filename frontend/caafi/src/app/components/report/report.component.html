@@ -15,7 +15,7 @@
     </div>
 
     <div *ngIf="noReport">
-        <mat-tab-group (selectedTabChange)="dependencyTabSelectionChanged($event)" animationDuration="0ms">
+        <mat-tab-group (selectedTabChange)="dependencyTabSelectionChanged($event)" animationDuration="0ms" [selectedIndex]="selectedTabDependency.value" (selectedIndexChange)="selectedTabDependency.setValue($event)">
             <mat-tab *ngFor="let dependencyReport of dependenciesReport; let i = index" [label]="dependencyReport.label">
                 <mat-tab-group (selectedTabChange)="formTabSelectionChanged($event)" animationDuration="0ms">
                     <mat-tab *ngFor="let formReport of dependencyReport.forms; let j = index" [label]="formReport.name">

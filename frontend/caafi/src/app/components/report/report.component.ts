@@ -38,6 +38,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   firstLoad = true;
   filters: String = '';
   filter: String = '';
+  selectedTabDependency = new FormControl(0);
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -225,13 +226,9 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {}
 
   dependencyTabSelectionChanged(event) {
-    //if (!this.firstLoad) {
-      this.indexDependenciesTab = event.index;
-      this.indexReportsTab = 0;
-      this.createDataTable();
-    //} else {
-    //  this.firstLoad = false;
-    //}
+    this.indexDependenciesTab = event.index;
+    this.indexReportsTab = 0;
+    this.createDataTable();
   }
 
   formTabSelectionChanged(event: MatTabChangeEvent) {
@@ -260,9 +257,6 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   public ngAfterViewInit(): void {
     this.containers.changes.subscribe((comps: QueryList<ContainerComponent>) => {
       this.containers.reset(comps.toArray());
-      //this.indexDependenciesTab = 0;
-      //this.indexReportsTab = 0;
-      //this.createDataTable();
     });
   }
 
@@ -293,12 +287,25 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
         this.listService.getDependencyListById(event['te-dependencia']).subscribe(
           dependencies => {
             this.dependenciesReport = dependencies;
+            setTimeout(() => {
+              this.selectedTabDependency.setValue(0);
+              if (this.indexDependenciesTab === 0) {
+                this.indexReportsTab = 0;
+                this.createDataTable();
+              }
+            }, 0);
           });
       } else {
         this.listService.getDependencyList().subscribe(
           dependencies => {
             this.dependenciesReport = dependencies;
-            this.createDataTable();
+            setTimeout(() => {
+              this.selectedTabDependency.setValue(0);
+              if (this.indexDependenciesTab === 0) {
+                this.indexReportsTab = 0;
+                this.createDataTable();
+              }
+            }, 0);
           });
       }
     }
@@ -313,7 +320,13 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       this.listService.getDependencyList().subscribe(
         dependencies => {
           this.dependenciesReport = dependencies;
-          this.createDataTable();
+          setTimeout(() => {
+            this.selectedTabDependency.setValue(0);
+            if (this.indexDependenciesTab === 0) {
+              this.indexReportsTab = 0;
+              this.createDataTable();
+            }
+          }, 0);
         });
     }
   }

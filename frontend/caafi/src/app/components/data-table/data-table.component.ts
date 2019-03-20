@@ -148,10 +148,14 @@ export class DataTableComponent implements OnInit, OnDestroy {
   loadDataPage() {
 
     let filter = '';
-    if (this.filter != null) {
+    if (this.extFilter != null && this.filter != null) {
+      filter = this.extFilter + '|' + this.filter;
+    } else if (this.extFilter != null) {
+      filter = this.extFilter;
+    } else if (this.filter != null) {
       filter = this.filter.nativeElement.value;
     } else {
-      filter = this.extFilter;
+      filter = '';
     }
 
     this.dataService.count(this.formId, this.dependencyName, this.allDataAccess,
