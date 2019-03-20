@@ -6,7 +6,8 @@
 <div *ngIf="template != null">
     <!-- Formly -->
     <div *ngIf="templateFilters.fields != null">
-        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="templateFilters" [noDependency]="noDependency" [adminReport]="adminReport" [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (buttonClicked)="filterData($event)" (reseted)="resetFilters($event)"></app-formly>
+        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="templateFilters" [noDependency]="noDependency" [adminReport]="adminReport" [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (buttonClicked)="filterData($event)"
+            (reseted)="resetFilters($event)"></app-formly>
     </div>
 
     <!-- Data Table -->
@@ -20,7 +21,7 @@
                 <mat-tab-group (selectedTabChange)="formTabSelectionChanged($event)" animationDuration="0ms">
                     <mat-tab *ngFor="let formReport of dependencyReport.forms; let j = index" [label]="formReport.name">
                         <app-container id="{{ 'container-' + dependencyReport.path + '-' + formReport.path }}" name="{{ 'container-' + dependencyReport.path + '-' + formReport.path }}" [formId]="formReport.path" [dependencyId]="dependencyReport.path" [dependencyName]="dependencyReport.label"
-                            [allDataAccess]="false" [activeActions]="false" [export]="true"></app-container>
+                            [allDataAccess]="formReport.allDataAccess" [activeActions]="false" [export]="true"></app-container>
                     </mat-tab>
                 </mat-tab-group>
                 <div class="container">
