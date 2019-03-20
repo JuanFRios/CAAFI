@@ -81,7 +81,7 @@ public class ConfigService {
 				reportItem.put("label", nameReport);
 				reportItem.put("value", (String) ((Map<?,?>)reports.get(i)).get("path"));
 				reportItem.put("path", (String) ((Map<?,?>)reports.get(i)).get("path"));
-				List<?> forms = (List<?>) ((Map<?,?>)reports.get(i)).get("subItems");
+				List<?> forms = getSubItmes((List<?>) ((Map<?,?>)reports.get(i)).get("subItems"));
 				reportItem.put("forms", forms);
 				value.add(reportItem);
 			}
@@ -101,7 +101,7 @@ public class ConfigService {
 				reportItem.put("label", nameReport);
 				reportItem.put("value", nameReport);
 				reportItem.put("path", (String) ((Map<?,?>)reports.get(i)).get("path"));
-				List<?> forms = (List<?>) ((Map<?,?>)reports.get(i)).get("subItems");
+				List<?> forms = getSubItmes((List<?>) ((Map<?,?>)reports.get(i)).get("subItems"));
 				reportItem.put("forms", forms);
 				value.add(reportItem);
 				break;
@@ -109,6 +109,17 @@ public class ConfigService {
 		}
 		reportDependencies.setValue(value);
 		return reportDependencies;
+	}
+
+	private List<Map<?,?>> getSubItmes(List<?> items) {
+		List<Map<?,?>> subitems = new ArrayList<Map<?, ?>>();
+		for(int i = 0; i < items.size(); i++) {
+			if (((Boolean) ((Map<?,?>)items.get(i)).get("noReport")) == null || 
+					!((Boolean) ((Map<?,?>)items.get(i)).get("noReport"))) {
+				subitems.add((Map<?,?>)items.get(i));
+			}
+		}
+		return subitems;
 	}
 
 }

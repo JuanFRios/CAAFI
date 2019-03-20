@@ -12,6 +12,7 @@ public class Item {
 	private List<String> role;
 	private List<Item> subItems;
 	private boolean noReport;
+	private boolean adminReport;
 	
 	public String getName() {
 		return name;
@@ -60,5 +61,11 @@ public class Item {
 	}
 	public void setNoReport(boolean noReport) {
 		this.noReport = noReport;
+	}
+	public boolean isAdminReport() {
+		return adminReport;
+	}
+	public void setAdminReport(boolean adminReport) {
+		this.adminReport = adminReport;
 	}
 }

@@ -33,6 +33,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   noDependency = false;
   dependenciesReport: any[] = null;
   noReport = false;
+  adminReport = false;
   indexDependenciesTab = 0;
   indexReportsTab = 0;
   firstLoad = true;
@@ -76,11 +77,6 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {
     this.notifier = notifierService;
     this.fullLoading = false;
-
-    this.listService.dependencyList$.subscribe(
-      dependencies => {
-        this.dependenciesReport = dependencies;
-      });
   }
 
   ngOnInit() {
@@ -94,6 +90,17 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       this.allDataAccess = $event.allDataAccess;
       this.noDependency = $event.noDependency;
       this.noReport = $event.noReport;
+      this.adminReport = $event.adminReport;
+      if (this.adminReport) {
+        this.listService.dependencyList$.subscribe(
+          dependencies => {
+            this.dependenciesReport = dependencies;
+          });
+      } else {
+        this.listService.getDependencyListById($event.dependencyId).subscribe(dependencies => {
+          this.dependenciesReport = dependencies;
+        });
+      }
       this.loadReport($event.formId);
     }
   }
@@ -266,7 +273,21 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   exportAllCSV(event) {
-    
+    const containers = this.containers.toArray();
+    const shetNames = new Array();
+    const jsonArray = new Array();
+    for (const container of containers) {
+      this.createDataTableById(container.dependencyId, container.formId).then(dataTable => {
+        dataTable.externalExportReport().then(data => {
+          shetNames.push(container.dependencyId.substring(0, 10) + '-' + container.formId.substring(0, 10) + '-'
+          + Date.now().toString().substring(0, 9));
+          jsonArray.push(data);
+          if (jsonArray.length === containers.length) {
+            this.excelService.exportAsExcelFileMultipleSheets(jsonArray, 'reporte-todo-', shetNames);
+          }
+        });
+      });
+    }
   }
 
   public ngAfterViewInit(): void {

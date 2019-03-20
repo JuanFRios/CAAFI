@@ -6,7 +6,7 @@
 <div *ngIf="template != null">
     <!-- Formly -->
     <div *ngIf="templateFilters.fields != null">
-        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="templateFilters" [noDependency]="noDependency" [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (buttonClicked)="filterData($event)" (reseted)="resetFilters($event)"></app-formly>
+        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="templateFilters" [noDependency]="noDependency" [adminReport]="adminReport" [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (buttonClicked)="filterData($event)" (reseted)="resetFilters($event)"></app-formly>
     </div>
 
     <!-- Data Table -->

@@ -13,6 +13,7 @@ public class Dependency {
 	private String evaluationDoc;
 	private boolean noDependency;
 	private boolean noReport;
+	private boolean adminReport;
 
 	public String getName() {
 		return name;
@@ -84,6 +85,14 @@ public class Dependency {
 
 	public void setNoReport(boolean noReport) {
 		this.noReport = noReport;
+	}
+
+	public boolean isAdminReport() {
+		return adminReport;
+	}
+
+	public void setAdminReport(boolean adminReport) {
+		this.adminReport = adminReport;
 	}
 
 }

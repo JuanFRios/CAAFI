@@ -30,6 +30,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   lista_modulos: Module[];
   evaluationDoc = '';
   noReport = false;
+  adminReport = false;
 
   constructor(
     private configService: ConfigService,
@@ -95,12 +96,14 @@ export class MenuComponent implements OnInit, OnDestroy {
     menuData['noDependency'] = this.noDependency;
     menuData['evaluationDoc'] = this.evaluationDoc;
     menuData['noReport'] = this.noReport;
+    menuData['adminReport'] = this.adminReport;
     this.selectedItem.emit(menuData);
   }
 
   getItemNames(menuItems) {
+    let mItem = null;
     for (const menuItem of menuItems) {
-      if (menuItem.path === this.dependencyId) {
+      if (menuItem.path === this.dependencyId || (this.dependencyId == null && menuItem.path === this.formId)) {
         this.dependencyName = menuItem.name;
         if (menuItem.noDependency) {
           this.noDependency = menuItem.noDependency;
@@ -108,27 +111,25 @@ export class MenuComponent implements OnInit, OnDestroy {
         if (menuItem.evaluationDoc) {
           this.evaluationDoc = menuItem.evaluationDoc;
         }
+        mItem = menuItem;
         break;
       }
     }
-    this.getFormNames(menuItems);
+    if (mItem != null) {
+      this.getFormNames(mItem);
+    }
   }
 
-  getFormNames(menuItems) {
-    for (const menuItem of menuItems) {
-      if (menuItem.subItems && menuItem.subItems.length > 0) {
-        this.getFormNames(menuItem.subItems);
-      } else {
-        if (menuItem.path === this.formId) {
-          this.formName = menuItem.name;
-          if (menuItem.allDataAccess) {
-            this.allDataAccess = menuItem.allDataAccess;
-          }
-          if (menuItem.noReport) {
-            this.noReport = menuItem.noReport;
-          }
-        }
+  getFormNames(menuItem) {
+    if (menuItem.subItems && menuItem.subItems.length > 0) {
+      for (const mItem of menuItem.subItems) {
+        this.getFormNames(mItem);
       }
+    } else if (menuItem.path === this.formId) {
+        this.formName = menuItem.name;
+        this.allDataAccess = menuItem.allDataAccess;
+        this.noReport = menuItem.noReport;
+        this.adminReport = menuItem.adminReport;
     }
   }
 

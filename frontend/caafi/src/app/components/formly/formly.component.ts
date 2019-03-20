@@ -24,6 +24,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
   @Input() dependencyName: string;
   @Input() typeSubmit = true;
   @Input() noDependency = false;
+  @Input() adminReport = false;
   @Output() fullLoading = new EventEmitter();
   @Output() dataSaved = new EventEmitter();
   @Output() buttonClicked = new EventEmitter();
