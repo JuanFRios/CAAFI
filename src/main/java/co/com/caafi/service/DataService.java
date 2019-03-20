@@ -172,8 +172,11 @@ public class DataService {
 
 	private String getGenericFilter(String filter) {
 		String filterWhere = "true";
-		if(filter != null && !filter.isEmpty()) {
-			filterWhere = "JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + filter + "\\\".toLowerCase() )!=-1";
+		String filters[] = filter.split(";");
+		for(String filt : filters) {
+			if(filt != null && !filt.isEmpty()) {
+				filterWhere += " && (JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + filt + "\\\".toLowerCase() )!=-1)";
+			}
 		}
 		return filterWhere;
 	}

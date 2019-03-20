@@ -149,7 +149,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
 
     let filter = '';
     if (this.extFilter != null && this.filter != null) {
-      filter = this.extFilter + '|' + this.filter;
+      filter = this.extFilter + ';' + this.filter.nativeElement.value;
     } else if (this.extFilter != null) {
       filter = this.extFilter;
     } else if (this.filter != null) {
@@ -243,7 +243,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
     return new Promise(resolve => {
       const proccessedData: Object[] = [];
       this.dataService.getAllByTemplateAndDependency(this.formId, this.dependencyName,
-        this.allDataAccess, '', 'savedDate', '', 0, -1, this.filters)
+        this.allDataAccess, this.extFilter, 'savedDate', '', 0, -1, this.filters)
         .subscribe(data => {
           this.dataService.processDataReport(data, [], proccessedData, null, this.template.repeatSections,
             this.template.dates, this.template.booleans, this.template.files, this.template.namesRepeats,

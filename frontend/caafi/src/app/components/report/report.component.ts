@@ -36,13 +36,23 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   indexDependenciesTab = 0;
   indexReportsTab = 0;
   firstLoad = true;
-  filters: String = '';
-  filter: String = '';
+  filters = '';
+  filter = '';
   selectedTabDependency = new FormControl(0);
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
     text: 'Exportar Dependencia',
+    spinnerSize: 18,
+    raised: true,
+    buttonColor: 'primary',
+    spinnerColor: 'primary',
+    disabled: false
+  };
+
+  @Input() exportAllCSVSpinnerButtonOptions: any = {
+    active: false,
+    text: 'Exportar Informe General',
     spinnerSize: 18,
     raised: true,
     buttonColor: 'primary',
@@ -176,6 +186,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
             dataTable.dependencyName = container.dependencyName;
             dataTable.export = container.export;
             dataTable.template = template;
+            dataTable.filters = this.filters;
+            dataTable.extFilter = this.filter;
             resolve(dataTable);
           });
         });
@@ -251,7 +263,10 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       });
     }
+  }
 
+  exportAllCSV(event) {
+    
   }
 
   public ngAfterViewInit(): void {
@@ -264,7 +279,6 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.noReport) {
       this.activeDataTable.filterData(event);
     } else {
-      console.log(event);
       const jsonFilters = {};
       if (event['tea-grupoInvestigacion'] != null) {
         jsonFilters['tea-grupoInvestigacion'] = event['tea-grupoInvestigacion'];
