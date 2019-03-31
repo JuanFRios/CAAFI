@@ -7,7 +7,7 @@ import { UtilService } from '../../services/util.service';
 import { ListService } from '../../services/list.service';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { ContainerComponent } from '../container/container.component';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { MatTabChangeEvent } from '@angular/material';
 import { DataService } from '../../services/data.service';
 import { ExcelService } from '../../services/excel.service';
@@ -24,7 +24,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   dataTableComponentFactory: ComponentFactory<DataTableComponent>;
 
   private readonly notifier: NotifierService;
-  fullLoading: boolean;
+  fullLoading = false;
   formId: string;
   dependencyName: string;
   template: any;
@@ -40,6 +40,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   filters = '';
   filter = '';
   selectedTabDependency = new FormControl(0);
+  subscribeContainers: Subscription;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -76,7 +77,6 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     private excelService: ExcelService
   ) {
     this.notifier = notifierService;
-    this.fullLoading = false;
   }
 
   ngOnInit() {
@@ -242,8 +242,6 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     return arrayContainers;
   }
 
-  ngOnDestroy() {}
-
   dependencyTabSelectionChanged(event) {
     this.indexDependenciesTab = event.index;
     this.indexReportsTab = 0;
@@ -290,10 +288,16 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  public ngAfterViewInit(): void {
-    this.containers.changes.subscribe((comps: QueryList<ContainerComponent>) => {
+  ngAfterViewInit() {
+    this.subscribeContainers = this.containers.changes.subscribe((comps: QueryList<ContainerComponent>) => {
       this.containers.reset(comps.toArray());
     });
+  }
+
+  ngOnDestroy() {
+    if (this.subscribeContainers) {
+      this.subscribeContainers.unsubscribe();
+    }
   }
 
   filterData(event) {
