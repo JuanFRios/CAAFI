@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Template } from '../common/template';
 import { Observable } from 'rxjs';
 import { RestangularModule, Restangular } from 'ngx-restangular';
-import { Cacheable } from 'ngx-cacheable';
 import { UtilService } from './util.service';
 import { HttpClient } from '@angular/common/http';
 
