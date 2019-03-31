@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class UtilService {
@@ -89,6 +90,15 @@ export class UtilService {
     }
 
     throw new Error('Unable to copy obj! Its type isnt supported.');
+  }
+
+  getRequestOptions(): Object {
+    let headers = new HttpHeaders();
+    headers = headers.set('X-Requested-With', 'XMLHttpRequest').set('Access-Control-Allow-Origin', '*');
+    const options: Object = {};
+    options['withCredentials'] = true;
+    options['headers'] = headers;
+    return options;
   }
 
 }

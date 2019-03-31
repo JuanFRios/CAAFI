@@ -2,22 +2,28 @@ import { Injectable } from '@angular/core';
 import { Template } from '../common/template';
 import { Observable } from 'rxjs';
 import { RestangularModule, Restangular } from 'ngx-restangular';
+import { Cacheable } from 'ngx-cacheable';
+import { UtilService } from './util.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class TemplatesService {
 
-  constructor(private restangular: Restangular) { }
+  constructor(
+    private restangular: Restangular,
+    private http: HttpClient,
+    private utilService: UtilService) { }
 
   getAll(): Observable<Template[]> {
     return this.restangular.all('template').getList();
   }
 
   getByName(name: string): Observable<Template> {
-    return this.restangular.one('template/byname', name).get();
+    return this.http.get<Template>('template/byname/' + name, this.utilService.getRequestOptions());
   }
 
   getPublicTemplateByName(name: string): Observable<Template> {
-    return this.restangular.one('template/public/byname', name).get();
+    return this.http.get<Template>('template/public/byname/' + name, this.utilService.getRequestOptions());
   }
 
   senTemplateByEmail(template: string, emails: string, url: string): Observable<any> {

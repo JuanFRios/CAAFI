@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable ,  from, ReplaySubject, Subject } from 'rxjs';
 import { ConfigService } from './config.service';
+import { Cacheable } from 'ngx-cacheable';
 
 @Injectable()
 export class ListService {

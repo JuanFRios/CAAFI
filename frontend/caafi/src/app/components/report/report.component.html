@@ -4,6 +4,7 @@
 </div>
 
 <div *ngIf="template != null">
+
     <!-- Formly -->
     <div *ngIf="templateFilters.fields != null">
         <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="templateFilters" [noDependency]="noDependency" [adminReport]="adminReport" [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (buttonClicked)="filterData($event)"
@@ -35,10 +36,10 @@
         </div>
         -->
     </div>
-
-    <!-- Loading -->
-    <ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
-
-    <!-- Notifier -->
-    <notifier-container></notifier-container>
 </div>
+
+<!-- Loading -->
+<ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
+
+<!-- Notifier -->
+<notifier-container></notifier-container>
