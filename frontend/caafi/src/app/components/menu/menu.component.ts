@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, OnDestroy, AfterViewInit } from '@angular/core';
 import { ConfigService } from '../../services/config.service';
 import { NotifierService } from 'angular-notifier';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,10 +10,11 @@ import { LoginService } from '../../services/login.service';
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css']
 })
-export class MenuComponent implements OnInit, OnDestroy {
+export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() isVisible = true;
   @Output() selectedItem = new EventEmitter();
+  @Output() loaded = new EventEmitter();
 
   private readonly notifier: NotifierService;
   activeModule: string;
@@ -65,6 +66,10 @@ export class MenuComponent implements OnInit, OnDestroy {
         }
       );
     }
+  }
+
+  ngAfterViewInit() {
+    this.loaded.emit();
   }
 
   /**

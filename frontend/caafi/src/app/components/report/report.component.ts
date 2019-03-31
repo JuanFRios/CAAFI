@@ -109,7 +109,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
    * Loads an specified report from DB
    */
   loadReport(formId): Promise<any[]> {
-    //this.toggleLoading(true);
+    this.toggleLoading(true);
     return new Promise(resolve => {
       this.templatesService.getByName(formId)
         .subscribe(template => {
@@ -120,11 +120,11 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
           templateForm.fields = templateForm.report;
           this.utilService.loadTemplateFeatures(templateForm);
           this.templateFilters = templateForm;
-          //this.toggleLoading(false);
+          this.toggleLoading(false);
           resolve();
         },
           error => {
-            //this.toggleLoading(false);
+            this.toggleLoading(false);
             this.notifier.notify( 'error', 'ERROR: Error al cargar el formulario.' );
             resolve();
         });
@@ -132,18 +132,18 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loadReportTemplate(formId): Promise<any> {
-    //this.toggleLoading(true);
+    this.toggleLoading(true);
     return new Promise(resolve => {
       this.templatesService.getByName(formId)
         .subscribe(template => {
           const templateData = this.utilService.deepCopy(template);
           this.utilService.loadTemplateFeatures(templateData, false);
           const templateRes = templateData;
-          //this.toggleLoading(false);
+          this.toggleLoading(false);
           resolve(templateRes);
         },
           error => {
-            //this.toggleLoading(false);
+            this.toggleLoading(false);
             this.notifier.notify( 'error', 'ERROR: Error al cargar el formulario.' );
             resolve();
         });
