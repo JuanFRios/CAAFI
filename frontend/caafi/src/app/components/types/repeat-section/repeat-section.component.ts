@@ -9,7 +9,7 @@ import * as clonedeep from 'lodash.clonedeep';
   selector: 'app-formly-repeat-section',
   templateUrl: './repeat-section.component.html'
 })
-export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy, AfterViewInit, OnChanges, DoCheck {
+export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy, AfterViewInit {
   formControl: FormArray;
   field: any;
   fields = [];
@@ -31,22 +31,6 @@ export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy,
 
   ngAfterViewInit() {
     setTimeout(() => this.add());
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['model']) {
-      console.log('changes');
-    }
-  }
-
-  ngDoCheck() {
-    /*
-    if (this.model.length === 0 && this.fields.length > 0) {
-      console.log('add');
-      this.fields = [];
-      setTimeout(() => this.add());
-    }
-    */
   }
 
   add() {

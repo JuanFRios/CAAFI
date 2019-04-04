@@ -61,9 +61,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
             this.loadMenu(this.activeModule);
           });
         },
-        error => {
-          console.log('ERROR: ', error);
-        }
+        error => {}
       );
     }
   }
@@ -84,9 +82,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
         this.breadcrumb = this.getBreadcrumb(this.menuItems);
         this.emitSelectedItem();
       },
-      error => {
-        console.log('ERROR: ', error);
-      }
+      error => {}
     );
   }
 
@@ -176,9 +172,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
 
   logOut() {
     this.loginService.logOut()
-      .subscribe(usuario => {
-        console.log(usuario);
-      });
+      .subscribe(usuario => {});
     localStorage.removeItem('tokenUser');
     this.router.navigate(['/home']);
   }

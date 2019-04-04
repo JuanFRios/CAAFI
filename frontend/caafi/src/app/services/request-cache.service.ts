@@ -39,7 +39,6 @@ export class RequestCache  {
     if (!this.noCacheUrls.includes(url)) {
       const entry = { url, response, lastRead: Date.now() };
       localStorage.setItem(url, JSON.stringify(entry));
-      console.log(localStorage);
     }
   }
 }
