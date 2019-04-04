@@ -97,7 +97,6 @@ export class HomeComponent implements OnInit {
     this.clave = this.formIncioSesion.get('clave').value;
     this.data = new LoginData(this.nombre_usuario, this.clave);
 
-    console.log(this.data);
     this.loginService.login(this.data)
       .subscribe(usuario => {
         let navigationExtras: NavigationExtras = {
