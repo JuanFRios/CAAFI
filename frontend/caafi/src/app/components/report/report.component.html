@@ -1,23 +1,45 @@
+<!-- Loading -->
+<ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
+
+<!-- Notifier -->
+<notifier-container></notifier-container>
+
 <!-- Menu -->
 <div>
     <app-menu (selectedItem)="onSelectMenuItem($event)"></app-menu>
 </div>
 
 <div *ngIf="template != null">
+
     <!-- Formly -->
     <div *ngIf="templateFilters.fields != null">
-        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="templateFilters" [noDependency]="noDependency" [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)" (buttonClicked)="dataTable.filterData($event)"
-            (reseted)="dataTable.refresh($event)"></app-formly>
+        <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="templateFilters" [noDependency]="noDependency" [adminReport]="adminReport" [typeSubmit]="false" (fullLoading)="toggleLoading($event)" (buttonClicked)="filterData($event)"
+            (reseted)="resetFilters($event)"></app-formly>
     </div>
 
     <!-- Data Table -->
-    <div>
+    <div *ngIf="!noReport">
         <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="allDataAccess" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
     </div>
 
-    <!-- Loading -->
-    <ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
-
-    <!-- Notifier -->
-    <notifier-container></notifier-container>
+    <div *ngIf="noReport">
+        <mat-tab-group (selectedTabChange)="dependencyTabSelectionChanged($event)" animationDuration="0ms" [selectedIndex]="selectedTabDependency.value" (selectedIndexChange)="selectedTabDependency.setValue($event)">
+            <mat-tab *ngFor="let dependencyReport of dependenciesReport; let i = index" [label]="dependencyReport.label">
+                <mat-tab-group (selectedTabChange)="formTabSelectionChanged($event)" animationDuration="0ms">
+                    <mat-tab *ngFor="let formReport of dependencyReport.forms; let j = index" [label]="formReport.name">
+                        <app-container id="{{ 'container-' + dependencyReport.path + '-' + formReport.path }}" name="{{ 'container-' + dependencyReport.path + '-' + formReport.path }}" [formId]="formReport.path" [dependencyId]="dependencyReport.path" [dependencyName]="dependencyReport.label"
+                            [allDataAccess]="formReport.allDataAccess" [activeActions]="false" [export]="true"></app-container>
+                    </mat-tab>
+                </mat-tab-group>
+                <div class="container">
+                    <mat-spinner-button [options]="exportCSVSpinnerButtonOptions" (click)="exportCSV($event)"></mat-spinner-button>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+        <!--
+        <div class="container">
+            <mat-spinner-button [options]="exportAllCSVSpinnerButtonOptions" (click)="exportAllCSV($event)"></mat-spinner-button>
+        </div>
+        -->
+    </div>
 </div>

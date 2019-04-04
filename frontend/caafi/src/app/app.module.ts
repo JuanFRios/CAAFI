@@ -5,17 +5,6 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import {
-  MatButtonModule,
-  MatToolbarModule,
-  MatMenuModule,
-  MatTableModule,
-  MatPaginatorModule,
-  MatTooltipModule,
-  MatSortModule,
-  MatProgressBarModule
- } from '@angular/material';
-import {MatSidenavModule} from '@angular/material/sidenav';
 import { LoadingModule } from 'ngx-loading';
 import { OwlDateTimeModule, OwlNativeDateTimeModule, OwlDateTimeIntl } from 'ng-pick-datetime';
 
@@ -23,7 +12,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { GenericTableModule } from 'angular-generic-table';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
-import { DatepickerTypeComponent } from './components/types/datepicker/datepicker.component';
+import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { VariableTypeComponent } from './components/types/variable/variable.component';
 import { RepeatTypeComponent } from './components/types/repeat-section/repeat-section.component';
 import { FormlyFieldFileComponent } from './components/types/file-upload/file.component';
@@ -48,7 +37,7 @@ import { LoginService } from './services/login.service';
 import { FileService } from './services/file.service';
 import { ListService } from './services/list.service';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TooltipWrapperComponent } from './components/wrappers/tooltip/tooltip-wrapper.component';
 
 import { AppComponent } from './app.component';
@@ -56,74 +45,78 @@ import { SafePipe } from './safe.pipe';
 import { MenuComponent } from './components/menu/menu.component';
 import { MenuItemComponent } from './components/menu/menu-item/menu-item.component';
 import { FormlyComponent } from './components/formly/formly.component';
-import { MatProgressButtons } from 'mat-progress-buttons';
+import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import { RouterModule } from '../../node_modules/@angular/router';
 import { NotifierModule } from 'angular-notifier';
 import { DataTableComponent } from './components/data-table/data-table.component';
 import { UtilService } from './services/util.service';
 import { PollsComponent } from './components/polls/polls.component';
+import { ContainerComponent } from './components/container/container.component';
+import { ExcelService } from './services/excel.service';
+import { RequestCache } from './services/request-cache.service';
+import { CachingInterceptor } from './services/caching-interceptor.interceptor';
 
 // here is the default text string
 export class DefaultIntl extends OwlDateTimeIntl {
   /** A label for the up second button (used by screen readers).  */
-  upSecondLabel= 'Add a second';
+  upSecondLabel = 'Add a second';
 
   /** A label for the down second button (used by screen readers).  */
-  downSecondLabel= 'Minus a second';
+  downSecondLabel = 'Minus a second';
 
   /** A label for the up minute button (used by screen readers).  */
-  upMinuteLabel= 'Add a minute';
+  upMinuteLabel = 'Add a minute';
 
   /** A label for the down minute button (used by screen readers).  */
-  downMinuteLabel= 'Minus a minute';
+  downMinuteLabel = 'Minus a minute';
 
   /** A label for the up hour button (used by screen readers).  */
-  upHourLabel= 'Add a hour';
+  upHourLabel = 'Add a hour';
 
   /** A label for the down hour button (used by screen readers).  */
-  downHourLabel= 'Minus a hour';
+  downHourLabel = 'Minus a hour';
 
   /** A label for the previous month button (used by screen readers). */
-  prevMonthLabel= 'Previous month';
+  prevMonthLabel = 'Previous month';
 
   /** A label for the next month button (used by screen readers). */
-  nextMonthLabel= 'Next month';
+  nextMonthLabel = 'Next month';
 
   /** A label for the previous year button (used by screen readers). */
-  prevYearLabel= 'Previous year';
+  prevYearLabel = 'Previous year';
 
   /** A label for the next year button (used by screen readers). */
-  nextYearLabel= 'Next year';
+  nextYearLabel = 'Next year';
 
   /** A label for the previous multi-year button (used by screen readers). */
-  prevMultiYearLabel= 'Previous 21 years';
+  prevMultiYearLabel = 'Previous 21 years';
 
   /** A label for the next multi-year button (used by screen readers). */
-  nextMultiYearLabel= 'Next 21 years';
+  nextMultiYearLabel = 'Next 21 years';
 
   /** A label for the 'switch to month view' button (used by screen readers). */
-  switchToMonthViewLabel= 'Change to month view';
+  switchToMonthViewLabel = 'Change to month view';
 
   /** A label for the 'switch to year view' button (used by screen readers). */
-  switchToMultiYearViewLabel= 'Choose month and year';
+  switchToMultiYearViewLabel = 'Choose month and year';
 
   /** A label for the cancel button */
-  cancelBtnLabel= 'Cancelar';
+  cancelBtnLabel = 'Cancelar';
 
   /** A label for the set button */
-  setBtnLabel= 'OK';
+  setBtnLabel = 'OK';
 
   /** A label for the range 'from' in picker info */
-  rangeFromLabel= 'Desde';
+  rangeFromLabel = 'Desde';
 
   /** A label for the range 'to' in picker info */
-  rangeToLabel= 'Hasta';
+  rangeToLabel = 'Hasta';
 
   /** A label for the hour12 button (AM) */
-  hour12AMLabel= 'AM';
+  hour12AMLabel = 'AM';
 
   /** A label for the hour12 button (PM) */
-  hour12PMLabel= 'PM';
+  hour12PMLabel = 'PM';
 }
 
 export function minlengthValidationMessage(err, field) {
@@ -157,9 +150,9 @@ export function required(err, field) {
     TemplatesComponent,
     PollsComponent,
     ReportComponent,
+    ContainerComponent,
     HomeComponent,
     EvaluationComponent,
-    DatepickerTypeComponent,
     VariableTypeComponent,
     RepeatTypeComponent,
     FileValueAccessor,
@@ -169,6 +162,7 @@ export function required(err, field) {
   ],
   imports: [
     BrowserModule,
+    MatProgressButtonsModule,
     FormsModule,
     CommonModule,
     ReactiveFormsModule,
@@ -176,16 +170,6 @@ export function required(err, field) {
     GenericTableModule,
     FormlyModule.forRoot({
       types: [
-        {
-          name: 'datepicker',
-          component: DatepickerTypeComponent,
-          defaultOptions: {
-            defaultValue: new Date(),
-            templateOptions: {
-              datepickerOptions: {}
-            }
-          }
-        },
         { name: 'repeat', component: RepeatTypeComponent },
         { name: 'file', component: FormlyFieldFileComponent },
         {
@@ -210,23 +194,14 @@ export function required(err, field) {
         { name: 'tooltip', component: TooltipWrapperComponent },
       ],
     }),
+    FormlyMatDatepickerModule,
     FormlyMaterialModule,
     BrowserAnimationsModule,
     MaterialModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSidenavModule,
-    MatSortModule,
     AppRoutingModule,
-    MatTooltipModule,
-    MatProgressBarModule,
     LoadingModule,
     HttpClientModule,
     RestangularModule.forRoot(RestangularConfigFactory),
-    MatProgressButtons,
     RouterModule,
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
@@ -252,8 +227,12 @@ export function required(err, field) {
       FileService,
       ListService,
       UtilService,
-      {provide: OwlDateTimeIntl, useClass: DefaultIntl}
+      ExcelService,
+      { provide: OwlDateTimeIntl, useClass: DefaultIntl },
+      RequestCache,
+      { provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [DataTableComponent]
 })
 export class AppModule { }

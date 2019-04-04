@@ -47,7 +47,9 @@ export class PollsComponent implements OnInit, OnDestroy {
       this.pollType = this.route.snapshot.paramMap.get('type');
       this.formId = this.route.snapshot.paramMap.get('form');
       this.dependencyId = this.route.snapshot.paramMap.get('dependency');
-      this.loadTemplate(this.formId, true);
+      if (this.formId != null) {
+        this.loadTemplate(this.formId, true);
+      }
     });
   }
 
@@ -72,8 +74,10 @@ export class PollsComponent implements OnInit, OnDestroy {
       .subscribe(template => {
         this.utilService.loadTemplateFeatures(template, false);
         this.template = template;
-        this.emails = template.config['emails'];
-        this.dateTimeRange = template.config['dateRange'];
+        if (template.config != null) {
+          this.emails = template.config['emails'];
+          this.dateTimeRange = template.config['dateRange'];
+        }
         this.toggleLoading(false);
       },
         error => {
@@ -85,8 +89,10 @@ export class PollsComponent implements OnInit, OnDestroy {
       .subscribe(template => {
         this.utilService.loadTemplateFeatures(template, false);
         this.template = template;
-        this.emails = template.config['emails'];
-        this.dateTimeRange = template.config['dateRange'];
+        if (template.config != null) {
+          this.emails = template.config['emails'];
+          this.dateTimeRange = template.config['dateRange'];
+        }
         this.toggleLoading(false);
       },
         error => {

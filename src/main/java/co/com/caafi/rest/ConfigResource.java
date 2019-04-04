@@ -37,4 +37,16 @@ public class ConfigResource {
 	public ConfigTemplate findTemplateConfigByRol(@PathVariable String name, Authentication authentication) {
 		return this.configService.findTemplateConfigByRol((User) authentication.getPrincipal(), name);
 	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/reportdependencies", method = RequestMethod.GET)
+	public Config findDependencies() {
+		return this.configService.findReportDependencies(null);
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/reportdependency/{dependency}", method = RequestMethod.GET)
+	public Config findDependency(@PathVariable String dependency) {
+		return this.configService.findReportDependencies(dependency);
+	}
 }

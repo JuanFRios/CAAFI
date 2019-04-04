@@ -1,7 +1,9 @@
 package co.com.caafi.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,6 +60,66 @@ public class ConfigService {
 		}
 
 		return false;
+	}
+	
+	public Config findReportDependencies(String dependency) {
+		Config reports =  this.configRepository.findByName("reportes");
+		if(dependency != null) {
+			return getDependencyFromReports((List<?>) reports.getValue(), dependency);
+		}
+		return getDependenciesFromReports((List<?>) reports.getValue());
+	}
+
+	private Config getDependenciesFromReports(List<?> reports) {
+		Config reportDependencies = new Config();
+		List<Map<String, Object>> value = new ArrayList<Map<String, Object>>();
+		for(int i = 0; i < reports.size(); i++) {
+			if (((Boolean) ((Map<?,?>)reports.get(i)).get("noReport")) == null || 
+					!((Boolean) ((Map<?,?>)reports.get(i)).get("noReport"))) {
+				Map<String, Object> reportItem = new HashMap<String, Object>();
+				String nameReport = (String) ((Map<?,?>)reports.get(i)).get("name");
+				reportItem.put("label", nameReport);
+				reportItem.put("value", (String) ((Map<?,?>)reports.get(i)).get("path"));
+				reportItem.put("path", (String) ((Map<?,?>)reports.get(i)).get("path"));
+				List<?> forms = getSubItmes((List<?>) ((Map<?,?>)reports.get(i)).get("subItems"));
+				reportItem.put("forms", forms);
+				value.add(reportItem);
+			}
+		}
+		reportDependencies.setValue(value);
+		return reportDependencies;
+	}
+	
+	private Config getDependencyFromReports(List<?> reports, String dependency) {
+		Config reportDependencies = new Config();
+		List<Map<String, Object>> value = new ArrayList<Map<String, Object>>();
+		for(int i = 0; i < reports.size(); i++) {
+			if (dependency != null && 
+					dependency.equals((String) ((Map<?,?>)reports.get(i)).get("path"))) {
+				Map<String, Object> reportItem = new HashMap<String, Object>();
+				String nameReport = (String) ((Map<?,?>)reports.get(i)).get("name");
+				reportItem.put("label", nameReport);
+				reportItem.put("value", nameReport);
+				reportItem.put("path", (String) ((Map<?,?>)reports.get(i)).get("path"));
+				List<?> forms = getSubItmes((List<?>) ((Map<?,?>)reports.get(i)).get("subItems"));
+				reportItem.put("forms", forms);
+				value.add(reportItem);
+				break;
+			}
+		}
+		reportDependencies.setValue(value);
+		return reportDependencies;
+	}
+
+	private List<Map<?,?>> getSubItmes(List<?> items) {
+		List<Map<?,?>> subitems = new ArrayList<Map<?, ?>>();
+		for(int i = 0; i < items.size(); i++) {
+			if (((Boolean) ((Map<?,?>)items.get(i)).get("noReport")) == null || 
+					!((Boolean) ((Map<?,?>)items.get(i)).get("noReport"))) {
+				subitems.add((Map<?,?>)items.get(i));
+			}
+		}
+		return subitems;
 	}
 
 }

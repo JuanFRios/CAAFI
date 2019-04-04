@@ -5,7 +5,7 @@ import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import { pairwise, takeUntil, startWith, tap } from 'rxjs/operators';
 import { Subject, Subscription, BehaviorSubject } from '../../../../node_modules/rxjs';
 import { NotifierService } from 'angular-notifier';
-import { MatDialog } from '@angular/material';
+import { MatDialog, DateAdapter } from '@angular/material';
 import { ListService } from '../../services/list.service';
 import { DataService } from '../../services/data.service';
 import { FileService } from '../../services/file.service';
@@ -24,6 +24,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
   @Input() dependencyName: string;
   @Input() typeSubmit = true;
   @Input() noDependency = false;
+  @Input() adminReport = false;
   @Output() fullLoading = new EventEmitter();
   @Output() dataSaved = new EventEmitter();
   @Output() buttonClicked = new EventEmitter();
@@ -64,6 +65,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
     private loginService: LoginService,
     public dialog: MatDialog,
     notifierService: NotifierService,
+    private dateAdapter: DateAdapter<Date>
   ) {
     this.data = new Data();
     this.form = new FormGroup({});
@@ -75,6 +77,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
     this.formLoaded = false;
     this.currentId = null;
     this.saving = false;
+    this.dateAdapter.setLocale('es');
   }
 
   ngOnInit() {

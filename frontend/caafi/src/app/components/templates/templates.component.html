@@ -1,3 +1,9 @@
+<!-- Loading -->
+<ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
+
+<!-- Notifier -->
+<notifier-container></notifier-container>
+
 <!-- Menu -->
 <div>
     <app-menu (selectedItem)="onSelectMenuItem($event)"></app-menu>
@@ -13,10 +19,4 @@
     <div>
         <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="allDataAccess" [template]="template" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
     </div>
-
-    <!-- Loading -->
-    <ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
-
-    <!-- Notifier -->
-    <notifier-container></notifier-container>
 </div>

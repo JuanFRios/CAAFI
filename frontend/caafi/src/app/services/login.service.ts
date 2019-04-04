@@ -6,9 +6,7 @@ import {
 } from '@angular/router';
 import { LoginData } from '../common/loginData';
 import { Headers, Response } from '@angular/http';
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/catch';
-import { baseURL } from '../common/baseurl';
+
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
@@ -57,7 +55,7 @@ export class LoginService implements CanActivate {
         const options: Object = {};
         options['withCredentials'] = true;
         options['headers'] = headers;
-        return this.http.get(baseURL + '/account/login', options)
+        return this.http.get('account/login', options)
             .map((response: Response) => {
                 // login successful if there's a jwt token in the response
                 const user = response['user']; // the returned user object is a
@@ -78,11 +76,9 @@ export class LoginService implements CanActivate {
         options['withCredentials'] = true;
         options['headers'] = headers;
 
-        if (localStorage.getItem('tokenUser')) {
-            localStorage.removeItem('tokenUser');
-        }
+        localStorage.clear();
 
-        return this.http.post(baseURL + '/account/logout', options)
+        return this.http.post('account/logout', options)
             .map(() => {
             });
     }
@@ -93,7 +89,7 @@ export class LoginService implements CanActivate {
         const options: Object = {};
         options['withCredentials'] = true;
         options['headers'] = headers;
-        return this.http.get(baseURL + '/account/check', options)
+        return this.http.get('account/check', options)
             .map((response: Response) => {
                 return response['response'];
             });

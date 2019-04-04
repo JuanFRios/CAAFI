@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
 import { Router } from '@angular/router';
 import { UtilService } from '../../services/util.service';
@@ -9,11 +9,11 @@ import { NotifierService } from 'angular-notifier';
   templateUrl: './templates.component.html',
   styleUrls: ['./templates.component.css']
 })
-export class TemplatesComponent implements OnInit {
+export class TemplatesComponent implements OnInit, AfterViewInit {
 
   private readonly notifier: NotifierService;
   formId: string;
-  fullLoading: boolean;
+  fullLoading = false;
   dependencyName: string;
   varFields;
   fields: any;
@@ -27,11 +27,12 @@ export class TemplatesComponent implements OnInit {
     public router: Router
   ) {
     this.notifier = notifierService;
-    this.fullLoading = false;
     this.varFields = {};
   }
 
   ngOnInit() {}
+
+  ngAfterViewInit() {}
 
   onSelectMenuItem($event) {
     if ($event.formId != null) {
@@ -47,7 +48,6 @@ export class TemplatesComponent implements OnInit {
    */
   loadTemplate(formId) {
     this.toggleLoading(true);
-
     this.templatesService.getByName(formId)
       .subscribe(template => {
         this.utilService.loadTemplateFeatures(template);

@@ -2,7 +2,7 @@ import { Component, ViewChild, ViewContainerRef, OnInit, OnDestroy } from '@angu
 import { FieldWrapper } from '@ngx-formly/core';
 import { MatFormField } from '@angular/material/form-field';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'formly-wrapper-tooltip',

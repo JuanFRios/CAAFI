@@ -14,7 +14,7 @@ background-color: #f7f7f7;
     margin-bottom: 20px;
 }
 
-.signin-card .mat-input-container{
+.signin-card .mat-form-field {
     display: block !important;
 }
 .boton-inicio{

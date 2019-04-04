@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, OnDestroy, AfterViewInit } from '@angular/core';
 import { ConfigService } from '../../services/config.service';
 import { NotifierService } from 'angular-notifier';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,10 +10,11 @@ import { LoginService } from '../../services/login.service';
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css']
 })
-export class MenuComponent implements OnInit, OnDestroy {
+export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() isVisible = true;
   @Output() selectedItem = new EventEmitter();
+  @Output() loaded = new EventEmitter();
 
   private readonly notifier: NotifierService;
   activeModule: string;
@@ -29,6 +30,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   noDependency = false;
   lista_modulos: Module[];
   evaluationDoc = '';
+  noReport = false;
+  adminReport = false;
 
   constructor(
     private configService: ConfigService,
@@ -65,6 +68,10 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewInit() {
+    this.loaded.emit();
+  }
+
   /**
    * Loads the menu of an especified module
    * @param module module to load the menu
@@ -93,12 +100,15 @@ export class MenuComponent implements OnInit, OnDestroy {
     menuData['allDataAccess'] = this.allDataAccess;
     menuData['noDependency'] = this.noDependency;
     menuData['evaluationDoc'] = this.evaluationDoc;
+    menuData['noReport'] = this.noReport;
+    menuData['adminReport'] = this.adminReport;
     this.selectedItem.emit(menuData);
   }
 
   getItemNames(menuItems) {
+    let mItem = null;
     for (const menuItem of menuItems) {
-      if (menuItem.path === this.dependencyId) {
+      if (menuItem.path === this.dependencyId || (this.dependencyId == null && menuItem.path === this.formId)) {
         this.dependencyName = menuItem.name;
         if (menuItem.noDependency) {
           this.noDependency = menuItem.noDependency;
@@ -106,26 +116,25 @@ export class MenuComponent implements OnInit, OnDestroy {
         if (menuItem.evaluationDoc) {
           this.evaluationDoc = menuItem.evaluationDoc;
         }
-        if (menuItem.subItems && menuItem.subItems.length > 0) {
-          this.getFormNames(menuItem.subItems);
-        }
+        mItem = menuItem;
         break;
       }
     }
+    if (mItem != null) {
+      this.getFormNames(mItem);
+    }
   }
 
-  getFormNames(menuItems) {
-    for (const menuItem of menuItems) {
-      if (menuItem.subItems && menuItem.subItems.length > 0) {
-        this.getFormNames(menuItems);
-      } else {
-        if (menuItem.path === this.formId) {
-          this.formName = menuItem.name;
-          if (menuItem.allDataAccess) {
-            this.allDataAccess = menuItem.allDataAccess;
-          }
-        }
+  getFormNames(menuItem) {
+    if (menuItem.subItems && menuItem.subItems.length > 0) {
+      for (const mItem of menuItem.subItems) {
+        this.getFormNames(mItem);
       }
+    } else if (menuItem.path === this.formId) {
+        this.formName = menuItem.name;
+        this.allDataAccess = menuItem.allDataAccess;
+        this.noReport = menuItem.noReport;
+        this.adminReport = menuItem.adminReport;
     }
   }
 
@@ -133,12 +142,16 @@ export class MenuComponent implements OnInit, OnDestroy {
     const breadcrumbs = {};
     this.loop(menuItems, [], breadcrumbs, '');
     let breadcrumb;
-    if (this.formId != null) {
+    if (this.formId != null && this.dependencyId != null) {
       breadcrumb = breadcrumbs[this.formId + ':' + this.dependencyId].map(o => o).join(' - ');
-    } else {
+    } else if (this.dependencyId != null) {
       if (breadcrumbs[this.dependencyId + ':' + this.dependencyId]) {
         breadcrumb = breadcrumbs[this.dependencyId + ':' + this.dependencyId].map(o => o).join(' - ');
       }
+    } else if (this.formId != null) {
+      breadcrumb = breadcrumbs[this.formId + ':' + this.formId].map(o => o).join(' - ');
+    } else {
+      breadcrumb = '';
     }
     return breadcrumb;
   }
