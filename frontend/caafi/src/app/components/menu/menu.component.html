@@ -2,7 +2,7 @@
     <div *ngIf="loginService.isLogIn()">
         <button mat-icon-button [matMenuTriggerFor]="menu">
             <i class="material-icons">apps</i>
-            <span>Módulo de {{ activeModuleName }}</span>
+            <span *ngIf="activeModule">Módulo de {{ activeModule.name }}</span>
         </button>
         <mat-menu #menu="matMenu">
             <button mat-menu-item *ngFor="let modulo of lista_modulos" [routerLink]="['/', modulo.path]" routerLinkActive="active">
@@ -25,18 +25,18 @@
 <div *ngIf="isVisible">
     <button mat-button [matMenuTriggerFor]="main_menu">
         <i class="material-icons">more_vert</i>
-        <span *ngIf="formId == null && dependencyId == null">Seleccione una dependencia académica o administrativa</span>
-        <span *ngIf="formId != null || dependencyId != null" class="titleform">{{ breadcrumb }}</span>
+        <span *ngIf="breadcrumb == null || breadcrumb === ''">Seleccione una dependencia académica o administrativa</span>
+        <span *ngIf="breadcrumb != null && breadcrumb != ''" class="titleform">{{ breadcrumb }}</span>
     </button>
 
     <mat-menu #main_menu="matMenu">
         <ng-container *ngFor="let menuItem of menuItems">
             <span *ngIf="menuItem.subItems && menuItem.subItems.length > 0">
                 <button mat-menu-item [matMenuTriggerFor]="menu.childMenu">{{ menuItem.name }}</button>
-                <app-menu-item #menu [items]="menuItem.subItems" [module]="activeModule" [parent]="menuItem.path"></app-menu-item>
+                <app-menu-item #menu [items]="menuItem.subItems" [module]="activeModule.path" [parent]="menuItem.path"></app-menu-item>
             </span>
             <span *ngIf="!menuItem.subItems || menuItem.subItems.length === 0">
-                <button mat-menu-item [routerLink]="['/', activeModule, menuItem.path]" routerLinkActive="active">{{
+                <button mat-menu-item [routerLink]="['/', activeModule.path, menuItem.path]" routerLinkActive="active">{{
                     menuItem.name }}</button>
             </span>
         </ng-container>

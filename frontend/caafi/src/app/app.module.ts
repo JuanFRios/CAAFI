@@ -198,11 +198,11 @@ export function required(err, field) {
     FormlyMaterialModule,
     BrowserAnimationsModule,
     MaterialModule,
-    AppRoutingModule,
     LoadingModule,
     HttpClientModule,
     RestangularModule.forRoot(RestangularConfigFactory),
     RouterModule,
+    AppRoutingModule,
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
     NotifierModule.withConfig({
