@@ -2208,3 +2208,7 @@ a.download-link {
 .form-button {
     margin-right: 5px !important;
 }
+
+.notifier__container ul {
+    margin: 0
+}
