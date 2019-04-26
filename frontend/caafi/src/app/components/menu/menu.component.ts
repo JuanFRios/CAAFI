@@ -4,6 +4,7 @@ import { NotifierService } from 'angular-notifier';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Module } from '../../common/module';
 import { LoginService } from '../../services/login.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-menu',
@@ -16,12 +17,13 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
   @Output() selectedItem = new EventEmitter();
   @Output() loaded = new EventEmitter();
 
-  private readonly notifier: NotifierService;
-  activeModule: string;
-  activeModuleName: string;
-  navigationSubscription;
-  formId: string;
-  dependencyId: string;
+  activeModule: Module;
+  activeItem: Object;
+  navigationSubscriptionPath: Subscription;
+  navigationSubscriptionParams: Subscription;
+  params: string[];
+  pathArray: Array<Object>;
+
   formName: string;
   dependencyName: string;
   menuItems: any;
@@ -32,6 +34,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
   evaluationDoc = '';
   noReport = false;
   adminReport = false;
+  urlArray: string[];
 
   constructor(
     private configService: ConfigService,
@@ -45,25 +48,38 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
       this.configService.getByName('LISTA_MODULOS')
         .subscribe(confi => {
           this.lista_modulos = confi.value;
-
-          const urlTree = this.router.parseUrl(this.route.snapshot.routeConfig.path);
-          this.activeModule = urlTree.root.children['primary'].segments[0].path;
-          for (let i = 0; i < confi.value.length; i++) {
-            if (confi.value[i].path === this.activeModule) {
-              this.activeModuleName = confi.value[i].name;
-              break;
-            }
-          }
-
-          this.navigationSubscription = this.route.params.subscribe(params => {
-            this.formId = this.route.snapshot.paramMap.get('form');
-            this.dependencyId = this.route.snapshot.paramMap.get('dependency');
-            this.loadMenu(this.activeModule);
+          this.getMenuParams().then(res => {
+            this.loadMenuData();
           });
         },
         error => {}
       );
     }
+  }
+
+  loadMenuData(): Promise<any> {
+    return new Promise(resolve => {
+      // Get active module
+      this.navigationSubscriptionPath = this.route.pathFromRoot[1].url.subscribe(urlArr => {
+        this.activeModule = this.lista_modulos.find(mod => mod.path === urlArr[0].path);
+        urlArr.shift();
+        this.urlArray = urlArr.map(o => o.path);
+        this.loadMenu();
+        resolve();
+      });
+    });
+  }
+
+  getMenuParams(): Promise<any> {
+    return new Promise(resolve => {
+      this.navigationSubscriptionParams = this.route.params.subscribe(params => {
+        const param: string[] = new Array();
+        param['formId'] = params['form'];
+        param['dependencyId'] = params['dependency'];
+        this.params = param;
+        resolve();
+      });
+    });
   }
 
   ngAfterViewInit() {
@@ -74,12 +90,13 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
    * Loads the menu of an especified module
    * @param module module to load the menu
    */
-  loadMenu(module: string) {
-    this.configService.getTemplateConfig(module).subscribe(
+  loadMenu() {
+    this.configService.getTemplateConfig(this.activeModule.path).subscribe(
       config => {
         this.menuItems = config.value;
-        this.getItemNames(this.menuItems);
-        this.breadcrumb = this.getBreadcrumb(this.menuItems);
+        this.pathArray = new Array();
+        this.activeItem = this.getActiveItem(config.value, 0, this.urlArray.length, 0, true, this.pathArray);
+        this.breadcrumb = this.pathArray.map(o => o['name']).join(' - ');
         this.emitSelectedItem();
       },
       error => {}
@@ -88,85 +105,37 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
 
   emitSelectedItem() {
     const menuData = {};
-    menuData['activeModule'] = this.activeModule;
-    menuData['formId'] = this.formId;
-    menuData['dependencyId'] = this.dependencyId;
-    menuData['formName'] = this.formName;
-    menuData['dependencyName'] = this.dependencyName;
-    menuData['allDataAccess'] = this.allDataAccess;
-    menuData['noDependency'] = this.noDependency;
-    menuData['evaluationDoc'] = this.evaluationDoc;
-    menuData['noReport'] = this.noReport;
-    menuData['adminReport'] = this.adminReport;
+    menuData['activeModule'] = this.activeModule.path;
+    menuData['formId'] = this.params['formId'];
+    menuData['dependencyId'] = this.params['dependencyId'];
+    menuData['formName'] = this.params['formId'] ? this.pathArray.find(o => o['path'] === this.params['formId'])['name'] : null;
+    menuData['dependencyName'] =
+    this.params['dependencyId'] ? this.pathArray.find(o => o['path'] === this.params['dependencyId'])['name'] : null;
+    menuData['allDataAccess'] = this.activeItem ? this.activeItem['allDataAccess'] : false;
+    menuData['noDependency'] = this.activeItem ? this.activeItem['noDependency'] : false;
+    menuData['evaluationDoc'] = this.activeItem ? this.activeItem['evaluationDoc'] : null;
+    menuData['noReport'] = this.activeItem ? this.activeItem['noReport'] : false;
+    menuData['adminReport'] = this.activeItem ? this.activeItem['adminReport'] : false;
     this.selectedItem.emit(menuData);
   }
 
-  getItemNames(menuItems) {
-    let mItem = null;
-    for (const menuItem of menuItems) {
-      if (menuItem.path === this.dependencyId || (this.dependencyId == null && menuItem.path === this.formId)) {
-        this.dependencyName = menuItem.name;
-        if (menuItem.noDependency) {
-          this.noDependency = menuItem.noDependency;
-        }
-        if (menuItem.evaluationDoc) {
-          this.evaluationDoc = menuItem.evaluationDoc;
-        }
-        mItem = menuItem;
-        break;
-      }
+  getActiveItem(item, iterItem, countPath, iterUrl, root, pathArray: Array<Object>) {
+    if (this.urlArray == null || this.urlArray.length <= 0) {
+      return null;
     }
-    if (mItem != null) {
-      this.getFormNames(mItem);
+    if (iterUrl === countPath) {
+      return item;
     }
-  }
-
-  getFormNames(menuItem) {
-    if (menuItem.subItems && menuItem.subItems.length > 0) {
-      for (const mItem of menuItem.subItems) {
-        this.getFormNames(mItem);
-      }
-    } else if (menuItem.path === this.formId) {
-        this.formName = menuItem.name;
-        this.allDataAccess = menuItem.allDataAccess;
-        this.noReport = menuItem.noReport;
-        this.adminReport = menuItem.adminReport;
-    }
-  }
-
-  getBreadcrumb(menuItems): string {
-    const breadcrumbs = {};
-    this.loop(menuItems, [], breadcrumbs, '');
-    let breadcrumb;
-    if (this.formId != null && this.dependencyId != null) {
-      breadcrumb = breadcrumbs[this.formId + ':' + this.dependencyId].map(o => o).join(' - ');
-    } else if (this.dependencyId != null) {
-      if (breadcrumbs[this.dependencyId + ':' + this.dependencyId]) {
-        breadcrumb = breadcrumbs[this.dependencyId + ':' + this.dependencyId].map(o => o).join(' - ');
-      }
-    } else if (this.formId != null) {
-      breadcrumb = breadcrumbs[this.formId + ':' + this.formId].map(o => o).join(' - ');
+    if (root && item[iterItem].path === this.urlArray[iterUrl]) {
+      pathArray.push({'path': item[iterItem].path, 'name': item[iterItem].name});
+      return this.getActiveItem(item[iterItem], 0, countPath, ++iterUrl, false, pathArray);
+    } else if (root && item[iterItem].path !== this.urlArray[iterUrl]) {
+      return this.getActiveItem(item, ++iterItem, countPath, iterUrl, true, pathArray);
+    } else if (!root && item.subItems[iterItem].path === this.urlArray[iterUrl]) {
+      pathArray.push({'path': item.subItems[iterItem].path, 'name': item.subItems[iterItem].name});
+      return this.getActiveItem(item.subItems[iterItem], 0, countPath, ++iterUrl, false, pathArray);
     } else {
-      breadcrumb = '';
-    }
-    return breadcrumb;
-  }
-
-  loop(menuItems, path, breadcrumbs, root) {
-    for (let i = 0; i < menuItems.length; i++) {
-      if (menuItems[i].subItems) {
-        if (root === '') {
-          this.loop(menuItems[i].subItems, [...path, menuItems[i].name], breadcrumbs, menuItems[i].path);
-        } else {
-          this.loop(menuItems[i].subItems, [...path, menuItems[i].name], breadcrumbs, root);
-        }
-      } else {
-        if (root === '') {
-          breadcrumbs[menuItems[i].path + ':' + menuItems[i].path] = [...path, menuItems[i].name];
-        } else {
-          breadcrumbs[menuItems[i].path + ':' + root] = [...path, menuItems[i].name];
-        }
-      }
+      return this.getActiveItem(item, ++iterItem, countPath, iterUrl, false, pathArray);
     }
   }
 
@@ -178,8 +147,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    if (this.navigationSubscription) {
-      this.navigationSubscription.unsubscribe();
+    if (this.navigationSubscriptionPath) {
+      this.navigationSubscriptionPath.unsubscribe();
+    }
+    if (this.navigationSubscriptionParams) {
+      this.navigationSubscriptionParams.unsubscribe();
     }
   }
 }

@@ -7,12 +7,12 @@
     <div *ngIf="loginService.isLogIn();else public_content">
         <!-- Formly -->
         <div>
-            <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="template" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)"></app-formly>
+            <app-formly #formly [formId]="formId" [dependencyName]="dependencyId + '-' + pollType + '-' + formId" [template]="template" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)"></app-formly>
         </div>
 
         <!-- Data Table -->
         <div>
-            <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
+            <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyId + '-' + pollType + '-' + formId" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
         </div>
 
         <div class="container">
@@ -36,7 +36,7 @@
     <ng-template #public_content>
         <!-- Formly -->
         <div>
-            <app-formly #formly [formId]="formId" [dependencyName]="dependencyName" [template]="template" (fullLoading)="toggleLoading($event)"></app-formly>
+            <app-formly #formly [formId]="formId" [dependencyName]="dependencyId + '-' + pollType + '-' + formId" [template]="template" (fullLoading)="toggleLoading($event)"></app-formly>
         </div>
     </ng-template>
 
