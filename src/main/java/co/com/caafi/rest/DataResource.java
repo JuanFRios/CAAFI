@@ -67,11 +67,7 @@ public class DataResource {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public FormData save(@RequestBody @Valid FormData data, Authentication authentication) {
-		if(data.isLogin()) {
-			return dataService.save(data, (User) authentication.getPrincipal());
-		} else {
-			return dataService.save(data);
-		}
+		return dataService.save(data, authentication);
 	}
 	
 	@CrossOrigin(origins = "*")
