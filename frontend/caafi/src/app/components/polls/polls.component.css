@@ -203,10 +203,14 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
     width: 100%;
 }
 
-.container-rangePoll {
+.container-rangePoll,
+.container-formPollSubject,
+.container-formPollMessage {
     display: flex;
     flex-direction: column;
 }   
-.container-rangePoll>* {
+.container-rangePoll>*,
+.container-formPollSubject>*,
+.container-formPollMessage>* {
     width: 100%;
 }

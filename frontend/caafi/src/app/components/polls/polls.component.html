@@ -23,6 +23,16 @@
                     <textarea matInput #poll_emails [(ngModel)]="emails" placeholder="Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
                 </mat-form-field>
             </div>
+            <div class="container-formPollSubject">
+                <mat-form-field>
+                    <input matInput placeholder="Asunto del correo electrónico" [(ngModel)]="subject">
+                </mat-form-field>
+            </div>
+            <div class="container-formPollMessage">
+                    <mat-form-field>
+                        <input matInput placeholder="Mensaje del correo electrónico" [(ngModel)]="message">
+                    </mat-form-field>
+                </div>
             <div class="container-rangePoll">
                 <mat-form-field>
                     <input matInput placeholder="Rango de activación" [(ngModel)]="dateTimeRange" [selectMode]="'range'" [owlDateTimeTrigger]="dtRange1" [owlDateTime]="dtRange1">
