@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +31,9 @@ public class DataService {
     
     @Autowired
     TemplateService templateService;
+    
+    @Autowired
+    LogService logService;
 
     public FormData findById(String id) {
         return this.dataRepository.findById(id);
@@ -51,12 +55,23 @@ public class DataService {
         return this.mongoTemplate.find(query, Object.class, "data");
     }
 
-    public FormData save(FormData data, User user) {
-        data.setCreator(user.getDocument());
-        return this.dataRepository.save(data);
+    public FormData save(FormData data, Authentication authentication) {
+    		FormData dataSaved = null;
+    		try {
+        		if(authentication != null) {
+        			data.setCreator(((User)authentication.getPrincipal()).getDocument());
+        	        dataSaved = this.dataRepository.save(data); 
+        		} else {
+        			dataSaved = save(data);
+        		}
+            this.logService.info("Saved Form", dataSaved.getId());
+    		} catch (Exception e) {
+    			this.logService.error("Saved Form Error: " + e.getMessage(), data);
+    		}
+    		return dataSaved;
     }
     
-    public FormData save(FormData data) {
+    private FormData save(FormData data) {
 	    	if(this.templateService.findByName(data.getTemplate()).isPublic()) {
 	    		data.setCreator("public");
 	    		return this.dataRepository.save(data);
