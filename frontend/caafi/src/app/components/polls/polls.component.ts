@@ -15,8 +15,10 @@ import { Template } from '../../common/template';
 export class PollsComponent implements OnInit, OnDestroy {
 
   private readonly notifier: NotifierService;
-  public dateTimeRange: Date[];
-  public emails: string;
+  private emails: string;
+  private subject: string;
+  private message: string;
+  private dateTimeRange: Date[];
   formId: string;
   formName: string;
   dependencyId: string;
@@ -76,6 +78,8 @@ export class PollsComponent implements OnInit, OnDestroy {
         this.template = template;
         if (template.config != null) {
           this.emails = template.config['emails'];
+          this.subject = template.config['subject'];
+          this.message = template.config['message'];
           this.dateTimeRange = template.config['dateRange'];
         }
         this.toggleLoading(false);
@@ -91,6 +95,8 @@ export class PollsComponent implements OnInit, OnDestroy {
         this.template = template;
         if (template.config != null) {
           this.emails = template.config['emails'];
+          this.subject = template.config['subject'];
+          this.message = template.config['message'];
           this.dateTimeRange = template.config['dateRange'];
         }
         this.toggleLoading(false);
@@ -116,6 +122,8 @@ export class PollsComponent implements OnInit, OnDestroy {
       data.name = this.formId;
       data.config = new Object();
       data.config['emails'] = this.emails;
+      data.config['subject'] = this.subject;
+      data.config['message'] = this.message;
       data.config['dateRange'] = this.dateTimeRange;
       this.templatesService.saveTemplateConfig(data)
       .subscribe(result => {

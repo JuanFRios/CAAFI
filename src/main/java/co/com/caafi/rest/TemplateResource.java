@@ -58,7 +58,7 @@ public class TemplateResource {
 	}
 	
 	@CrossOrigin(origins = "*")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(path = "/config", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public StringResponse save(@RequestBody @Valid Template data, Authentication authentication) {
 		return templateService.save(data, (User) authentication.getPrincipal());

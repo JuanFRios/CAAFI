@@ -3,7 +3,7 @@ import { Template } from '../common/template';
 import { Observable } from 'rxjs';
 import { RestangularModule, Restangular } from 'ngx-restangular';
 import { UtilService } from './util.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class TemplatesService {
@@ -30,7 +30,10 @@ export class TemplatesService {
   }
 
   saveTemplateConfig(data: Template): Observable<any> {
-    return this.restangular.all('template').post(data);
+    const options: Object = {};
+    options['withCredentials'] = true;
+    return this.http.post<Template>('template/config', data, options);
+    //return this.restangular.all('template/config').post(data);
   }
 
 }

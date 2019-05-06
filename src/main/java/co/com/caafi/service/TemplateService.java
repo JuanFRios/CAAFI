@@ -58,6 +58,7 @@ public class TemplateService {
 		query.addCriteria(Criteria.where("name").is(data.getName()));
 		Update update = new Update();
 		update.set("config", data.getConfig());
+		update.set("configCreator", user.getDocument());
 		WriteResult result = mongoTemplate.updateFirst(query, update, Template.class);
 		return new StringResponse(result == null ? "0" : result.getN() + "");
     }
