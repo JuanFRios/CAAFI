@@ -125,6 +125,7 @@ export class PollsComponent implements OnInit, OnDestroy {
       data.config['subject'] = this.subject;
       data.config['message'] = this.message;
       data.config['dateRange'] = this.dateTimeRange;
+      data.config['url'] = httpBaseURL + '/encuestas/' + this.dependencyId + '/' + this.pollType + '/' + this.formId;
       this.templatesService.saveTemplateConfig(data)
       .subscribe(result => {
         if (result.response > 0) {
@@ -148,8 +149,7 @@ export class PollsComponent implements OnInit, OnDestroy {
 
   sendPoll() {
     this.fullLoading = true;
-    this.templatesService.senTemplateByEmail(this.formName, this.emails, httpBaseURL + '/encuestas/' +
-      this.dependencyId + '/' + this.pollType + '/' + this.formId)
+    this.templatesService.senTemplateByEmail(this.formName)
     .subscribe(result => {
       if (result.response === 'OK') {
         this.notifier.notify( 'success', 'OK: Encuesta enviada satisfactoriamente.' );

@@ -25,15 +25,14 @@ export class TemplatesService {
     return this.http.get<Template>('template/public/byname/' + name, this.utilService.getRequestOptions());
   }
 
-  senTemplateByEmail(template: string, emails: string, url: string): Observable<any> {
-    return this.restangular.all('template/sendtemplatebymail/' + template).post({'emails': emails, 'url': url});
+  senTemplateByEmail(template: string, url: string): Observable<any> {
+    return this.restangular.all('template/sendtemplatebymail/' + template).post();
   }
 
   saveTemplateConfig(data: Template): Observable<any> {
     const options: Object = {};
     options['withCredentials'] = true;
     return this.http.post<Template>('template/config', data, options);
-    //return this.restangular.all('template/config').post(data);
   }
 
 }

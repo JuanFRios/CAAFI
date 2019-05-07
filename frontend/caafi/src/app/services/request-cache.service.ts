@@ -41,4 +41,8 @@ export class RequestCache  {
       localStorage.setItem(url, JSON.stringify(entry));
     }
   }
+
+  remove(url: string) {
+    localStorage.removeItem(url);
+  }
 }

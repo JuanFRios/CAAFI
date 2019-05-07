@@ -14,7 +14,6 @@ export class CachingInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     const cachedResponse = this.cache.get(req);
-    //if (req.method === 'POST' && )
     return cachedResponse ? Observable.of(cachedResponse) : this.sendRequest(req, next, this.cache);
   }
 
@@ -27,6 +26,9 @@ export class CachingInterceptor implements HttpInterceptor {
         tap(event => {
           if (req.method === 'GET' && event instanceof HttpResponse) {
             cache.put(req, event);
+          } else if (req.method === 'POST' && event instanceof HttpResponse && req.url === 'template/config') {
+            cache.remove('template/byname/' + req.body.name);
+            cache.remove('template/public/byname/' + req.body.name);
           }
         })
       );
