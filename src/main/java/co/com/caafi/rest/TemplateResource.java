@@ -50,11 +50,8 @@ public class TemplateResource {
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/sendtemplatebymail/{template}", method = RequestMethod.POST, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public StringResponse sendTemplateByMail(@PathVariable String template, @RequestBody String json) throws JSONException {
-		JSONObject jsonObj = new JSONObject(json);
-		String emails = jsonObj.getString("emails");
-		String url = jsonObj.getString("url");
-		return templateService.sendTemplateByMail(template, emails, url);
+	public StringResponse sendTemplateByMail(@PathVariable String template) throws JSONException {
+		return templateService.sendTemplateByMail(template);
 	}
 	
 	@CrossOrigin(origins = "*")

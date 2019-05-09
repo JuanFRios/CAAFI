@@ -45,10 +45,12 @@ public class TemplateService {
 		return this.templateRepository.findAll();
 	}
 
-	public StringResponse sendTemplateByMail(String template, String emails, String url) throws JSONException {
-		String[] emailsSpl = emails.split(",");
+	public StringResponse sendTemplateByMail(String templateName) {
+		Template template = findByName(templateName);
+		String[] emailsSpl = ((String) template.getConfig().get("emails")).split(",");
 		for(String email : emailsSpl) {
-			emailService.sendEmail(email, "Encuesta Caafi", url);
+			emailService.sendEmail(email, (String) template.getConfig().get("subject"), 
+					(String) template.getConfig().get("message") + "\n\n" + (String) template.getConfig().get("url"));
 		}
 		return new StringResponse("OK");
 	}

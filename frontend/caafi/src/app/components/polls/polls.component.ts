@@ -149,7 +149,7 @@ export class PollsComponent implements OnInit, OnDestroy {
 
   sendPoll() {
     this.fullLoading = true;
-    this.templatesService.senTemplateByEmail(this.formName)
+    this.templatesService.senTemplateByEmail(this.formId)
     .subscribe(result => {
       if (result.response === 'OK') {
         this.notifier.notify( 'success', 'OK: Encuesta enviada satisfactoriamente.' );

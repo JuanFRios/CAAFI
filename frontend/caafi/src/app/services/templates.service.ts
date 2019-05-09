@@ -25,7 +25,7 @@ export class TemplatesService {
     return this.http.get<Template>('template/public/byname/' + name, this.utilService.getRequestOptions());
   }
 
-  senTemplateByEmail(template: string, url: string): Observable<any> {
+  senTemplateByEmail(template: string): Observable<any> {
     return this.restangular.all('template/sendtemplatebymail/' + template).post();
   }
 
