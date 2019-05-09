@@ -2,8 +2,6 @@ package co.com.caafi.service;
 
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -13,11 +11,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.mongodb.WriteResult;
-import com.sun.jersey.spi.inject.Inject;
 
 import co.com.caafi.model.StringResponse;
 import co.com.caafi.model.User;
-import co.com.caafi.model.template.FormData;
 import co.com.caafi.model.template.Template;
 import co.com.caafi.repository.TemplateRepository;
 
@@ -32,6 +28,9 @@ public class TemplateService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private StudentService studentService;
 
 	public Template findByName(String name) {
 		return this.templateRepository.findByName(name).get(0);
@@ -52,6 +51,9 @@ public class TemplateService {
 			emailService.sendEmail(email, (String) template.getConfig().get("subject"), 
 					(String) template.getConfig().get("message") + "\n\n" + (String) template.getConfig().get("url"));
 		}
+		
+		studentService.getStudentsByPrograma("BIOINGENIERÍA");
+		
 		return new StringResponse("OK");
 	}
 	
