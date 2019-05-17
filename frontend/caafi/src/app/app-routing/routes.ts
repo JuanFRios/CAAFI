@@ -5,6 +5,7 @@ import { HomeComponent } from '../components/home/home.component';
 import { LoginService as AuthGuard } from '../services/login.service';
 import { PollsComponent } from '../components/polls/polls.component';
 import { ReportComponent } from '../components/report/report.component';
+import { SurveyComponent } from '../components/survey/survey.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -18,6 +19,8 @@ export const routes: Routes = [
   { path: 'autoevaluacion/:dependency/informe-de-autoevaluacion', component: EvaluationComponent, canActivate: [AuthGuard] },
   { path: 'autoevaluacion/:dependency/:form', component: TemplatesComponent, canActivate: [AuthGuard] },
   { path: 'encuestas', component: PollsComponent, canActivate: [AuthGuard] },
-  { path: 'encuestas/:dependency/:type/:form', component: PollsComponent },
+  { path: 'encuestas/:dependency/:form', component: PollsComponent, canActivate: [AuthGuard] },
+  { path: 'encuestas/:formId/:program/:matter/:group', component: SurveyComponent },
+  { path: 'encuestas/:dependency/:type/:form', component: PollsComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: 'home' }
 ];

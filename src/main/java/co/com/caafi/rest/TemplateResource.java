@@ -48,10 +48,10 @@ public class TemplateResource {
 	}
 	
 	@CrossOrigin(origins = "*")
-	@RequestMapping(path = "/sendtemplatebymail/{template}", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(path = "/sendtemplatebymail/{template}/{configId}", method = RequestMethod.POST, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public StringResponse sendTemplateByMail(@PathVariable String template) throws JSONException {
-		return templateService.sendTemplateByMail(template);
+	public StringResponse sendTemplateByMail(@PathVariable String template, @PathVariable String configId) throws JSONException {
+		return templateService.sendTemplateByMail(template, configId);
 	}
 	
 	@CrossOrigin(origins = "*")
@@ -59,5 +59,11 @@ public class TemplateResource {
 	@ResponseStatus(HttpStatus.CREATED)
 	public StringResponse save(@RequestBody @Valid Template data, Authentication authentication) {
 		return templateService.save(data, (User) authentication.getPrincipal());
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/config/{template}/{configId}", method = RequestMethod.GET)
+	public Template getTemplateConfig(@PathVariable String template, @PathVariable String configId) {
+		return templateService.findTemplateConfig(template, configId);
 	}
 }

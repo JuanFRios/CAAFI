@@ -8,6 +8,6 @@ export class Template {
   fields: Array<FormlyFieldConfig>;
   table: String[];
   report: Array<FormlyFieldConfig>;
-  config: Object;
+  config: Array<Object>;
   isPublic: boolean;
 }

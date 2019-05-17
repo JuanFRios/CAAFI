@@ -25,6 +25,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
   @Input() typeSubmit = true;
   @Input() noDependency = false;
   @Input() adminReport = false;
+  @Input() formData: Object = null;
   @Output() fullLoading = new EventEmitter();
   @Output() dataSaved = new EventEmitter();
   @Output() buttonClicked = new EventEmitter();
@@ -45,7 +46,6 @@ export class FormlyComponent implements OnInit, OnDestroy {
   data: Data;
   options: FormlyFormOptions = {};
   form: FormGroup;
-  formData: Object;
   formFields: Array<FormlyFieldConfig>;
   takeUntil;
   startWith;
@@ -95,7 +95,9 @@ export class FormlyComponent implements OnInit, OnDestroy {
       this.options.resetModel();
     }
 
-    this.formData = new Object();
+    if (this.formData == null) {
+      this.formData = new Object();
+    }
     const fields = this.template.fields;
     this.proccessFields(fields);
     this.formFields = fields;

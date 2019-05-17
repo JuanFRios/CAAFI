@@ -1,13 +1,15 @@
 package co.com.caafi.model;
 
+import org.springframework.data.annotation.Id;
+
 public class Student {
 
+	private String cedula;
 	private int semestre;
     private String programa;
     private int codigoMateria;
     private String nombreMateria;
-    private int grupo;
-    private long cedula;
+    private int grupo;    
     private String nombrePila;
     private String primApellido;
     private String sdoApellido;
@@ -44,10 +46,10 @@ public class Student {
 	public void setGrupo(int grupo) {
 		this.grupo = grupo;
 	}
-	public long getCedula() {
+	public String getCedula() {
 		return cedula;
 	}
-	public void setCedula(long cedula) {
+	public void setCedula(String cedula) {
 		this.cedula = cedula;
 	}
 	public String getNombrePila() {

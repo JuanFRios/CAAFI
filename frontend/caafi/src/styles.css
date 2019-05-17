@@ -1160,6 +1160,7 @@
 .mat-form-field.mat-focused .mat-form-field-label {
     color: #0a351c
 }
+
 .mat-form-field.mat-focused.mat-form-field-invalid .mat-form-field-label {
     color: #f44336;
 }
@@ -1189,15 +1190,19 @@ input.mat-input-element:-webkit-autofill+.mat-input-placeholder .mat-placeholder
 .mat-form-field.mat-focused .mat-form-field-ripple {
     background-color: #0a351c;
 }
+
 .mat-form-field.mat-focused.mat-form-field-invalid .mat-form-field-ripple {
     background-color: #f44336;
 }
+
 .mat-form-field.mat-focused.mat-primary .mat-select-arrow {
     color: #0a351c;
 }
+
 .mat-form-field.mat-focused.mat-form-field-invalid.mat-primary .mat-select-arrow {
     color: #f44336;
 }
+
 .mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
     color: #0a351c;
 }
@@ -2211,4 +2216,15 @@ a.download-link {
 
 .notifier__container ul {
     margin: 0
+}
+
+.title-h2 h2 {
+    font-size: 24px;
+    text-align: left;
+    color: #272C29;
+}
+
+.text-p p {
+    text-align: justify;
+    font-size: 16px;
 }

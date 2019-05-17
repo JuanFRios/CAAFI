@@ -1,6 +1,7 @@
 package co.com.caafi.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.mongodb.WriteResult;
 
 import co.com.caafi.model.StringResponse;
+import co.com.caafi.model.Student;
 import co.com.caafi.model.User;
 import co.com.caafi.model.template.Template;
 import co.com.caafi.repository.TemplateRepository;
@@ -44,25 +46,50 @@ public class TemplateService {
 		return this.templateRepository.findAll();
 	}
 
-	public StringResponse sendTemplateByMail(String templateName) {
-		Template template = findByName(templateName);
-		String[] emailsSpl = ((String) template.getConfig().get("emails")).split(",");
+	public StringResponse sendTemplateByMail(String templateName, String configId) {
+		Map<String, Object> config = getTemplateConfigByConfigId(templateName, configId);
+		String[] emailsSpl = ((String) config.get("emails")).split(",");
 		for(String email : emailsSpl) {
-			emailService.sendEmail(email, (String) template.getConfig().get("subject"), 
-					(String) template.getConfig().get("message") + "\n\n" + (String) template.getConfig().get("url"));
+			List<Student> students = studentService.getStudentByEmail(email);
+			String url = ((String) config.get("url"));
+			if (!students.isEmpty()) {
+				url += "/" + students.get(0).getCedula();
+			}
+			emailService.sendEmail(email, (String) config.get("subject"), 
+					(String) config.get("message") + "\n\n" + url);
 		}
-		
-		studentService.getStudentsByPrograma("BIOINGENIERÍA");
-		
 		return new StringResponse("OK");
 	}
 	
+	private Map<String, Object> getTemplateConfigByConfigId(String templateName, String configId) {
+		Template template = findByName(templateName);
+		for (Map<String, Object> config : template.getConfig()) {
+			if (config.get("configId").equals(configId)) {
+				return config;
+			}
+		}
+		return null;
+	}
+
 	public StringResponse save(Template data, User user) {
+		Template template = findByName(data.getName()); 
+		List<Map<String, Object>> configs = template.getConfig();
+		int pos = 0;
+		for (Map<String, Object> config : configs) {
+			if (config.get("configId").equals(data.getConfig().get(0).get("configId"))) {
+				configs.set(pos, data.getConfig().get(0));
+				break;
+			}
+			pos++;
+		}
+		if (pos == configs.size()) {
+			configs.add(data.getConfig().get(0));
+		}
 		Query query = new Query();
 		query.addCriteria(Criteria.where("name").is(data.getName()));
 		Update update = new Update();
-		update.set("config", data.getConfig());
-		update.set("configCreator", user.getDocument());
+		data.getConfig().get(0).put("configCreator", user.getDocument());
+		update.set("config", configs);
 		WriteResult result = mongoTemplate.updateFirst(query, update, Template.class);
 		return new StringResponse(result == null ? "0" : result.getN() + "");
     }
@@ -73,5 +100,9 @@ public class TemplateService {
 	    long now = System.currentTimeMillis() / 1000;
 	    System.out.println(
 	      "schedule tasks using cron jobs - " + now);
+	}
+
+	public Template findTemplateConfig(String template, String configId) {
+		return this.templateRepository.findByNameAndConfigId(template, configId);
 	}
 }

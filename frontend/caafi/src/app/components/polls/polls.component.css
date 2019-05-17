@@ -208,9 +208,34 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 .container-formPollMessage {
     display: flex;
     flex-direction: column;
-}   
+}
+
 .container-rangePoll>*,
 .container-formPollSubject>*,
-.container-formPollMessage>* {
+.container-formPollMessage>*,
+.container-formPollPrograms,
+.container-formPollEmailsDB,
+.container-formPollAllStudents {
+    flex: 100%;
+}
+
+.container-formPollMatters,
+.container-formPollGroups {
+    flex: 50%;
+}
+
+.container-formPollMatters {
+    margin-right: 10px;
+}
+
+.container-formPollPrograms>*,
+.container-formPollMatters>*,
+.container-formPollGroups>*,
+.container-formPollEmailsDB>*,
+.container-formPollAllStudents>* {
     width: 100%;
+}
+
+.container-mattersSurvery {
+    display: flex;
 }

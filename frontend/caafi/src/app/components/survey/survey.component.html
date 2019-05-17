@@ -1,0 +1,13 @@
+<!-- Loading -->
+<ngx-loading [show]="fullLoading" [config]="{ fullScreenBackdrop: true }"></ngx-loading>
+
+<!-- Notifier -->
+<notifier-container></notifier-container>
+
+<!-- Template -->
+<div *ngIf="dataLoaded && template != null">
+    <!-- Formly -->
+    <div>
+        <app-formly #formly [formId]="formId" [formData]="formData" [dependencyName]="formId + '-' + program + '-' + matter + '-' + group" [template]="template" (fullLoading)="toggleLoading($event)"></app-formly>
+    </div>
+</div>

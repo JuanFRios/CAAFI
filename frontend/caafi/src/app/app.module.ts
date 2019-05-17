@@ -55,6 +55,8 @@ import { ContainerComponent } from './components/container/container.component';
 import { ExcelService } from './services/excel.service';
 import { RequestCache } from './services/request-cache.service';
 import { CachingInterceptor } from './services/caching-interceptor.interceptor';
+import { StudentService } from './services/student.service';
+import { SurveyComponent } from './components/survey/survey.component';
 
 // here is the default text string
 export class DefaultIntl extends OwlDateTimeIntl {
@@ -158,6 +160,7 @@ export function required(err, field) {
     FileValueAccessor,
     FormlyFieldFileComponent,
     TooltipWrapperComponent,
+    SurveyComponent,
     SafePipe
   ],
   imports: [
@@ -228,6 +231,7 @@ export function required(err, field) {
       ListService,
       UtilService,
       ExcelService,
+      StudentService,
       { provide: OwlDateTimeIntl, useClass: DefaultIntl },
       RequestCache,
       { provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true }

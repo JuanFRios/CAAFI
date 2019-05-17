@@ -6,8 +6,8 @@
 <div *ngIf="template != null">
     <div *ngIf="loginService.isLogIn();else public_content">
         <!-- Formly -->
-        <div>
-            <app-formly #formly [formId]="formId" [dependencyName]="dependencyId + '-' + pollType + '-' + formId" [template]="template" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)"></app-formly>
+        <div *ngIf="formData != null">
+            <app-formly #formly [formId]="formId" [dependencyName]="dependencyId + '-' + pollType + '-' + formId" [template]="template" [formData]="formData" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)"></app-formly>
         </div>
 
         <!-- Data Table -->
@@ -18,9 +18,55 @@
         <div class="container">
             <hr>
             <h4>Configuración de la Encuesta</h4>
+            <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
+                <div class="container-formPollPrograms">
+                    <mat-form-field>
+                        <mat-label>Programa Académico</mat-label>
+                        <mat-select #poll_program [(ngModel)]="program" (selectionChange)="loadMatters()">
+                            <mat-option *ngFor="let program of programs" [value]="program.code">
+                                {{program.code}} - {{program.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
+                <div class="container-formPollMatters">
+                    <mat-form-field>
+                        <mat-label>Materia</mat-label>
+                        <mat-select #poll_matter [(ngModel)]="matter" (selectionChange)="loadGroups()">
+                            <mat-option *ngFor="let matter of matters" [value]="matter.code">
+                                {{matter.code}} - {{matter.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="container-formPollGroups">
+                    <mat-form-field>
+                        <mat-label>Grupo</mat-label>
+                        <mat-select #poll_group [(ngModel)]="group" (selectionChange)="loadConfig()">
+                            <mat-option *ngFor="let group of groups" [value]="group.code">
+                                {{group.code}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
+                <div class="container-formPollAllStudents">
+                    <mat-checkbox [(ngModel)]="allEmails" (change)="getEmailsDB()">Mostrar los correos electrónicos de todos los estudantes de la materia</mat-checkbox>
+                </div>
+            </div>
+            <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
+                <div class="container-formPollEmailsDB">
+                    <mat-form-field>
+                        <textarea matInput #poll_emailsDB [(ngModel)]="emailsDB" placeholder="Correos electrónicos cargados de archivo"></textarea>
+                    </mat-form-field>
+                </div>
+            </div>
             <div class="container-formPollEmails">
                 <mat-form-field>
-                    <textarea matInput #poll_emails [(ngModel)]="emails" placeholder="Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
+                    <textarea matInput #poll_emails [(ngModel)]="emails" placeholder="Otros Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
                 </mat-form-field>
             </div>
             <div class="container-formPollSubject">
@@ -29,10 +75,10 @@
                 </mat-form-field>
             </div>
             <div class="container-formPollMessage">
-                    <mat-form-field>
-                        <textarea matInput [(ngModel)]="message" placeholder="Mensaje del correo electrónico"></textarea>
-                    </mat-form-field>
-                </div>
+                <mat-form-field>
+                    <textarea matInput [(ngModel)]="message" placeholder="Mensaje del correo electrónico"></textarea>
+                </mat-form-field>
+            </div>
             <div class="container-rangePoll">
                 <mat-form-field>
                     <input matInput placeholder="Rango de activación" [(ngModel)]="dateTimeRange" [selectMode]="'range'" [owlDateTimeTrigger]="dtRange1" [owlDateTime]="dtRange1">
