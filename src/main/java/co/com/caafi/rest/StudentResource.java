@@ -80,4 +80,10 @@ public class StudentResource {
 	public Matter findMatterByCode(@PathVariable int code) {
 		return this.studentService.getMatterByCode(code);
 	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/public/groupByStudentAndProgramAndMatter/{cedula}/{program}/{matter}", method = RequestMethod.GET)
+	public Group findGroupByStudentAndProgramAndMatter(@PathVariable String cedula, @PathVariable int program, @PathVariable int matter) {
+		return this.studentService.getGroupByStudentAndProgramAndMatter(cedula, program, matter);
+	}
 }

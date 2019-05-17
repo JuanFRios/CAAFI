@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ViewChild } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { httpBaseURL } from '../../common/baseurl';
@@ -9,6 +9,7 @@ import { Template } from '../../common/template';
 import { StudentService } from '../../services/student.service';
 import { RequestCache } from '../../services/request-cache.service';
 import { Student } from '../../common/student';
+import { DataTableComponent } from '../data-table/data-table.component';
 
 @Component({
   selector: 'app-polls',
@@ -16,6 +17,8 @@ import { Student } from '../../common/student';
   styleUrls: ['./polls.component.css']
 })
 export class PollsComponent implements OnInit, OnDestroy {
+
+  @ViewChild('dataTable') dataTable: DataTableComponent;
 
   private readonly notifier: NotifierService;
   private emails: string;
@@ -203,6 +206,7 @@ export class PollsComponent implements OnInit, OnDestroy {
         });
     }
     this.getEmailsDB();
+    this.dataTable.refresh(null);
   }
 
   getEmailsDB() {

@@ -53,4 +53,9 @@ export class StudentService {
     return this.http.get<Matter>('student/public/matterByCode/' + code, this.utilService.getRequestOptions());
   }
 
+  getGrupoByStudentAndProgramAndMatter(student: string, program: string, matter: string): Observable<Group> {
+    return this.http.get<Group>('student/public/groupByStudentAndProgramAndMatter/' + student + '/'
+      + program + '/' + matter, this.utilService.getRequestOptions());
+  }
+
 }

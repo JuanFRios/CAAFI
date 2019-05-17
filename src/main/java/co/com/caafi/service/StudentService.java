@@ -109,4 +109,18 @@ public class StudentService {
 		return mongoTemplate.aggregate(aggregation, "student", Student.class).getMappedResults();
 	}
 
+	public Group getGroupByStudentAndProgramAndMatter(String cedula, int program, int matter) {
+		long cedulaLong = -1;
+		try {
+			cedulaLong = Long.parseLong(cedula);
+		} catch (Exception e) {}
+		GroupOperation group = Aggregation.group("grupo").first("grupo").as("code");
+		MatchOperation filter = Aggregation.match(new Criteria().orOperator(
+				new Criteria("cedula").is(cedula), new Criteria("cedula").is(cedulaLong))
+					.and("codigoMateria").is(matter).and("codigoPrograma").is(program));
+		SortOperation sort = Aggregation.sort(Direction.ASC, "grupo");
+		Aggregation aggregation = Aggregation.newAggregation(filter, group, sort);
+		return mongoTemplate.aggregate(aggregation, "student", Group.class).getMappedResults().get(0);
+	}
+
 }

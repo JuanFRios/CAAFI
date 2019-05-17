@@ -22,6 +22,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
   matter = null;
   group = null;
   dataLoaded = false;
+  cedula = null;
 
   constructor(
     private templatesService: TemplatesService,
@@ -41,6 +42,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
         this.program = this.route.snapshot.paramMap.get('program');
         this.matter = this.route.snapshot.paramMap.get('matter');
         this.group = this.route.snapshot.paramMap.get('group');
+        this.cedula = this.route.snapshot.paramMap.get('cedula');
         if (this.program != null && this.matter != null && this.group != null) {
           this.loadTemplate();
           this.loadData();
@@ -69,7 +71,13 @@ export class SurveyComponent implements OnInit, OnDestroy {
   loadData() {
     this.loadProgram().then(result => {
       this.loadMatter().then(result2 => {
-        this.dataLoaded = true;
+        if (this.cedula != null) {
+          this.loadGroup().then(result3 => {
+            this.dataLoaded = true;
+          });
+        } else {
+          this.dataLoaded = true;
+        }
       });
     });
   }
@@ -95,7 +103,20 @@ export class SurveyComponent implements OnInit, OnDestroy {
         resolve();
       },
       error => {
-        this.notifier.notify( 'error', 'ERROR: Error al cargar el programa académico.' );
+        this.notifier.notify( 'error', 'ERROR: Error al cargar la materia.' );
+      });
+    });
+  }
+
+  loadGroup() {
+    return new Promise(resolve => {
+      this.studentService.getGrupoByStudentAndProgramAndMatter(this.cedula, this.program, this.matter)
+      .subscribe(group => {
+        this.formData['grupo'] = group.code;
+        resolve();
+      },
+      error => {
+        this.notifier.notify( 'error', 'ERROR: Error al cargar el grupo.' );
       });
     });
   }
