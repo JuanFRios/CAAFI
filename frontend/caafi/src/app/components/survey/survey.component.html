@@ -8,7 +8,7 @@
     <app-menu [isVisible]="false"></app-menu>
 </div>
 
-<div *ngIf="!isSaved && !isError">
+<div *ngIf="!isSaved && !isError && template != null">
     <!-- Template -->
     <div *ngIf="dataLoaded && template != null">
         <!-- Formly -->

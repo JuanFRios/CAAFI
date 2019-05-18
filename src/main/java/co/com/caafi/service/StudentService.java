@@ -59,7 +59,7 @@ public class StudentService {
 	}
 
 	public List<Student> getEmailsByProgramAndMatterAndGroup(int program, int matter, int group) {
-		GroupOperation groupOp = Aggregation.group("emailInstitu").first("emailInstitu").as("emailInstitu");
+		GroupOperation groupOp = Aggregation.group("cedula").first("emailInstitu").as("emailInstitu").first("email").as("email").first("cedula").as("cedula");
 		MatchOperation filter = Aggregation.match(new Criteria("codigoPrograma").is(program).and("codigoMateria").is(matter).and("grupo").is(group));
 		SortOperation sort = Aggregation.sort(Direction.ASC, "emailInstitu");
 		Aggregation aggregation = Aggregation.newAggregation(filter, groupOp, sort);
@@ -82,7 +82,7 @@ public class StudentService {
 	}
 
 	public List<Student> getEmailsByMatterAndGroup(int matter, int group) {
-		GroupOperation groupOp = Aggregation.group("emailInstitu").first("emailInstitu").as("emailInstitu");
+		GroupOperation groupOp = Aggregation.group("cedula").first("emailInstitu").as("emailInstitu").first("email").as("email").first("cedula").as("cedula");
 		MatchOperation filter = Aggregation.match(new Criteria("codigoMateria").is(matter).and("grupo").is(group));
 		SortOperation sort = Aggregation.sort(Direction.ASC, "emailInstitu");
 		Aggregation aggregation = Aggregation.newAggregation(filter, groupOp, sort);

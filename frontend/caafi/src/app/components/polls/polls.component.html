@@ -58,7 +58,7 @@
             <h4>Configuración de la Encuesta</h4>
             <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
                 <div class="container-formPollAllStudents">
-                    <mat-checkbox [(ngModel)]="allEmails" (change)="getEmailsDB()">Mostrar los correos electrónicos de todos los estudantes de la materia</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="allEmails" (change)="getEmailsDB()">Enviar a todos los estudantes de la materia</mat-checkbox>
                 </div>
             </div>
             <div *ngIf="isMattersSurvery" class="container-mattersSurvery">

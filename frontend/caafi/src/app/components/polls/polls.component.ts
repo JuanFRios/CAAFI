@@ -215,7 +215,12 @@ export class PollsComponent implements OnInit, OnDestroy {
         .subscribe(result => {
           this.emailsDB = '';
           result.forEach( (student) => {
-            this.emailsDB += student['emailInstitu'] + ',';
+            if (student['emailInstitu'] != null && student['emailInstitu'] !== '') {
+              this.emailsDB += student['emailInstitu'] + ',';
+            }
+            if (student['email'] != null && student['email'] !== '') {
+              this.emailsDB += student['email'] + ',';
+            }
           });
           this.emailsDB = this.emailsDB.substring(0, this.emailsDB.length - 1);
         },
@@ -227,7 +232,12 @@ export class PollsComponent implements OnInit, OnDestroy {
         .subscribe(result => {
           this.emailsDB = '';
           result.forEach( (student) => {
-            this.emailsDB += student['emailInstitu'] + ',';
+            if (student['emailInstitu'] != null && student['emailInstitu'] !== '') {
+              this.emailsDB += student['emailInstitu'] + ',';
+            }
+            if (student['email'] != null && student['email'] !== '') {
+              this.emailsDB += student['email'] + ',';
+            }
           });
           this.emailsDB = this.emailsDB.substring(0, this.emailsDB.length - 1);
         },
@@ -260,6 +270,7 @@ export class PollsComponent implements OnInit, OnDestroy {
         conf['program'] = this.program;
         conf['matter'] = this.matter;
         conf['group'] = this.group;
+        conf['allEmails'] = this.allEmails;
         conf['configId'] = this.program + '-' + this.matter + '-' + this.group;
         this.configId = this.program + '-' + this.matter + '-' + this.group;
         data.config.push(conf);

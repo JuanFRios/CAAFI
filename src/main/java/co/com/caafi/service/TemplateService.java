@@ -58,9 +58,30 @@ public class TemplateService {
 			emailService.sendEmail(email, (String) config.get("subject"), 
 					(String) config.get("message") + "\n\n" + url);
 		}
+		//sendStudentsEmails(config);
 		return new StringResponse("OK");
 	}
 	
+	private void sendStudentsEmails(Map<String, Object> config) {
+		List<Student> students = null;
+		if ((boolean) config.get("allEmails")) {
+			students = studentService.getEmailsByMatterAndGroup(Integer.parseInt((String) config.get("matter")), Integer.parseInt((String) config.get("group")));
+		} else {
+			students = studentService.getEmailsByProgramAndMatterAndGroup(Integer.parseInt((String) config.get("program")), Integer.parseInt((String) config.get("matter")), Integer.parseInt((String) config.get("group")));
+		}
+		for (Student student : students) {
+			String url = ((String) config.get("url")) + "/" + student.getCedula();
+			if (student.getEmail() != null && !"".equals(student.getEmail())) {
+				emailService.sendEmail(student.getEmail(), (String) config.get("subject"), 
+						(String) config.get("message") + "\n\n" + url);
+			}
+			if (student.getEmailInstitu() != null && !"".equals(student.getEmailInstitu())) {
+				emailService.sendEmail(student.getEmailInstitu(), (String) config.get("subject"), 
+						(String) config.get("message") + "\n\n" + url);
+			}
+		}
+	}
+
 	private Map<String, Object> getTemplateConfigByConfigId(String templateName, String configId) {
 		Template template = findByName(templateName);
 		for (Map<String, Object> config : template.getConfig()) {
