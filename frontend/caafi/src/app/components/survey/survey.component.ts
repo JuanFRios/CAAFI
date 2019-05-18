@@ -26,6 +26,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
   cedula = null;
   message = null;
   isSaved = false;
+  isError = false;
 
   constructor(
     private templatesService: TemplatesService,
@@ -74,7 +75,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
         resolve(result['present']);
       },
       error => {
-        this.notifier.notify( 'error', 'ERROR: Error al validar el registro' );
+        this.isError = true;
+        this.notifier.notify( 'error', 'ERROR: 1' );
       });
     });
   }
@@ -92,7 +94,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
     },
     error => {
       this.toggleLoading(false);
-      this.notifier.notify( 'error', 'ERROR: Error al cargar la encuesta.' );
+      this.isError = true;
+      this.notifier.notify( 'error', 'ERROR: 2' );
     });
   }
 
@@ -104,9 +107,29 @@ export class SurveyComponent implements OnInit, OnDestroy {
             this.dataLoaded = true;
           });
         } else {
-          this.formData['grupo'] = this.group;
-          this.dataLoaded = true;
+          this.validateGroup().then(result4 => {
+            if (result4) {
+              this.formData['grupo'] = this.group;
+              this.dataLoaded = true;
+            } else {
+              this.isError = true;
+              this.notifier.notify( 'error', 'ERROR: 8' );
+            }
+          });
         }
+      });
+    });
+  }
+
+  validateGroup() {
+    return new Promise(resolve => {
+      this.studentService.getGroupByProgramAndMatterAndGroup(this.program, this.matter, this.group)
+      .subscribe(result => {
+        resolve(result['present']);
+      },
+      error => {
+        this.isError = true;
+        this.notifier.notify( 'error', 'ERROR: 7' );
       });
     });
   }
@@ -119,7 +142,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
         resolve();
       },
       error => {
-        this.notifier.notify( 'error', 'ERROR: Error al cargar el programa académico.' );
+        this.isError = true;
+        this.notifier.notify( 'error', 'ERROR: 3' );
       });
     });
   }
@@ -132,7 +156,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
         resolve();
       },
       error => {
-        this.notifier.notify( 'error', 'ERROR: Error al cargar la materia.' );
+        this.isError = true;
+        this.notifier.notify( 'error', 'ERROR: 4' );
       });
     });
   }
@@ -141,11 +166,17 @@ export class SurveyComponent implements OnInit, OnDestroy {
     return new Promise(resolve => {
       this.studentService.getGrupoByStudentAndProgramAndMatter(this.cedula, this.program, this.matter)
       .subscribe(group => {
-        this.formData['grupo'] = group.code;
-        resolve();
+        if (this.group !== group.code) {
+          this.isError = true;
+          this.notifier.notify( 'error', 'ERROR: 6' );
+        } else {
+          this.formData['grupo'] = group.code;
+          resolve();
+        }
       },
       error => {
-        this.notifier.notify( 'error', 'ERROR: Error al cargar el grupo.' );
+        this.isError = true;
+        this.notifier.notify( 'error', 'ERROR: 5' );
       });
     });
   }

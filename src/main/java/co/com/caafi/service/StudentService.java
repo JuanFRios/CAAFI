@@ -1,6 +1,7 @@
 package co.com.caafi.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
@@ -16,12 +17,16 @@ import co.com.caafi.model.Group;
 import co.com.caafi.model.Matter;
 import co.com.caafi.model.Program;
 import co.com.caafi.model.Student;
+import co.com.caafi.repository.StudentRepository;
 
 @Service
 public class StudentService {
 	
 	@Autowired
     MongoTemplate mongoTemplate;
+	
+	@Autowired
+	StudentRepository studentRepository;
 	
 	public List<Student> getStudentsByProgram(String programa) {	
 		GroupOperation group = Aggregation.group("cedula", "email", "emailInstitu");
@@ -121,6 +126,10 @@ public class StudentService {
 		SortOperation sort = Aggregation.sort(Direction.ASC, "grupo");
 		Aggregation aggregation = Aggregation.newAggregation(filter, group, sort);
 		return mongoTemplate.aggregate(aggregation, "student", Group.class).getMappedResults().get(0);
+	}
+
+	public Optional<Student> getGroupByProgramAndMatterAndGroup(int program, int matter, int group) {
+		return this.studentRepository.findByCodigoProgramaAndCodigoMateriaAndGrupo(program, matter, group);
 	}
 
 }

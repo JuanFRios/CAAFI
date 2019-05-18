@@ -13,7 +13,8 @@ export class StudentService {
 
   constructor(
     private http: HttpClient,
-    private utilService: UtilService) { }
+    private utilService: UtilService,
+    private restangular: Restangular) { }
 
   getPrograms(): Observable<Program[]> {
     return this.http.get<Program[]>('student/programs', this.utilService.getRequestOptions());
@@ -56,6 +57,10 @@ export class StudentService {
   getGrupoByStudentAndProgramAndMatter(student: string, program: string, matter: string): Observable<Group> {
     return this.http.get<Group>('student/public/groupByStudentAndProgramAndMatter/' + student + '/'
       + program + '/' + matter, this.utilService.getRequestOptions());
+  }
+
+  getGroupByProgramAndMatterAndGroup(program: string, matter: string, group: string): Observable<Group> {
+    return this.restangular.one('student/public/getGroupByProgramAndMatterAndGroup/' + program + '/' + matter + '/' + group).get();
   }
 
 }

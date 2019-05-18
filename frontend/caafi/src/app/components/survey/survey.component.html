@@ -8,7 +8,7 @@
     <app-menu [isVisible]="false"></app-menu>
 </div>
 
-<div *ngIf="!isSaved">
+<div *ngIf="!isSaved && !isError">
     <!-- Template -->
     <div *ngIf="dataLoaded && template != null">
         <!-- Formly -->
@@ -23,5 +23,13 @@
             <i class="fas fa-exclamation-circle"></i>
         </span>
         <span class="user-info-message">{{message}}</span>
+    </div>
+</div>
+<div *ngIf="isError">
+    <div class="container">
+        <span style="font-size: 48px; color: #D9534F">
+            <i class="fas fa-times"></i>
+        </span>
+        <span class="user-info-message">Error cargando la pagina</span>
     </div>
 </div>

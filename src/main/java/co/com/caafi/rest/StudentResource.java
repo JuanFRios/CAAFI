@@ -1,6 +1,7 @@
 package co.com.caafi.rest;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -85,5 +86,11 @@ public class StudentResource {
 	@RequestMapping(path = "/public/groupByStudentAndProgramAndMatter/{cedula}/{program}/{matter}", method = RequestMethod.GET)
 	public Group findGroupByStudentAndProgramAndMatter(@PathVariable String cedula, @PathVariable int program, @PathVariable int matter) {
 		return this.studentService.getGroupByStudentAndProgramAndMatter(cedula, program, matter);
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/public/getGroupByProgramAndMatterAndGroup/{program}/{matter}/{group}", method = RequestMethod.GET)
+	public Optional<Student> getGroupByProgramAndMatterAndGroup(@PathVariable int program, @PathVariable int matter, @PathVariable int group) {
+		return this.studentService.getGroupByProgramAndMatterAndGroup(program, matter, group);
 	}
 }

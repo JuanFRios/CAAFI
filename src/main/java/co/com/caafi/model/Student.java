@@ -1,12 +1,11 @@
 package co.com.caafi.model;
 
-import org.springframework.data.annotation.Id;
-
 public class Student {
 
 	private String cedula;
 	private int semestre;
-    private String programa;
+    private String nombrePrograma;
+    private int codigoPrograma;
     private int codigoMateria;
     private String nombreMateria;
     private int grupo;    
@@ -22,11 +21,11 @@ public class Student {
 	public void setSemestre(int semestre) {
 		this.semestre = semestre;
 	}
-	public String getPrograma() {
-		return programa;
+	public String getNombrePrograma() {
+		return nombrePrograma;
 	}
-	public void setPrograma(String programa) {
-		this.programa = programa;
+	public void setNombrePrograma(String nombrePrograma) {
+		this.nombrePrograma = nombrePrograma;
 	}
 	public int getCodigoMateria() {
 		return codigoMateria;
@@ -81,6 +80,12 @@ public class Student {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public int getCodigoPrograma() {
+		return codigoPrograma;
+	}
+	public void setCodigoPrograma(int codigoPrograma) {
+		this.codigoPrograma = codigoPrograma;
 	}
 
 }

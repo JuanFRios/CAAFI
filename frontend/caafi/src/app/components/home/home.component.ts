@@ -99,16 +99,16 @@ export class HomeComponent implements OnInit {
 
     this.loginService.login(this.data)
       .subscribe(usuario => {
-        let navigationExtras: NavigationExtras = {
+        const navigationExtras: NavigationExtras = {
           queryParamsHandling: 'preserve',
           preserveFragment: true
         };
 
         // Redirect the user
-        this.router.navigate(["/formularios"], navigationExtras);
+        this.router.navigate(['/formularios'], navigationExtras);
       }, error => {
         if (error.codigoError = 404) {
-          this.errMess = "Usuario o contraseña inválidos.";
+          this.errMess = 'Usuario o contraseña incorrectos.';
         }
         // Volvemos el formulario a su estado original
         this.formIncioSesion.reset();
