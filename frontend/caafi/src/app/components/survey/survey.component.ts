@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UtilService } from '../../services/util.service';
 import { NotifierService } from 'angular-notifier';
 import { StudentService } from '../../services/student.service';
+import { DataService } from '../../services/data.service';
 
 @Component({
   selector: 'app-survey',
@@ -23,13 +24,16 @@ export class SurveyComponent implements OnInit, OnDestroy {
   group = null;
   dataLoaded = false;
   cedula = null;
+  message = null;
+  isSaved = false;
 
   constructor(
     private templatesService: TemplatesService,
     private utilService: UtilService,
     private notifierService: NotifierService,
     private route: ActivatedRoute,
-    private studentService: StudentService
+    private studentService: StudentService,
+    private dataService: DataService
   ) {
     this.notifier = notifierService;
     this.fullLoading = false;
@@ -44,10 +48,34 @@ export class SurveyComponent implements OnInit, OnDestroy {
         this.group = this.route.snapshot.paramMap.get('group');
         this.cedula = this.route.snapshot.paramMap.get('cedula');
         if (this.program != null && this.matter != null && this.group != null) {
-          this.loadTemplate();
-          this.loadData();
+          if (this.cedula != null) {
+            this.validateRegister().then(result => {
+              if (result) {
+                this.message = 'Usted ya realizó la encuesta, muchas gracias.';
+                this.isSaved = true;
+              } else {
+                this.loadTemplate();
+                this.loadData();
+              }
+            });
+          } else {
+            this.loadTemplate();
+            this.loadData();
+          }
         }
       }
+    });
+  }
+
+  validateRegister() {
+    return new Promise(resolve => {
+      this.dataService.getDataByFormAndCreator(this.formId + '-' + this.program + '-' + this.matter + '-' + this.group, this.cedula)
+      .subscribe(result => {
+        resolve(result['present']);
+      },
+      error => {
+        this.notifier.notify( 'error', 'ERROR: Error al validar el registro' );
+      });
     });
   }
 
@@ -76,6 +104,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
             this.dataLoaded = true;
           });
         } else {
+          this.formData['grupo'] = this.group;
           this.dataLoaded = true;
         }
       });
@@ -132,6 +161,11 @@ export class SurveyComponent implements OnInit, OnDestroy {
     if (this.navigationSubscription) {
       this.navigationSubscription.unsubscribe();
     }
+  }
+
+  saved() {
+    this.message = 'Muchas gracias por tu respuesta.';
+    this.isSaved = true;
   }
 
 }

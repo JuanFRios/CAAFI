@@ -6,4 +6,5 @@ export class Data {
   countData: number;
   isPublic: boolean;
   login: boolean;
+  creator: string;
 }

@@ -26,6 +26,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
   @Input() noDependency = false;
   @Input() adminReport = false;
   @Input() formData: Object = null;
+  @Input() creator: string = null;
   @Output() fullLoading = new EventEmitter();
   @Output() dataSaved = new EventEmitter();
   @Output() buttonClicked = new EventEmitter();
@@ -158,6 +159,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
     this.data.login = this.loginService.isLogIn();
     this.data.template = this.formId;
     this.data.origin = this.dependencyName;
+    this.data.creator = this.creator;
 
     if (this.currentId != null) {
       this.data.id = this.currentId;

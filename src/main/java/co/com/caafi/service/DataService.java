@@ -3,6 +3,7 @@ package co.com.caafi.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -66,17 +67,19 @@ public class DataService {
         		}
             this.logService.info("Saved Form", dataSaved.getId());
     		} catch (Exception e) {
-    			this.logService.error("Saved Form Error: " + e.getMessage(), data);
+    			this.logService.error("Saved Form Error: " + e.getMessage() + ", Cause: " + e.getCause() + ", Trace: " + e.getStackTrace(), data);
     		}
     		return dataSaved;
     }
     
     private FormData save(FormData data) {
-	    	if(this.templateService.findByName(data.getTemplate()).isPublic()) {
+	    if(this.templateService.findByName(data.getTemplate()).isPublic()) {
+	    	if (data.getCreator() == null) {
 	    		data.setCreator("public");
-	    		return this.dataRepository.save(data);
+	    	}
+	    	return this.dataRepository.save(data);
 	    } else {
-	    		return null;
+	    	return null;
 	    }
 	}
 
@@ -216,5 +219,9 @@ public class DataService {
 		data.setCountData(this.dataRepository.countByTemplate(template, dependencyFilter, filterWhere, 
 				filtersWhere));
 		return data;
+	}
+
+	public Optional<FormData> getByFormAndCreator(String formId, String creator) {
+		return this.dataRepository.findByOriginAndCreator(formId, creator);
 	}
 }

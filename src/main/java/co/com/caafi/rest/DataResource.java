@@ -1,6 +1,7 @@
 package co.com.caafi.rest;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -75,5 +76,11 @@ public class DataResource {
 	public FormData count(@PathVariable String template, @RequestParam("dependency") String dependency,
 			@RequestParam("filter") String filter, @RequestParam("filters") String filters) {
 		return dataService.count(template, dependency, filter, filters);
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/public/getByFormAndCreator/{formId}/{creator}", method = RequestMethod.GET)
+	public Optional<FormData> getByFormAndCreator(@PathVariable String formId, @PathVariable String creator) {
+		return dataService.getByFormAndCreator(formId, creator);
 	}
 }

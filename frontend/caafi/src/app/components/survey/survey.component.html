@@ -4,10 +4,24 @@
 <!-- Notifier -->
 <notifier-container></notifier-container>
 
-<!-- Template -->
-<div *ngIf="dataLoaded && template != null">
-    <!-- Formly -->
-    <div>
-        <app-formly #formly [formId]="formId" [formData]="formData" [dependencyName]="formId + '-' + program + '-' + matter + '-' + group" [template]="template" (fullLoading)="toggleLoading($event)"></app-formly>
+<div>
+    <app-menu [isVisible]="false"></app-menu>
+</div>
+
+<div *ngIf="!isSaved">
+    <!-- Template -->
+    <div *ngIf="dataLoaded && template != null">
+        <!-- Formly -->
+        <div>
+            <app-formly #formly [formId]="formId" [formData]="formData" [dependencyName]="formId + '-' + program + '-' + matter + '-' + group" [template]="template" [creator]="cedula" (fullLoading)="toggleLoading($event)" (dataSaved)="saved()"></app-formly>
+        </div>
+    </div>
+</div>
+<div *ngIf="isSaved">
+    <div class="container">
+        <span style="font-size: 48px; color: #0a351c">
+            <i class="fas fa-exclamation-circle"></i>
+        </span>
+        <span class="user-info-message">{{message}}</span>
     </div>
 </div>
