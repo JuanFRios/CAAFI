@@ -143,6 +143,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
   reset() {
     this.options.resetModel();
+    this.currentId = null;
     this.reseted.emit(null);
   }
 
@@ -167,6 +168,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
           this.uploadFile(formsData[i]);
         }
         this.reset();
+        this.currentId = null;
         this.dataSaved.emit(null);
         this.saving = false;
         this.notifier.notify( 'success', 'OK: El formulario ha sido guardado exitosamente.' );
