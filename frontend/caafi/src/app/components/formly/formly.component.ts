@@ -209,14 +209,12 @@ export class FormlyComponent implements OnInit, OnDestroy {
   }
 
   editData($event) {
-    this.currentId = $event;
     this.loadData($event);
   }
 
   loadData(id) {
     this.fullLoading.emit(true);
     this.reset();
-
     this.dataService.getById(id)
       .subscribe(formData => {
         for (const i in formData.data) {
@@ -240,9 +238,11 @@ export class FormlyComponent implements OnInit, OnDestroy {
             }
           }
         }
+        this.currentId = id;
         this.fullLoading.emit(false);
       },
         error => {
+          this.reset();
           this.notifier.notify( 'error', 'ERROR: Error al cargar los datos.' );
           this.fullLoading.emit(false);
         });
