@@ -194,45 +194,45 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
     max-width: none;
 }
 
-.container-formPollEmails {
+.container-formSurveyEmails {
     display: flex;
     flex-direction: column;
 }
 
-.container-formPollEmails>* {
+.container-formSurveyEmails>* {
     width: 100%;
 }
 
-.container-rangePoll,
-.container-formPollSubject,
-.container-formPollMessage {
+.container-rangeSurvey,
+.container-formSurveySubject,
+.container-formSurveyMessage {
     display: flex;
     flex-direction: column;
 }
 
-.container-rangePoll>*,
-.container-formPollSubject>*,
-.container-formPollMessage>*,
-.container-formPollPrograms,
-.container-formPollEmailsDB,
-.container-formPollAllStudents {
+.container-rangeSurvey>*,
+.container-formSurveySubject>*,
+.container-formSurveyMessage>*,
+.container-formSurveyPrograms,
+.container-formSurveyEmailsDB,
+.container-formSurveyAllStudents {
     flex: 100%;
 }
 
-.container-formPollMatters,
-.container-formPollGroups {
+.container-formSurveyMatters,
+.container-formSurveyGroups {
     flex: 50%;
 }
 
-.container-formPollMatters {
+.container-formSurveyMatters {
     margin-right: 10px;
 }
 
-.container-formPollPrograms>*,
-.container-formPollMatters>*,
-.container-formPollGroups>*,
-.container-formPollEmailsDB>*,
-.container-formPollAllStudents>* {
+.container-formSurveyPrograms>*,
+.container-formSurveyMatters>*,
+.container-formSurveyGroups>*,
+.container-formSurveyEmailsDB>*,
+.container-formSurveyAllStudents>* {
     width: 100%;
 }
 

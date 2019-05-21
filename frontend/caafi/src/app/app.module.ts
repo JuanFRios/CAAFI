@@ -50,7 +50,7 @@ import { RouterModule } from '../../node_modules/@angular/router';
 import { NotifierModule } from 'angular-notifier';
 import { DataTableComponent } from './components/data-table/data-table.component';
 import { UtilService } from './services/util.service';
-import { PollsComponent } from './components/polls/polls.component';
+import { SurveyConfigComponent } from './components/survey-config/survey-config.component';
 import { ContainerComponent } from './components/container/container.component';
 import { ExcelService } from './services/excel.service';
 import { RequestCache } from './services/request-cache.service';
@@ -150,7 +150,7 @@ export function required(err, field) {
     FormlyComponent,
     DataTableComponent,
     TemplatesComponent,
-    PollsComponent,
+    SurveyConfigComponent,
     ReportComponent,
     ContainerComponent,
     HomeComponent,

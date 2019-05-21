@@ -12,11 +12,11 @@ import { Student } from '../../common/student';
 import { DataTableComponent } from '../data-table/data-table.component';
 
 @Component({
-  selector: 'app-polls',
-  templateUrl: './polls.component.html',
-  styleUrls: ['./polls.component.css']
+  selector: 'app-survey-config',
+  templateUrl: './survey-config.component.html',
+  styleUrls: ['./survey-config.component.css']
 })
-export class PollsComponent implements OnInit, OnDestroy {
+export class SurveyConfigComponent implements OnInit, OnDestroy {
 
   @ViewChild('dataTable') dataTable: DataTableComponent;
 
@@ -35,7 +35,7 @@ export class PollsComponent implements OnInit, OnDestroy {
   template: any;
   public = false;
   navigationSubscription;
-  pollType: string;
+  surveyType: string;
   formData: Object = null;
   isMattersSurvery = false;
   programs = [];
@@ -65,7 +65,7 @@ export class PollsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.navigationSubscription = this.route.params.subscribe(params => {
-      this.pollType = this.route.snapshot.paramMap.get('type');
+      this.surveyType = this.route.snapshot.paramMap.get('type');
       this.formId = this.route.snapshot.paramMap.get('form');
       this.dependencyId = this.route.snapshot.paramMap.get('dependency');
       if (this.formId != null) {
@@ -254,7 +254,7 @@ export class PollsComponent implements OnInit, OnDestroy {
     this.fullLoading = $event;
   }
 
-  savePoll() {
+  saveSurveyConfig() {
     return new Promise(resolve => {
       this.fullLoading = true;
       const data: Template = new Template();
@@ -279,7 +279,7 @@ export class PollsComponent implements OnInit, OnDestroy {
         data.config['subject'] = this.subject;
         data.config['message'] = this.message;
         data.config['dateRange'] = this.dateTimeRange;
-        data.config['url'] = httpBaseURL + '/encuestas/' + this.dependencyId + '/' + this.pollType + '/' + this.formId;
+        data.config['url'] = httpBaseURL + '/encuestas/' + this.dependencyId + '/' + this.surveyType + '/' + this.formId;
       }
       this.templatesService.saveTemplateConfig(data)
       .subscribe(result => {
@@ -297,13 +297,13 @@ export class PollsComponent implements OnInit, OnDestroy {
     });
   }
 
-  saveAndSendPoll() {
-    this.savePoll().then(result => {
-      this.sendPoll();
+  saveConfigAndSendSurvey() {
+    this.saveSurveyConfig().then(result => {
+      this.sendSurvey();
     });
   }
 
-  sendPoll() {
+  sendSurvey() {
     this.fullLoading = true;
     this.templatesService.senTemplateByEmail(this.formId, this.configId)
     .subscribe(result => {

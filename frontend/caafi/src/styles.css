@@ -1999,6 +1999,13 @@ button.btn-agregar {
     width: 47%;
 }
 
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+    .w-50 {
+        width: 100%;
+    }
+}
+
 [class*="flex-"] {
     padding-left: 10px;
     padding-right: 10px;

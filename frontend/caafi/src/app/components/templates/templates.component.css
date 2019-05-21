@@ -194,11 +194,11 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
     max-width: none;
 }
 
-.container-formPollEmails {
+.container-formSurveyEmails {
     display: flex;
     flex-direction: column;
 }
 
-.container-formPollEmails>* {
+.container-formSurveyEmails>* {
     width: 100%;
 }

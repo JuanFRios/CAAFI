@@ -7,17 +7,17 @@
     <div *ngIf="loginService.isLogIn();else public_content">
         <!-- Formly -->
         <div *ngIf="formData != null">
-            <app-formly #formly [formId]="formId" [dependencyName]="dependencyId + '-' + pollType + '-' + formId" [template]="template" [formData]="formData" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)"></app-formly>
+            <app-formly #formly [formId]="formId" [dependencyName]="dependencyId + '-' + surveyType + '-' + formId" [template]="template" [formData]="formData" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)"></app-formly>
         </div>
 
         <div class="container">
             <hr>
             <h4>Datos de la Encuesta</h4>
             <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
-                <div class="container-formPollPrograms">
+                <div class="container-formSurveyPrograms">
                     <mat-form-field>
                         <mat-label>Programa Académico</mat-label>
-                        <mat-select #poll_program [(ngModel)]="program" (selectionChange)="loadMatters()">
+                        <mat-select #survey_program [(ngModel)]="program" (selectionChange)="loadMatters()">
                             <mat-option *ngFor="let program of programs" [value]="program.code">
                                 {{program.code}} - {{program.name}}
                             </mat-option>
@@ -26,20 +26,20 @@
                 </div>
             </div>
             <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
-                <div class="container-formPollMatters">
+                <div class="container-formSurveyMatters">
                     <mat-form-field>
                         <mat-label>Materia</mat-label>
-                        <mat-select #poll_matter [(ngModel)]="matter" (selectionChange)="loadGroups()">
+                        <mat-select #survey_matter [(ngModel)]="matter" (selectionChange)="loadGroups()">
                             <mat-option *ngFor="let matter of matters" [value]="matter.code">
                                 {{matter.code}} - {{matter.name}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <div class="container-formPollGroups">
+                <div class="container-formSurveyGroups">
                     <mat-form-field>
                         <mat-label>Grupo</mat-label>
-                        <mat-select #poll_group [(ngModel)]="group" (selectionChange)="loadConfig()">
+                        <mat-select #survey_group [(ngModel)]="group" (selectionChange)="loadConfig()">
                             <mat-option *ngFor="let group of groups" [value]="group.code">
                                 {{group.code}}
                             </mat-option>
@@ -57,46 +57,46 @@
             <hr>
             <h4>Configuración de la Encuesta</h4>
             <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
-                <div class="container-formPollAllStudents">
+                <div class="container-formSurveyAllStudents">
                     <mat-checkbox [(ngModel)]="allEmails" (change)="getEmailsDB()">Enviar a todos los estudantes de la materia</mat-checkbox>
                 </div>
             </div>
             <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
-                <div class="container-formPollEmailsDB">
+                <div class="container-formSurveyEmailsDB">
                     <mat-form-field>
-                        <textarea matInput #poll_emailsDB [(ngModel)]="emailsDB" placeholder="Correos electrónicos cargados de archivo"></textarea>
+                        <textarea matInput #survey_emailsDB [(ngModel)]="emailsDB" placeholder="Correos electrónicos cargados de archivo"></textarea>
                     </mat-form-field>
                 </div>
             </div>
-            <div class="container-formPollEmails">
+            <div class="container-formSurveyEmails">
                 <mat-form-field>
-                    <textarea matInput #poll_emails [(ngModel)]="emails" placeholder="Otros Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
+                    <textarea matInput #survey_emails [(ngModel)]="emails" placeholder="Otros Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
                 </mat-form-field>
             </div>
-            <div class="container-formPollSubject">
+            <div class="container-formSurveySubject">
                 <mat-form-field>
                     <input matInput placeholder="Asunto del correo electrónico" [(ngModel)]="subject">
                 </mat-form-field>
             </div>
-            <div class="container-formPollMessage">
+            <div class="container-formSurveyMessage">
                 <mat-form-field>
                     <textarea matInput [(ngModel)]="message" placeholder="Mensaje del correo electrónico"></textarea>
                 </mat-form-field>
             </div>
-            <div class="container-rangePoll">
+            <div class="container-rangeSurvey">
                 <mat-form-field>
                     <input matInput placeholder="Rango de activación" [(ngModel)]="dateTimeRange" [selectMode]="'range'" [owlDateTimeTrigger]="dtRange1" [owlDateTime]="dtRange1">
                     <owl-date-time #dtRange1></owl-date-time>
                 </mat-form-field>
             </div>
-            <button mat-raised-button color="primary" type="button" (click)="savePoll()" class="form-button">Guardar configuración</button>
-            <button mat-raised-button color="primary" type="button" (click)="saveAndSendPoll()" class="form-button">Guardar configuración y enviar encuesta</button>
+            <button mat-raised-button color="primary" type="button" (click)="saveSurveyConfig()" class="form-button">Guardar configuración</button>
+            <button mat-raised-button color="primary" type="button" (click)="saveConfigAndSendSurvey()" class="form-button">Guardar configuración y enviar encuesta</button>
         </div>
     </div>
     <ng-template #public_content>
         <!-- Formly -->
         <div>
-            <app-formly #formly [formId]="formId" [dependencyName]="dependencyId + '-' + pollType + '-' + formId" [template]="template" (fullLoading)="toggleLoading($event)"></app-formly>
+            <app-formly #formly [formId]="formId" [dependencyName]="dependencyId + '-' + surveyType + '-' + formId" [template]="template" (fullLoading)="toggleLoading($event)"></app-formly>
         </div>
     </ng-template>
 
