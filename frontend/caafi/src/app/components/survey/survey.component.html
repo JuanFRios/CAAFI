@@ -13,7 +13,7 @@
     <div *ngIf="dataLoaded && template != null">
         <!-- Formly -->
         <div>
-            <app-formly #formly [formId]="formId" [formData]="formData" [dependencyName]="formId + '-' + program + '-' + matter + '-' + group" [template]="template" [creator]="cedula" (fullLoading)="toggleLoading($event)" (dataSaved)="saved()"></app-formly>
+            <app-formly #formly [formId]="formId" [formData]="formData" [dependencyName]="formId + '|' + program + '|' + matter + '|' + group" [template]="template" [creator]="cedula" (fullLoading)="toggleLoading($event)" (dataSaved)="saved()"></app-formly>
         </div>
     </div>
 </div>

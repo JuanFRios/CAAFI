@@ -26,6 +26,9 @@ public interface DataRepository extends MongoRepository<FormData, String> {
     public List<FormData> findCustomByTemplate(String template, String dependencyFilter, 
     		String filter, String filters, Sort sort);
     
+    @Query("{ template: ?0, deleted: false, $where: 'eval(?1) && eval(?2);' }")
+    public List<FormData> findCustomByTemplate(String template, String filter, String filters, Pageable pageable);
+    
     @Query(value = "{ template: ?0, deleted: false, $where:'eval(?1) && eval(?2) && eval(?3);' }", count = true)
     public long countByTemplate(String template, String dependencyFilter, String filter, String filters);
     

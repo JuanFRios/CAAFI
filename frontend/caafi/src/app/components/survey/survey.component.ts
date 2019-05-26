@@ -16,6 +16,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
   private readonly notifier: NotifierService;
   fullLoading: boolean;
   formId: string;
+  dependency: string;
+  type: string;
   template: any;
   navigationSubscription;
   formData: Object = new Object();
@@ -41,27 +43,32 @@ export class SurveyComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.navigationSubscription = this.route.params.subscribe(params => {
-      this.formId = this.route.snapshot.paramMap.get('formId');
-      if (this.formId != null && this.formId === 'encuesta-de-materias') {
-        this.program = this.route.snapshot.paramMap.get('program');
-        this.matter = this.route.snapshot.paramMap.get('matter');
-        this.group = this.route.snapshot.paramMap.get('group');
-        this.cedula = this.route.snapshot.paramMap.get('cedula');
-        if (this.program != null && this.matter != null && this.group != null) {
-          if (this.cedula != null) {
-            this.validateRegister().then(result => {
-              if (result) {
-                this.message = 'Usted ya realizó la encuesta, muchas gracias.';
-                this.isSaved = true;
-              } else {
-                this.loadTemplate();
-                this.loadData();
-              }
-            });
-          } else {
-            this.loadTemplate();
-            this.loadData();
+    this.route.paramMap.subscribe(params => {
+      this.formId = params.get('form');
+      this.dependency = params.get('dependency');
+      this.type = params.get('type');
+      if (this.formId != null && this.dependency != null && this.type != null) {
+        // Validar formulario, dependencia y tipo
+        if (this.formId === 'encuesta-de-materias') {
+          this.program = params.get('program');
+          this.matter = params.get('matter');
+          this.group = params.get('group');
+          this.cedula = params.get('cedula');
+          if (this.program != null && this.matter != null && this.group != null) {
+            if (this.cedula != null) {
+              this.validateRegister().then(result => {
+                if (result) {
+                  this.message = 'Usted ya realizó la encuesta, muchas gracias.';
+                  this.isSaved = true;
+                } else {
+                  this.loadTemplate();
+                  this.loadData();
+                }
+              });
+            } else {
+              this.loadTemplate();
+              this.loadData();
+            }
           }
         }
       }
@@ -70,7 +77,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
 
   validateRegister() {
     return new Promise(resolve => {
-      this.dataService.getDataByFormAndCreator(this.formId + '-' + this.program + '-' + this.matter + '-' + this.group, this.cedula)
+      this.dataService.getDataByFormAndCreator(this.formId + '+' + this.program + '+'
+        + this.matter + '+' + this.group, this.cedula)
       .subscribe(result => {
         resolve(result['present']);
       },

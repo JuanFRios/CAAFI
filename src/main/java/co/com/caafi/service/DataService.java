@@ -99,6 +99,16 @@ public class DataService {
 					filtersWhere, new PageRequest(pageNumber, pageSize, sort));
 		}
 	}
+	
+	public List<FormData> findByTemplate(String template, String filter, String sortColumn, String sortOrder, int pageNumber, 
+			int pageSize, String filters) {
+
+		Sort sort = getSort(sortColumn, sortOrder);
+		String filterWhere = getGenericFilter(filter);
+		String filtersWhere = getFilters(filters);
+		
+		return this.dataRepository.findCustomByTemplate(template, filterWhere, filtersWhere, new PageRequest(pageNumber, pageSize, sort));
+	}
 
 	private String getDependencyFilter(String dependency) {
 		String dependencyFilter = "true";
@@ -190,7 +200,7 @@ public class DataService {
 
 	private String getGenericFilter(String filter) {
 		String filterWhere = "true";
-		String filters[] = filter.split(";");
+		String[] filters = filter.split(";");
 		for(String filt : filters) {
 			if(filt != null && !filt.isEmpty()) {
 				filterWhere += " && (JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + filt + "\\\".toLowerCase() )!=-1)";

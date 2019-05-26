@@ -63,6 +63,15 @@ public class DataResource {
 		return dataService.findByTemplate(template, dependency, filter, sortColumn, 
 				sortOrder, pageNumber, pageSize, filters);
 	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/bytemplate2/{template}", method = RequestMethod.GET)
+	public List<FormData> findByTemplate(@PathVariable String template, @RequestParam("filter") String filter,
+			@RequestParam("sortColumn") String sortColumn, @RequestParam("sortOrder") String sortOrder, 
+			@RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize,
+			@RequestParam("filters") String filters) {
+		return dataService.findByTemplate(template, filter, sortColumn, sortOrder, pageNumber, pageSize, filters);
+	}
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(method = RequestMethod.POST)

@@ -28,6 +28,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
   dependencyName: string;
   menuItems: any;
   breadcrumb = '';
+  pathway = '';
   allDataAccess = false;
   noDependency = false;
   lista_modulos: Module[];
@@ -97,6 +98,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
         this.pathArray = new Array();
         this.activeItem = this.getActiveItem(config.value, 0, this.urlArray.length, 0, true, this.pathArray);
         this.breadcrumb = this.pathArray.map(o => o['name']).join(' - ');
+        this.pathway = this.pathArray.map(o => o['path']).join('|');
         this.emitSelectedItem();
       },
       error => {}
@@ -116,6 +118,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
     menuData['evaluationDoc'] = this.activeItem ? this.activeItem['evaluationDoc'] : null;
     menuData['noReport'] = this.activeItem ? this.activeItem['noReport'] : false;
     menuData['adminReport'] = this.activeItem ? this.activeItem['adminReport'] : false;
+    menuData['pathway'] = this.pathway;
     this.selectedItem.emit(menuData);
   }
 

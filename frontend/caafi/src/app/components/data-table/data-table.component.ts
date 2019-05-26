@@ -21,6 +21,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
   @Input() allDataAccess = false;
   @Input() activeActions = true;
   @Input() export = false;
+  @Input() filters: string;
   @Output() copyData = new EventEmitter();
   @Output() editData = new EventEmitter();
   @Output() deleteData = new EventEmitter();
@@ -62,7 +63,6 @@ export class DataTableComponent implements OnInit, OnDestroy {
   sortChange: Subscription;
   tapPaginator: Subscription;
   filterEvent: Subscription;
-  filters: string;
   extFilter: string;
 
   constructor(
