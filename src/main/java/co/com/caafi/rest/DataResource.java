@@ -60,7 +60,7 @@ public class DataResource {
 			@RequestParam("sortColumn") String sortColumn, @RequestParam("sortOrder") String sortOrder, 
 			@RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize,
 			@RequestParam("filters") String filters) {
-		return dataService.findByTemplate(template, dependency, filter, sortColumn, 
+		return dataService.findByTemplate(template, dependency.replace(" ", "+"), filter, sortColumn, 
 				sortOrder, pageNumber, pageSize, filters);
 	}
 	
@@ -84,7 +84,7 @@ public class DataResource {
 	@RequestMapping(path = "/count/{template}", method = RequestMethod.GET)
 	public FormData count(@PathVariable String template, @RequestParam("dependency") String dependency,
 			@RequestParam("filter") String filter, @RequestParam("filters") String filters) {
-		return dataService.count(template, dependency, filter, filters);
+		return dataService.count(template, dependency.replace(" ", "+"), filter, filters);
 	}
 	
 	@CrossOrigin(origins = "*")

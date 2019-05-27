@@ -4,17 +4,16 @@
 <!-- Notifier -->
 <notifier-container></notifier-container>
 
+<!--
 <div>
     <app-menu [isVisible]="false"></app-menu>
 </div>
+-->
 
-<div *ngIf="!isSaved && !isError && template != null">
-    <!-- Template -->
-    <div *ngIf="dataLoaded && template != null">
-        <!-- Formly -->
-        <div>
-            <app-formly #formly [formId]="formId" [formData]="formData" [dependencyName]="formId + '|' + program + '|' + matter + '|' + group" [template]="template" [creator]="cedula" (fullLoading)="toggleLoading($event)" (dataSaved)="saved()"></app-formly>
-        </div>
+<div *ngIf="!isSaved && !isError && dataLoaded && template != null">
+    <!-- Formly -->
+    <div>
+        <app-formly #formly [formId]="formId" [formData]="formData" [dependencyName]="dependency + '+' + type + '+' + formId + '+' + program + '+' + matter + '+' + group" [template]="template" [creator]="cedula" [clearButton]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="saved()"></app-formly>
     </div>
 </div>
 <div *ngIf="isSaved">

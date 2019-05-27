@@ -163,7 +163,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
       this.toggleLoading(true);
       this.configId = this.dependencyId + '+' + this.surveyType + '+' + this.formId + '+'
         + this.program + '+' + this.matter + '+' + this.group;
-      this.dataTable.refresh(null);
+      this.dataTable.dependencyName = this.configId;
       this.templatesService.getTemplateConfig(this.formId, this.configId)
         .subscribe(result => {
           if (result != null && result.config != null) {
@@ -178,6 +178,13 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
             this.notifier.notify('error', 'ERROR: Error al traer la configuración de la encuesta.');
             this.toggleLoading(false);
           });
+    } else {
+      if (this.dataTable != null) {
+        this.dataTable.dependencyName = null;
+      }
+    }
+    if (this.dataTable != null) {
+      this.dataTable.refresh(null);
     }
     this.getEmailsDB();
   }

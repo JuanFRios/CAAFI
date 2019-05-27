@@ -19,7 +19,7 @@ export const routes: Routes = [
   { path: 'autoevaluacion/:dependency/informe-de-autoevaluacion', component: EvaluationComponent, canActivate: [AuthGuard] },
   { path: 'autoevaluacion/:dependency/:form', component: TemplatesComponent, canActivate: [AuthGuard] },
   { path: 'encuestas', component: SurveyConfigComponent, canActivate: [AuthGuard] },
-  { path: 'encuestas/:dependency/:type/:form', component: SurveyConfigComponent, canActivate: [AuthGuard] },
+  { path: 'encuestas/:dependency/:type/:form', component: SurveyConfigComponent, canActivate: [AuthGuard], pathMatch: 'full' },
   { path: 'encuestas/:dependency/:type/:form/:program/:matter/:group', component: SurveyComponent },
   { path: 'encuestas/:dependency/:type/:form/:program/:matter/:group/:cedula', component: SurveyComponent },
   { path: '**', redirectTo: 'home' }

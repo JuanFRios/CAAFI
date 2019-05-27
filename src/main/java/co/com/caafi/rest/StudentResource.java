@@ -85,7 +85,11 @@ public class StudentResource {
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/public/groupByStudentAndProgramAndMatter/{cedula}/{program}/{matter}", method = RequestMethod.GET)
 	public Group findGroupByStudentAndProgramAndMatter(@PathVariable String cedula, @PathVariable int program, @PathVariable int matter) {
-		return this.studentService.getGroupByStudentAndProgramAndMatter(cedula, program, matter);
+		try {
+			return this.studentService.getGroupByStudentAndProgramAndMatter(cedula, program, matter);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 	@CrossOrigin(origins = "*")

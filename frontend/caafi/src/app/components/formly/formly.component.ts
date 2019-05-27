@@ -27,6 +27,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
   @Input() adminReport = false;
   @Input() formData: Object = null;
   @Input() creator: string = null;
+  @Input() clearButton = true;
   @Output() fullLoading = new EventEmitter();
   @Output() dataSaved = new EventEmitter();
   @Output() buttonClicked = new EventEmitter();

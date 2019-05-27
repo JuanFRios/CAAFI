@@ -77,14 +77,14 @@ export class SurveyComponent implements OnInit, OnDestroy {
 
   validateRegister() {
     return new Promise(resolve => {
-      this.dataService.getDataByFormAndCreator(this.formId + '+' + this.program + '+'
-        + this.matter + '+' + this.group, this.cedula)
+      this.dataService.getDataByFormAndCreator(this.dependency + '+' + this.type + '+' + this.formId + '+'
+        + this.program + '+' + this.matter + '+' + this.group, this.cedula)
       .subscribe(result => {
         resolve(result['present']);
       },
       error => {
         this.isError = true;
-        this.notifier.notify( 'error', 'ERROR: 1' );
+        this.notifier.notify( 'error', 'ERROR: 1' ); // Error desconocido
       });
     });
   }
@@ -103,7 +103,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
     error => {
       this.toggleLoading(false);
       this.isError = true;
-      this.notifier.notify( 'error', 'ERROR: 2' );
+      this.notifier.notify( 'error', 'ERROR: 2' ); // La encuesta no existe
     });
   }
 
@@ -121,7 +121,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
               this.dataLoaded = true;
             } else {
               this.isError = true;
-              this.notifier.notify( 'error', 'ERROR: 8' );
+              this.notifier.notify( 'error', 'ERROR: 8' ); // El grupo no pertenece a la materia del programa
             }
           });
         }
@@ -137,7 +137,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
       },
       error => {
         this.isError = true;
-        this.notifier.notify( 'error', 'ERROR: 7' );
+        this.notifier.notify( 'error', 'ERROR: 7' ); // Error desconocido
       });
     });
   }
@@ -151,7 +151,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
       },
       error => {
         this.isError = true;
-        this.notifier.notify( 'error', 'ERROR: 3' );
+        this.notifier.notify( 'error', 'ERROR: 3' ); // El programa académico no existe
       });
     });
   }
@@ -165,7 +165,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
       },
       error => {
         this.isError = true;
-        this.notifier.notify( 'error', 'ERROR: 4' );
+        this.notifier.notify( 'error', 'ERROR: 4' ); // La materia no existe
       });
     });
   }
@@ -174,17 +174,22 @@ export class SurveyComponent implements OnInit, OnDestroy {
     return new Promise(resolve => {
       this.studentService.getGrupoByStudentAndProgramAndMatter(this.cedula, this.program, this.matter)
       .subscribe(group => {
-        if (this.group !== group.code) {
-          this.isError = true;
-          this.notifier.notify( 'error', 'ERROR: 6' );
+        if (group != null) {
+          if (this.group !== group.code) {
+            this.isError = true;
+            this.notifier.notify( 'error', 'ERROR: 6' ); // El grupo en la url no corresponde al grupo en el que se encuetra el estudiante
+          } else {
+            this.formData['grupo'] = group.code;
+            resolve();
+          }
         } else {
-          this.formData['grupo'] = group.code;
-          resolve();
+          this.isError = true;
+          this.notifier.notify( 'error', 'ERROR: 9' ); // El estudiante no pertenece a ningún grupo de la materia
         }
       },
       error => {
         this.isError = true;
-        this.notifier.notify( 'error', 'ERROR: 5' );
+        this.notifier.notify( 'error', 'ERROR: 5' ); // Error desconocido
       });
     });
   }
