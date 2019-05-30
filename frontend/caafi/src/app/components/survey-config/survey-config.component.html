@@ -52,48 +52,58 @@
                 </mat-form-field>
             </div>
         </div>
+        <div *ngIf="isMattersSurvery">
+            <button mat-raised-button color="primary" type="button" (click)="cleanFilters()" class="form-button">Limpiar filtros</button>
+        </div>
 
         <!-- Data Table -->
-        <div>
+        <div *ngIf="configId != null">
             <app-data-table #dataTable [formId]="formId" [dependencyName]="configId" [template]="template" [activeActions]="false" [export]="true"></app-data-table>
         </div>
 
         <hr>
         <h4>Configuración de la Encuesta</h4>
-        <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
-            <div class="container-formSurveyAllStudents">
-                <mat-checkbox [(ngModel)]="allEmails" (change)="getEmailsDB()">Enviar a todos los estudantes de la materia</mat-checkbox>
+        <form [formGroup]="configForm">
+            <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
+                <div class="container-formSurveyAllStudents">
+                    <mat-checkbox formControlName="allEmails" (change)="getEmailsDB()">Enviar a todos los estudantes de la materia</mat-checkbox>
+                </div>
             </div>
-        </div>
-        <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
-            <div class="container-formSurveyEmailsDB">
+            <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
+                <div class="container-formSurveyEmailsDB">
+                    <mat-form-field>
+                        <textarea formControlName="emailsDB" matInput #survey_emailsDB placeholder="Correos electrónicos cargados de archivo"></textarea>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div *ngIf="isMattersSurvery" class="container-formSurveyEmails">
                 <mat-form-field>
-                    <textarea matInput #survey_emailsDB [(ngModel)]="emailsDB" placeholder="Correos electrónicos cargados de archivo"></textarea>
+                    <textarea formControlName="emails" matInput #survey_emails placeholder="Otros Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
                 </mat-form-field>
             </div>
-        </div>
-        <div class="container-formSurveyEmails">
-            <mat-form-field>
-                <textarea matInput #survey_emails [(ngModel)]="emails" placeholder="Otros Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
-            </mat-form-field>
-        </div>
-        <div class="container-formSurveySubject">
-            <mat-form-field>
-                <input matInput placeholder="Asunto del correo electrónico" [(ngModel)]="subject">
-            </mat-form-field>
-        </div>
-        <div class="container-formSurveyMessage">
-            <mat-form-field>
-                <textarea matInput [(ngModel)]="message" placeholder="Mensaje del correo electrónico"></textarea>
-            </mat-form-field>
-        </div>
-        <div class="container-rangeSurvey">
-            <mat-form-field>
-                <input matInput placeholder="Rango de activación" [(ngModel)]="dateTimeRange" [selectMode]="'range'" [owlDateTimeTrigger]="dtRange1" [owlDateTime]="dtRange1">
-                <owl-date-time #dtRange1></owl-date-time>
-            </mat-form-field>
-        </div>
-        <button mat-raised-button color="primary" type="button" (click)="saveSurveyConfig()" class="form-button">Guardar configuración</button>
-        <button mat-raised-button color="primary" type="button" (click)="saveConfigAndSendSurvey()" class="form-button">Guardar configuración y enviar encuesta</button>
+            <div *ngIf="!isMattersSurvery" class="container-formSurveyEmails">
+                <mat-form-field>
+                    <textarea formControlName="emails" matInput #survey_emails placeholder="Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
+                </mat-form-field>
+            </div>
+            <div class="container-formSurveySubject">
+                <mat-form-field>
+                    <input formControlName="subject" matInput placeholder="Asunto del correo electrónico">
+                </mat-form-field>
+            </div>
+            <div class="container-formSurveyMessage">
+                <mat-form-field>
+                    <textarea formControlName="message" matInput placeholder="Mensaje del correo electrónico"></textarea>
+                </mat-form-field>
+            </div>
+            <div class="container-rangeSurvey">
+                <mat-form-field>
+                    <input formControlName="dateTimeRange" matInput placeholder="Rango de activación" [selectMode]="'range'" [owlDateTimeTrigger]="dtRange1" [owlDateTime]="dtRange1">
+                    <owl-date-time #dtRange1></owl-date-time>
+                </mat-form-field>
+            </div>
+            <button mat-raised-button color="primary" type="button" (click)="saveSurveyConfig()" class="form-button" [disabled]="!configForm.valid">Guardar configuración</button>
+            <button mat-raised-button color="primary" type="button" (click)="saveConfigAndSendSurvey()" class="form-button" [disabled]="!configForm.valid">Guardar configuración y enviar encuesta</button>
+        </form>
     </div>
 </div>

@@ -10,10 +10,10 @@
 </div>
 -->
 
-<div *ngIf="!isSaved && !isError && dataLoaded && template != null">
+<div *ngIf="!isSaved && !isError && dataLoaded && template != null && configId != null">
     <!-- Formly -->
     <div>
-        <app-formly #formly [formId]="formId" [formData]="formData" [dependencyName]="dependency + '+' + type + '+' + formId + '+' + program + '+' + matter + '+' + group" [template]="template" [creator]="cedula" [clearButton]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="saved()"></app-formly>
+        <app-formly #formly [formId]="formId" [formData]="formData" [dependencyName]="configId" [template]="template" [creator]="cedula" [clearButton]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="saved()"></app-formly>
     </div>
 </div>
 <div *ngIf="isSaved">

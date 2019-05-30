@@ -1999,8 +1999,14 @@ button.btn-agregar {
     width: 47%;
 }
 
+.w-100 {
+    width: 100%;
+}
+
+
 /* Smartphones (portrait and landscape) ----------- */
-@media only screen and (max-device-width : 480px) {
+
+@media only screen and (max-device-width: 480px) {
     .w-50 {
         width: 100%;
     }

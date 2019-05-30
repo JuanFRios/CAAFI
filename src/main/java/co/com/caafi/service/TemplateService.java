@@ -1,5 +1,6 @@
 package co.com.caafi.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,10 +51,12 @@ public class TemplateService {
 		Map<String, Object> config = getTemplateConfigByConfigId(templateName, configId);
 		String[] emailsSpl = ((String) config.get("emails")).split(",");
 		for(String email : emailsSpl) {
-			List<Student> students = studentService.getStudentByEmail(email);
 			String url = ((String) config.get("url"));
-			if (!students.isEmpty()) {
-				url += "/" + students.get(0).getCedula();
+			if ("encuesta-de-materias".equals(templateName)) {
+				List<Student> students = studentService.getStudentByEmail(email);
+				if (!students.isEmpty()) {
+					url += "/" + students.get(0).getCedula();
+				}
 			}
 			emailService.sendEmail(email, (String) config.get("subject"), 
 					(String) config.get("message") + "\n\n" + url);
@@ -95,6 +98,9 @@ public class TemplateService {
 	public StringResponse save(Template data, User user) {
 		Template template = findByName(data.getName()); 
 		List<Map<String, Object>> configs = template.getConfig();
+		if (configs == null) {
+			configs = new ArrayList<Map<String, Object>>();
+		}
 		int pos = 0;
 		for (Map<String, Object> config : configs) {
 			if (config.get("configId").equals(data.getConfig().get(0).get("configId"))) {

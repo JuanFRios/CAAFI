@@ -29,6 +29,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
   message = null;
   isSaved = false;
   isError = false;
+  configId = null;
 
   constructor(
     private templatesService: TemplatesService,
@@ -55,6 +56,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
           this.group = params.get('group');
           this.cedula = params.get('cedula');
           if (this.program != null && this.matter != null && this.group != null) {
+            this.configId =  this.dependency + '+' + this.type + '+' + this.formId
+              + this.program + '+' + this.matter + '+' + this.group;
             if (this.cedula != null) {
               this.validateRegister().then(result => {
                 if (result) {
@@ -70,6 +73,10 @@ export class SurveyComponent implements OnInit, OnDestroy {
               this.loadData();
             }
           }
+        } else {
+          this.configId =  this.dependency + '+' + this.type + '+' + this.formId;
+          this.dataLoaded = true;
+          this.loadTemplate();
         }
       }
     });
