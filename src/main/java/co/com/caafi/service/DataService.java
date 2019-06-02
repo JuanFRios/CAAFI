@@ -175,6 +175,16 @@ public class DataService {
 								filtersWhere += " && new Date(this.data." + name + ").getTime() <= new Date(\\\"" + (String) entry.getValue() + "\\\").getTime()";
 							}
 							break;
+						case "dage": // Date Greater or Equals than - saved date
+							if(!((String)entry.getValue()).isEmpty()) {
+								filtersWhere += " && new Date(this." + name + ").getTime() >= new Date(\\\"" + (String) entry.getValue() + "\\\").getTime()";
+							}
+							break;
+						case "dale": // Date Less or Equals than - saved date
+							if(!((String)entry.getValue()).isEmpty()) {
+								filtersWhere += " && new Date(this." + name + ").getTime() <= new Date(\\\"" + (String) entry.getValue() + "\\\").getTime()";
+							}
+							break;
 						case "nge": // Number Greater or Equals than
 							if(!((String)entry.getValue()).isEmpty()) {
 								filtersWhere += " && this.data." + name + " >= " + (String) entry.getValue();

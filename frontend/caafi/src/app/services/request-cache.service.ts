@@ -45,4 +45,13 @@ export class RequestCache  {
   remove(url: string) {
     localStorage.removeItem(url);
   }
+
+  removeRegex(regexStr: string) {
+    Object.keys(localStorage).forEach(function(key) {
+      const reg = new RegExp(regexStr);
+      if (reg.test(key)) {
+        localStorage.removeItem(key);
+      }
+    });
+  }
 }

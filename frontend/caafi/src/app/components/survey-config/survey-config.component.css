@@ -220,17 +220,22 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 }
 
 .container-formSurveyMatters,
-.container-formSurveyGroups {
+.container-formSurveyGroups,
+.container-formSurveyFilterInitDate,
+.container-formSurveyFilterEndDate {
     flex: 50%;
 }
 
-.container-formSurveyMatters {
+.container-formSurveyMatters,
+.container-formSurveyFilterInitDate {
     margin-right: 10px;
 }
 
 .container-formSurveyPrograms>*,
 .container-formSurveyMatters>*,
 .container-formSurveyGroups>*,
+.container-formSurveyFilterInitDate>*,
+.container-formSurveyFilterEndDate>*,
 .container-formSurveyEmailsDB>*,
 .container-formSurveyAllStudents>* {
     width: 100%;
@@ -238,4 +243,8 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 
 .container-mattersSurvery {
     display: flex;
+}
+
+.buttons {
+    margin-top: 20px;
 }

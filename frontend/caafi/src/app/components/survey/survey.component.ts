@@ -56,7 +56,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
           this.group = params.get('group');
           this.cedula = params.get('cedula');
           if (this.program != null && this.matter != null && this.group != null) {
-            this.configId =  this.dependency + '+' + this.type + '+' + this.formId
+            this.configId =  this.dependency + '+' + this.type + '+' + this.formId + '+'
               + this.program + '+' + this.matter + '+' + this.group;
             if (this.cedula != null) {
               this.validateRegister().then(result => {
@@ -101,10 +101,22 @@ export class SurveyComponent implements OnInit, OnDestroy {
    */
   loadTemplate() {
     this.toggleLoading(true);
-    this.templatesService.getPublicTemplateByName(this.formId)
+    this.templatesService.getPublicTemplateByNameAndConfig(this.formId, this.configId)
     .subscribe(template => {
-      this.utilService.loadTemplateFeatures(template, false);
-      this.template = template;
+
+      const initDate = (new Date(template.config[0]['dateRange'][0])).getTime();
+      const endDate = (new Date(template.config[0]['dateRange'][1])).getTime();
+      const currDate = (new Date()).getTime();
+
+      if (currDate >= initDate && currDate <= endDate) {
+        this.utilService.loadTemplateFeatures(template, false);
+        this.template = template;
+      } else {
+        this.isSaved = true;
+        this.message = 'Esta encuesta no esta disponible';
+        this.notifier.notify( 'error', 'ERROR: 10' ); // La encuesta esta inhabilitada
+      }
+
       this.toggleLoading(false);
     },
     error => {

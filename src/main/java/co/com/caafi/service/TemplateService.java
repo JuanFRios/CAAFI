@@ -1,6 +1,7 @@
 package co.com.caafi.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.mongodb.WriteResult;
 
+import co.com.caafi.model.Group;
 import co.com.caafi.model.StringResponse;
 import co.com.caafi.model.Student;
 import co.com.caafi.model.User;
@@ -42,6 +44,10 @@ public class TemplateService {
 	public Template findPublicTemplateByName(String name) {
 		return this.templateRepository.findByNameAndIsPublic(name, true).get(0);
 	}
+	
+	public Template findPublicTemplateByNameAndConfig(String name, String configId) {
+		return this.templateRepository.findByNameAndConfigAndIsPublic(name, configId, true).get(0);
+	}
 
 	public List<Template> findAll() {
 		return this.templateRepository.findAll();
@@ -67,17 +73,21 @@ public class TemplateService {
 	
 	private void sendStudentsEmails(Map<String, Object> config) {
 		List<Student> students = null;
-		if ((boolean) config.get("allEmails")) {
+		if (((boolean) config.get("allEmails")) && !((boolean) config.get("allPrograms"))) {
 			students = studentService.getEmailsByMatterAndGroup(Integer.parseInt((String) config.get("matter")), Integer.parseInt((String) config.get("group")));
 		} else {
 			students = studentService.getEmailsByProgramAndMatterAndGroup(Integer.parseInt((String) config.get("program")), Integer.parseInt((String) config.get("matter")), Integer.parseInt((String) config.get("group")));
 		}
 		for (Student student : students) {
 			String url = ((String) config.get("url")) + "/" + student.getCedula();
+			// Envio a emails personales
+			/*
 			if (student.getEmail() != null && !"".equals(student.getEmail())) {
 				emailService.sendEmail(student.getEmail(), (String) config.get("subject"), 
 						(String) config.get("message") + "\n\n" + url);
 			}
+			*/
+			// Envio a emails institucionales
 			if (student.getEmailInstitu() != null && !"".equals(student.getEmailInstitu())) {
 				emailService.sendEmail(student.getEmailInstitu(), (String) config.get("subject"), 
 						(String) config.get("message") + "\n\n" + url);
@@ -86,31 +96,41 @@ public class TemplateService {
 	}
 
 	private Map<String, Object> getTemplateConfigByConfigId(String templateName, String configId) {
-		Template template = findByName(templateName);
-		for (Map<String, Object> config : template.getConfig()) {
-			if (config.get("configId").equals(configId)) {
-				return config;
-			}
+		Template template = findTemplateConfig(templateName, configId);
+		if (template.getConfig() != null) {
+			return template.getConfig().get(0);
 		}
 		return null;
 	}
 
 	public StringResponse save(Template data, User user) {
-		Template template = findByName(data.getName()); 
+		Template template = findByName(data.getName());
 		List<Map<String, Object>> configs = template.getConfig();
-		if (configs == null) {
+		if ("encuesta-de-materias".equals(template.getName()) && (Boolean) data.getConfig().get(0).get("allPrograms")) {
 			configs = new ArrayList<Map<String, Object>>();
-		}
-		int pos = 0;
-		for (Map<String, Object> config : configs) {
-			if (config.get("configId").equals(data.getConfig().get(0).get("configId"))) {
-				configs.set(pos, data.getConfig().get(0));
-				break;
+			String[] arrConfigId = ((String) data.getConfig().get(0).get("configId")).split("\\+");
+			String preConfigId = arrConfigId[0] + "+" + arrConfigId[1] + "+" + arrConfigId[2];
+			List<Group> allGroups = studentService.getAllGroupsByMatterByProgram();	
+			for (Group group : allGroups) {
+				Map<String, Object> config = new HashMap<String, Object>(data.getConfig().get(0));
+				config.replace("configId", preConfigId + "+" + group.getProgramCode() + "+" + group.getMatterCode() + "+" + group.getCode());
+				configs.add(config);
 			}
-			pos++;
-		}
-		if (pos == configs.size()) {
-			configs.add(data.getConfig().get(0));
+		} else {
+			if (configs == null) {
+				configs = new ArrayList<Map<String, Object>>();
+			}
+			int pos = 0;
+			for (Map<String, Object> config : configs) {
+				if (config.get("configId").equals(data.getConfig().get(0).get("configId"))) {
+					configs.set(pos, data.getConfig().get(0));
+					break;
+				}
+				pos++;
+			}
+			if (pos == configs.size()) {
+				configs.add(data.getConfig().get(0));
+			}
 		}
 		Query query = new Query();
 		query.addCriteria(Criteria.where("name").is(data.getName()));
@@ -131,5 +151,9 @@ public class TemplateService {
 
 	public Template findTemplateConfig(String template, String configId) {
 		return this.templateRepository.findByNameAndConfigId(template, configId);
+	}
+
+	public Template findTemplateWithoutConfig(String template) {
+		return this.templateRepository.findByNameWithoutConfig(template);
 	}
 }

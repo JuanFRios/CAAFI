@@ -25,6 +25,10 @@ export class TemplatesService {
     return this.http.get<Template>('template/public/byname/' + name, this.utilService.getRequestOptions());
   }
 
+  getPublicTemplateByNameAndConfig(name: string, configId: string): Observable<Template> {
+    return this.http.get<Template>('template/public/bynameandconfig/' + name + '/' + configId, this.utilService.getRequestOptions());
+  }
+
   senTemplateByEmail(template: string, configId: string): Observable<any> {
     return this.restangular.all('template/sendtemplatebymail/' + template + '/' + configId).post();
   }
@@ -37,6 +41,10 @@ export class TemplatesService {
 
   getTemplateConfig(formId: string, configId: string) {
     return this.http.get<Template>('template/config/' + formId + '/' + configId, this.utilService.getRequestOptions());
+  }
+
+  getTemplateWithoutConfig(formId: string) {
+    return this.http.get<Template>('template/withoutconfig/' + formId, this.utilService.getRequestOptions());
   }
 
 }

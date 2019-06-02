@@ -48,6 +48,12 @@ public class TemplateResource {
 	}
 	
 	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/public/bynameandconfig/{name}/{configId}", method = RequestMethod.GET)
+	public Template findPublicTemplateByNameAndConfig(@PathVariable String name, @PathVariable String configId) {
+		return templateService.findPublicTemplateByNameAndConfig(name, configId);
+	}
+	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/sendtemplatebymail/{template}/{configId}", method = RequestMethod.POST, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public StringResponse sendTemplateByMail(@PathVariable String template, @PathVariable String configId) throws JSONException {
@@ -65,5 +71,11 @@ public class TemplateResource {
 	@RequestMapping(path = "/config/{template}/{configId}", method = RequestMethod.GET)
 	public Template getTemplateConfig(@PathVariable String template, @PathVariable String configId) {
 		return templateService.findTemplateConfig(template, configId);
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/withoutconfig/{template}", method = RequestMethod.GET)
+	public Template getTemplateWithoutConfig(@PathVariable String template) {
+		return templateService.findTemplateWithoutConfig(template);
 	}
 }

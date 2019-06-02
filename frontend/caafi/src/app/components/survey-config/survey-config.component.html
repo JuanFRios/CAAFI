@@ -44,7 +44,7 @@
             <div class="container-formSurveyGroups">
                 <mat-form-field>
                     <mat-label>Grupo</mat-label>
-                    <mat-select #survey_group [(ngModel)]="group" (selectionChange)="loadConfigMattersSurvey()">
+                    <mat-select #survey_group [(ngModel)]="group" (selectionChange)="setGroup()">
                         <mat-option *ngFor="let group of groups" [value]="group.code">
                             {{group.code}}
                         </mat-option>
@@ -52,8 +52,29 @@
                 </mat-form-field>
             </div>
         </div>
-        <div *ngIf="isMattersSurvery">
-            <button mat-raised-button color="primary" type="button" (click)="cleanFilters()" class="form-button">Limpiar filtros</button>
+        <div class="container-mattersSurvery">
+            <div class="container-formSurveyFilterInitDate">
+                <mat-form-field>
+                    <input matInput [(ngModel)]="filterInitDate" [matDatepicker]="pickerInit" placeholder="Fecha inicial">
+                    <mat-datepicker-toggle matSuffix [for]="pickerInit"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerInit></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="container-formSurveyFilterEndDate">
+                <mat-form-field>
+                    <input matInput [(ngModel)]="filterEndDate" [matDatepicker]="pickerEnd" placeholder="Fecha final">
+                    <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerEnd></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="display-flex">
+            <div class="display-flex">
+                <button mat-raised-button color="primary" type="button" (click)="filterData()" class="form-button">Filtrar</button>
+            </div>
+            <div class="display-flex">
+                <button mat-raised-button color="primary" type="button" (click)="cleanFilters()" class="form-button">Limpiar</button>
+            </div>
         </div>
 
         <!-- Data Table -->
@@ -66,7 +87,7 @@
         <form [formGroup]="configForm">
             <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
                 <div class="container-formSurveyAllStudents">
-                    <mat-checkbox formControlName="allEmails" (change)="getEmailsDB()">Enviar a todos los estudantes de la materia</mat-checkbox>
+                    <mat-checkbox formControlName="allEmails" (change)="getEmailsDB()">Mostrar los correos electrónicos de todos los estudantes de la materia</mat-checkbox>
                 </div>
             </div>
             <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
@@ -102,8 +123,15 @@
                     <owl-date-time #dtRange1></owl-date-time>
                 </mat-form-field>
             </div>
-            <button mat-raised-button color="primary" type="button" (click)="saveSurveyConfig()" class="form-button" [disabled]="!configForm.valid">Guardar configuración</button>
-            <button mat-raised-button color="primary" type="button" (click)="saveConfigAndSendSurvey()" class="form-button" [disabled]="!configForm.valid">Guardar configuración y enviar encuesta</button>
+            <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
+                <div class="container-formSurveyAllStudents">
+                    <mat-checkbox formControlName="allPrograms" (change)="allPrograms()">Aplicar configuración para todas las materias de todos los programas</mat-checkbox>
+                </div>
+            </div>
+            <div class="buttons">
+                <button mat-raised-button color="primary" type="button" (click)="saveSurveyConfig()" class="form-button" [disabled]="!configFormValid()">Guardar configuración</button>
+                <button mat-raised-button color="primary" type="button" (click)="saveConfigAndSendSurvey()" class="form-button" [disabled]="!configFormValid()">Guardar configuración y enviar encuesta</button>
+            </div>
         </form>
     </div>
 </div>

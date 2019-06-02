@@ -80,6 +80,13 @@ public class StudentService {
 		Aggregation aggregation = Aggregation.newAggregation(filter, group, sort);
 		return mongoTemplate.aggregate(aggregation, "student", Group.class).getMappedResults();
 	}
+	
+	public List<Group> getAllGroupsByMatterByProgram() {
+		GroupOperation group = Aggregation.group("codigoPrograma", "codigoMateria", "grupo")
+				.first("codigoPrograma").as("programCode").first("grupo").as("code").first("codigoMateria").as("matterCode");
+		Aggregation aggregation = Aggregation.newAggregation(group);
+		return mongoTemplate.aggregate(aggregation, "student", Group.class).getMappedResults();
+	}
 
 	public List<Student> getEmailsByMatterAndGroup(int matter, int group) {
 		GroupOperation groupOp = Aggregation.group("cedula").first("emailInstitu").as("emailInstitu").first("email").as("email").first("cedula").as("cedula");
