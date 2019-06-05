@@ -21,6 +21,11 @@ export class TemplatesService {
     return this.http.get<Template>('template/byname/' + name, this.utilService.getRequestOptions());
   }
 
+  getByNameNoCache(name: string): Observable<Template> {
+    return this.restangular.one('template/byname/', name).get();
+    //return this.http.get<Template>('template/byname/' + name + '?nochache=true', this.utilService.getRequestOptions());
+  }
+
   getPublicTemplateByName(name: string): Observable<Template> {
     return this.http.get<Template>('template/public/byname/' + name, this.utilService.getRequestOptions());
   }

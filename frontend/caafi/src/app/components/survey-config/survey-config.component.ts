@@ -118,7 +118,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
     this.toggleLoading(true);
 
     if (this.isMattersSurvery) {
-      this.templatesService.getByName(formId)
+      this.templatesService.getByNameNoCache(formId)
       .subscribe(template => {
         this.utilService.loadTemplateFeatures(template, false);
         this.template = template;
