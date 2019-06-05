@@ -372,7 +372,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
         conf['subject'] = this.configForm.get('subject').value;
         conf['message'] = this.configForm.get('message').value;
         conf['dateRange'] = this.configForm.get('dateTimeRange').value;
-        conf['url'] = httpBaseURL + '/encuestas/' + this.dependencyId + '/' + this.surveyType + '/' + this.formId;
+        conf['url'] = 'http://ingenieria2.udea.edu.co/caafi' + '/encuestas/' + this.dependencyId + '/' + this.surveyType + '/' + this.formId;
         conf['program'] = this.program;
         conf['matter'] = this.matter;
         conf['group'] = this.group;
@@ -382,7 +382,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
         conf['subject'] = this.configForm.get('subject').value;
         conf['message'] = this.configForm.get('message').value;
         conf['dateRange'] = this.configForm.get('dateTimeRange').value;
-        conf['url'] = httpBaseURL + '/encuestas/' + this.dependencyId + '/' + this.surveyType + '/' + this.formId + '/' + Date.now();
+        conf['url'] = 'http://ingenieria2.udea.edu.co/caafi' + '/encuestas/' + this.dependencyId + '/' + this.surveyType + '/' + this.formId + '/' + Date.now();
         conf['configId'] = this.dependencyId + '+' + this.surveyType + '+' + this.formId;
       }
       data.config.push(conf);
