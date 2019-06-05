@@ -441,6 +441,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
           }
         } else {
           this.showProgress = false;
+          this.progressMode = 'query';
           this.notifier.notify('success', 'OK: Encuesta enviada satisfactoriamente. Total enviados: ' + result['sended']);
           clearInterval(progressInterval);
         }

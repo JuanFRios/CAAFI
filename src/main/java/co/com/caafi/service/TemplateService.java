@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -40,6 +42,8 @@ public class TemplateService {
 	
 	@Autowired
     private TaskExecutor taskExecutor;
+	
+	Logger logger = LoggerFactory.getLogger(TemplateService.class);
 
 	public Template findByName(String name) {
 		return this.templateRepository.findByName(name).get(0);
@@ -86,60 +90,32 @@ public class TemplateService {
 	
 	private void sendStudentsEmails(Template template) {
 		Map<String, Object> config = template.getConfig().get(0);
-		config.put("sending", true);
-		config.put("sending-percentage", -1);
-		updateConfig(template);
-		
-		List<Student> students = this.studentService.findAll();
-		int total = 1000;//students.size();
-		int count = 0;
 		int sended = 0;
-		config.put("sending-percentage", 0);
-		updateConfig(template);
-		for (Student student: students) {
-			String url = ((String) config.get("url")) + "/" + student.getCodigoPrograma() + "/" + student.getCodigoMateria() +
-					"/" + student.getGrupo() + "/" + student.getCedula();
-			
-			// Envio a emails personales
-			/*
-			if (student.getEmail() != null && !"".equals(student.getEmail())) {
-				emailService.sendEmail(student.getEmail(), 
-						((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", group.getNombreMateria()), 
-						((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
-							.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
-			}
-			*/
-			
-			// Envio a emails institucionales
-			if (student.getEmailInstitucional() != null && !"".equals(student.getEmailInstitucional())) {
-				emailService.sendEmail(student.getEmailInstitucional(), 
-						((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", student.getNombreMateria()), 
-						((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
-							.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
-				sended++;
-			}
-			count++;
-			int current = (count * 100) / total;
-			config.put("sending-percentage", current);
-			updateConfig(template);
-			if (count == 1000) break;
-		}
-		
 		config.put("sending", false);
-		config.put("sended", sended);
+		config.put("sending-percentage", 50);
+		config.put("sended", 666);
 		updateConfig(template);
-		
 		/*
-		List<Group> groups = this.studentService.getAllGroupsByMatterByProgram();
-		for (Group group: groups) {
-			List<Student> students = studentService.getEmailsByProgramAndMatterAndGroup(Integer.parseInt(group.getProgramCode()), 
-					Integer.parseInt(group.getMatterCode()), Integer.parseInt(group.getCode()));
-			for (Student student : students) {
-				
-				String url = ((String) config.get("url")) + "/" + group.getProgramCode() + "/" + group.getMatterCode() +
-						"/" + group.getCode() + "/" + student.getCedula();
+		try {
+			config.put("sending", true);
+			config.put("sending-percentage", -1);
+			updateConfig(template);
+			List<Student> students = null;
+			if (config.get("test") != null && ((boolean) config.get("test"))) {
+				students = this.studentService.findByCedula(1061732895);
+			} else {
+				students = this.studentService.findAll();
+			}
+			int total = students.size();
+			int count = 0;
+			config.put("sending-percentage", 0);
+			updateConfig(template);
+			for (Student student: students) {
+				String url = ((String) config.get("url")) + "/" + student.getCodigoPrograma() + "/" + student.getCodigoMateria() +
+						"/" + student.getGrupo() + "/" + student.getCedula();
 				
 				// Envio a emails personales
+				
 				if (student.getEmail() != null && !"".equals(student.getEmail())) {
 					emailService.sendEmail(student.getEmail(), 
 							((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", group.getNombreMateria()), 
@@ -147,14 +123,30 @@ public class TemplateService {
 								.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
 				}
 				
+				
 				// Envio a emails institucionales
 				if (student.getEmailInstitucional() != null && !"".equals(student.getEmailInstitucional())) {
 					emailService.sendEmail(student.getEmailInstitucional(), 
-							((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", group.getNombreMateria()), 
+							((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", student.getNombreMateria()), 
 							((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
 								.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
+					sended++;
 				}
+				count++;
+				int current = (count * 100) / total;
+				config.put("sending-percentage", current);
+				updateConfig(template);
 			}
+			
+			config.put("sending", false);
+			config.put("sended", sended);
+			updateConfig(template);
+		} catch (Exception e) {
+			logger.error("Error en envío de correos de encuestas, error: " + e.getMessage());
+			config.put("sending-error", e.getMessage());
+			config.put("sending", false);
+			config.put("sended", sended);
+			updateConfig(template);
 		}
 		*/
 	}

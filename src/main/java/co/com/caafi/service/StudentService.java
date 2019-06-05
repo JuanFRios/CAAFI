@@ -144,4 +144,8 @@ public class StudentService {
 		return studentRepository.findAll();
 	}
 
+	public List<Student> findByCedula(int cedula) {
+		return this.studentRepository.findByCedula(cedula);
+	}
+
 }
