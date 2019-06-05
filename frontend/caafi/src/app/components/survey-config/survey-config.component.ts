@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { TemplatesService } from '../../services/templates.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { httpBaseURL } from '../../common/baseurl';
+//import { httpBaseURL } from '../../common/baseurl';
 import { UtilService } from '../../services/util.service';
 import { NotifierService } from 'angular-notifier';
 import { LoginService } from '../../services/login.service';
