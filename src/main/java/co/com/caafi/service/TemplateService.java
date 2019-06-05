@@ -43,6 +43,9 @@ public class TemplateService {
 	@Autowired
     private TaskExecutor taskExecutor;
 	
+	@Autowired
+	private ConfigService configService;
+	
 	Logger logger = LoggerFactory.getLogger(TemplateService.class);
 
 	public Template findByName(String name) {
@@ -91,17 +94,13 @@ public class TemplateService {
 	private void sendStudentsEmails(Template template) {
 		Map<String, Object> config = template.getConfig().get(0);
 		int sended = 0;
-		config.put("sending", false);
-		config.put("sending-percentage", 50);
-		config.put("sended", 666);
-		updateConfig(template);
-		/*
 		try {
 			config.put("sending", true);
 			config.put("sending-percentage", -1);
+			config.put("sended", sended);
 			updateConfig(template);
 			List<Student> students = null;
-			if (config.get("test") != null && ((boolean) config.get("test"))) {
+			if ((boolean) this.configService.findParamByName("TESTING")) {
 				students = this.studentService.findByCedula(1061732895);
 			} else {
 				students = this.studentService.findAll();
@@ -115,14 +114,14 @@ public class TemplateService {
 						"/" + student.getGrupo() + "/" + student.getCedula();
 				
 				// Envio a emails personales
-				
+				/*
 				if (student.getEmail() != null && !"".equals(student.getEmail())) {
 					emailService.sendEmail(student.getEmail(), 
 							((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", group.getNombreMateria()), 
 							((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
 								.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
 				}
-				
+				*/
 				
 				// Envio a emails institucionales
 				if (student.getEmailInstitucional() != null && !"".equals(student.getEmailInstitucional())) {
@@ -148,7 +147,6 @@ public class TemplateService {
 			config.put("sended", sended);
 			updateConfig(template);
 		}
-		*/
 	}
 
 	private Map<String, Object> getTemplateConfigByConfigId(String templateName, String configId) {
