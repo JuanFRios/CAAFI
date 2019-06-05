@@ -4,15 +4,16 @@ public class Student {
 
 	private String cedula;
 	private int semestre;
+	private String nombreProgramaOriginal;
     private String nombrePrograma;
     private int codigoPrograma;
     private int codigoMateria;
     private String nombreMateria;
     private int grupo;    
     private String nombrePila;
-    private String primApellido;
-    private String sdoApellido;
-    private String emailInstitu;
+    private String primerApellido;
+    private String segundoApellido;
+    private String emailInstitucional;
     private String email;
     
 	public int getSemestre() {
@@ -57,24 +58,6 @@ public class Student {
 	public void setNombrePila(String nombrePila) {
 		this.nombrePila = nombrePila;
 	}
-	public String getPrimApellido() {
-		return primApellido;
-	}
-	public void setPrimApellido(String primApellido) {
-		this.primApellido = primApellido;
-	}
-	public String getSdoApellido() {
-		return sdoApellido;
-	}
-	public void setSdoApellido(String sdoApellido) {
-		this.sdoApellido = sdoApellido;
-	}
-	public String getEmailInstitu() {
-		return emailInstitu;
-	}
-	public void setEmailInstitu(String emailInstitu) {
-		this.emailInstitu = emailInstitu;
-	}
 	public String getEmail() {
 		return email;
 	}
@@ -86,6 +69,30 @@ public class Student {
 	}
 	public void setCodigoPrograma(int codigoPrograma) {
 		this.codigoPrograma = codigoPrograma;
+	}
+	public String getNombreProgramaOriginal() {
+		return nombreProgramaOriginal;
+	}
+	public void setNombreProgramaOriginal(String nombreProgramaOriginal) {
+		this.nombreProgramaOriginal = nombreProgramaOriginal;
+	}
+	public String getPrimerApellido() {
+		return primerApellido;
+	}
+	public void setPrimerApellido(String primerApellido) {
+		this.primerApellido = primerApellido;
+	}
+	public String getEmailInstitucional() {
+		return emailInstitucional;
+	}
+	public void setEmailInstitucional(String emailInstitucional) {
+		this.emailInstitucional = emailInstitucional;
+	}
+	public String getSegundoApellido() {
+		return segundoApellido;
+	}
+	public void setSegundoApellido(String segundoApellido) {
+		this.segundoApellido = segundoApellido;
 	}
 
 }

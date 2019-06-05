@@ -30,6 +30,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
   isSaved = false;
   isError = false;
   configId = null;
+  formlyName = null;
 
   constructor(
     private templatesService: TemplatesService,
@@ -50,14 +51,14 @@ export class SurveyComponent implements OnInit, OnDestroy {
       this.type = params.get('type');
       if (this.formId != null && this.dependency != null && this.type != null) {
         // Validar formulario, dependencia y tipo
+        this.configId =  this.dependency + '+' + this.type + '+' + this.formId;
         if (this.formId === 'encuesta-de-materias') {
           this.program = params.get('program');
           this.matter = params.get('matter');
           this.group = params.get('group');
           this.cedula = params.get('cedula');
           if (this.program != null && this.matter != null && this.group != null) {
-            this.configId =  this.dependency + '+' + this.type + '+' + this.formId + '+'
-              + this.program + '+' + this.matter + '+' + this.group;
+            this.formlyName = this.configId + '+' + this.program + '+' + this.matter + '+' + this.group;
             if (this.cedula != null) {
               this.validateRegister().then(result => {
                 if (result) {
@@ -74,7 +75,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
             }
           }
         } else {
-          this.configId =  this.dependency + '+' + this.type + '+' + this.formId;
+          this.formlyName = this.configId;
           this.dataLoaded = true;
           this.loadTemplate();
         }

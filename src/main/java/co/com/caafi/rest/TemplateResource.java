@@ -1,6 +1,7 @@
 package co.com.caafi.rest;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -71,6 +72,12 @@ public class TemplateResource {
 	@RequestMapping(path = "/config/{template}/{configId}", method = RequestMethod.GET)
 	public Template getTemplateConfig(@PathVariable String template, @PathVariable String configId) {
 		return templateService.findTemplateConfig(template, configId);
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/sendingprogress/{template}", method = RequestMethod.GET)
+	public Map<String, Object> getSendingProgress(@PathVariable String template) {
+		return templateService.getSendingProgress(template);
 	}
 	
 	@CrossOrigin(origins = "*")

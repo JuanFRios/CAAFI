@@ -29,7 +29,7 @@ public class StudentService {
 	StudentRepository studentRepository;
 	
 	public List<Student> getStudentsByProgram(String programa) {	
-		GroupOperation group = Aggregation.group("cedula", "email", "emailInstitu");
+		GroupOperation group = Aggregation.group("cedula", "email", "emailInstitucional");
 		MatchOperation filter = Aggregation.match(new Criteria("programa").is(programa));
 		Aggregation aggregation = Aggregation.newAggregation(filter, group);
 		return mongoTemplate.aggregate(aggregation, "student", Student.class).getMappedResults();
@@ -59,9 +59,9 @@ public class StudentService {
 	}
 
 	public List<Student> getEmailsByProgramAndMatterAndGroup(int program, int matter, int group) {
-		GroupOperation groupOp = Aggregation.group("cedula").first("emailInstitu").as("emailInstitu").first("email").as("email").first("cedula").as("cedula");
+		GroupOperation groupOp = Aggregation.group("cedula").first("emailInstitucional").as("emailInstitucional").first("email").as("email").first("cedula").as("cedula");
 		MatchOperation filter = Aggregation.match(new Criteria("codigoPrograma").is(program).and("codigoMateria").is(matter).and("grupo").is(group));
-		SortOperation sort = Aggregation.sort(Direction.ASC, "emailInstitu");
+		SortOperation sort = Aggregation.sort(Direction.ASC, "emailInstitucional");
 		Aggregation aggregation = Aggregation.newAggregation(filter, groupOp, sort);
 		return mongoTemplate.aggregate(aggregation, "student", Student.class).getMappedResults();
 	}
@@ -83,15 +83,16 @@ public class StudentService {
 	
 	public List<Group> getAllGroupsByMatterByProgram() {
 		GroupOperation group = Aggregation.group("codigoPrograma", "codigoMateria", "grupo")
-				.first("codigoPrograma").as("programCode").first("grupo").as("code").first("codigoMateria").as("matterCode");
+				.first("codigoPrograma").as("programCode").first("grupo").as("code").first("codigoMateria").as("matterCode")
+				.first("nombreMateria").as("nombreMateria");
 		Aggregation aggregation = Aggregation.newAggregation(group);
 		return mongoTemplate.aggregate(aggregation, "student", Group.class).getMappedResults();
 	}
 
 	public List<Student> getEmailsByMatterAndGroup(int matter, int group) {
-		GroupOperation groupOp = Aggregation.group("cedula").first("emailInstitu").as("emailInstitu").first("email").as("email").first("cedula").as("cedula");
+		GroupOperation groupOp = Aggregation.group("cedula").first("emailInstitucional").as("emailInstitucional").first("email").as("email").first("cedula").as("cedula");
 		MatchOperation filter = Aggregation.match(new Criteria("codigoMateria").is(matter).and("grupo").is(group));
-		SortOperation sort = Aggregation.sort(Direction.ASC, "emailInstitu");
+		SortOperation sort = Aggregation.sort(Direction.ASC, "emailInstitucional");
 		Aggregation aggregation = Aggregation.newAggregation(filter, groupOp, sort);
 		return mongoTemplate.aggregate(aggregation, "student", Student.class).getMappedResults();
 	}
@@ -115,7 +116,7 @@ public class StudentService {
 	public List<Student> getStudentByEmail(String email) {
 		GroupOperation group = Aggregation.group("cedula").first("cedula").as("cedula");
 		MatchOperation filter = Aggregation.match(new Criteria().orOperator(
-				new Criteria("email").is(email), new Criteria("emailInstitu").is(email)));
+				new Criteria("email").is(email), new Criteria("emailInstitucional").is(email)));
 		SortOperation sort = Aggregation.sort(Direction.ASC, "cedula");
 		Aggregation aggregation = Aggregation.newAggregation(filter, group, sort);
 		return mongoTemplate.aggregate(aggregation, "student", Student.class).getMappedResults();
@@ -137,6 +138,10 @@ public class StudentService {
 
 	public Optional<Student> getGroupByProgramAndMatterAndGroup(int program, int matter, int group) {
 		return this.studentRepository.findByCodigoProgramaAndCodigoMateriaAndGrupo(program, matter, group);
+	}
+
+	public List<Student> findAll() {
+		return studentRepository.findAll();
 	}
 
 }

@@ -1,22 +1,34 @@
 package co.com.caafi.service;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.CriteriaDefinition;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.wnameless.json.flattener.JsonFlattener;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.CommandResult;
 
 import co.com.caafi.model.User;
 import co.com.caafi.model.template.FormData;
@@ -35,6 +47,8 @@ public class DataService {
     
     @Autowired
     LogService logService;
+    
+    Logger logger = LoggerFactory.getLogger(DataService.class);
 
     public FormData findById(String id) {
         return this.dataRepository.findById(id);
@@ -243,5 +257,112 @@ public class DataService {
 
 	public Optional<FormData> getByFormAndCreator(String formId, String creator) {
 		return this.dataRepository.findByOriginAndCreator(formId, creator);
+	}
+
+	public List<Object> findByCollection(String collection, String sortColumn, String sortOrder, int pageNumber,
+			int pageSize, String filters) {
+		
+		// Order
+		Sort sort = getSort(sortColumn, sortOrder);
+		
+		// Pagination
+		Pageable pageable = new PageRequest(pageNumber, pageSize, sort);
+		
+		// Query
+		Query query = new Query();
+		query.with(sort);
+		query.with(pageable);
+		
+		// Criteria
+		try {
+			JSONObject jsonFilters = new JSONObject(filters);
+			Iterator<String> keys = jsonFilters.keys();
+			while(keys.hasNext()) {
+			    String key = keys.next();
+			    query.addCriteria(getCriteria(key, (String) jsonFilters.get(key)));
+			}
+		} catch (JSONException e) {
+			logger.error("Error convirtiendo los filtros en objeto json, error: " + e.getMessage(), e);
+		}
+		
+		// Fields
+		query.fields().exclude("_id");
+		
+		// Execution
+		return this.mongoTemplate.find(query, Object.class, collection);
+	}
+	
+	public CriteriaDefinition getCriteria(String filter, String value) {
+		String[] entryKey = filter.split("-");
+		String filterType = entryKey[0];
+		String filterName = entryKey[1];
+		switch(filterType) {
+		case "te": // Text Equals
+			return Criteria.where(filterName).is(value);
+		/*
+		case "tea": // Text Equals All
+			if(!((String)entry.getValue()).isEmpty()) {
+				filtersWhere += " && JSON.stringify(this.data).toLowerCase().indexOf( \\\"" + (String) entry.getValue() + "\\\".toLowerCase() ) != -1";
+			}
+			break;
+		case "tge": // Text Greater or Equals than
+			if(!((String)entry.getValue()).isEmpty()) {
+				filtersWhere += " && this.data." + name + " >= \\\"" + (String) entry.getValue() + "\\\"";
+			}
+			break;
+		case "tle": // Text Less or Equals than
+			if(!((String)entry.getValue()).isEmpty()) {
+				filtersWhere += " && this.data." + name + " <= \\\"" + (String) entry.getValue() + "\\\"";
+			}
+			break;
+		case "tl": // Text Like
+			if(!((String)entry.getValue()).isEmpty()) {
+				filtersWhere += " && this.data." + name + ".toLowerCase().indexOf( \\\"" + (String) entry.getValue() + "\\\".toLowerCase() ) != -1";
+			}
+			break;
+		case "tll": // Text Like List
+			List<String> list = (List<String>) entry.getValue();
+			if(!list.isEmpty()) {
+				filtersWhere += " && ( false";
+				for(String listItem : list) {
+					filtersWhere += " || (this.data." + name + " ? JSON.stringify(this.data." + name + ").toLowerCase().indexOf( \\\"" + listItem + "\\\".toLowerCase() ) != -1 : false)";
+				}
+				filtersWhere += " )";
+			}
+			break;
+		case "dge": // Date Greater or Equals than
+			if(!((String)entry.getValue()).isEmpty()) {
+				filtersWhere += " && new Date(this.data." + name + ").getTime() >= new Date(\\\"" + (String) entry.getValue() + "\\\").getTime()";
+			}
+			break;
+		case "dle": // Date Less or Equals than
+			if(!((String)entry.getValue()).isEmpty()) {
+				filtersWhere += " && new Date(this.data." + name + ").getTime() <= new Date(\\\"" + (String) entry.getValue() + "\\\").getTime()";
+			}
+			break;
+		case "dage": // Date Greater or Equals than - saved date
+			if(!((String)entry.getValue()).isEmpty()) {
+				filtersWhere += " && new Date(this." + name + ").getTime() >= new Date(\\\"" + (String) entry.getValue() + "\\\").getTime()";
+			}
+			break;
+		case "dale": // Date Less or Equals than - saved date
+			if(!((String)entry.getValue()).isEmpty()) {
+				filtersWhere += " && new Date(this." + name + ").getTime() <= new Date(\\\"" + (String) entry.getValue() + "\\\").getTime()";
+			}
+			break;
+		case "nge": // Number Greater or Equals than
+			if(!((String)entry.getValue()).isEmpty()) {
+				filtersWhere += " && this.data." + name + " >= " + (String) entry.getValue();
+			}
+			break;
+		case "nle": // Number Less or Equals than
+			if(!((String)entry.getValue()).isEmpty()) {
+				filtersWhere += " && this.data." + name + " <= " + (String) entry.getValue();
+			}
+			break;
+		*/
+		default:
+			return null;
+		}
 	}
 }

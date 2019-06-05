@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -36,6 +37,9 @@ public class TemplateService {
 	
 	@Autowired
 	private StudentService studentService;
+	
+	@Autowired
+    private TaskExecutor taskExecutor;
 
 	public Template findByName(String name) {
 		return this.templateRepository.findByName(name).get(0);
@@ -54,50 +58,110 @@ public class TemplateService {
 	}
 
 	public StringResponse sendTemplateByMail(String templateName, String configId) {
-		Map<String, Object> config = getTemplateConfigByConfigId(templateName, configId);
-		String[] emailsSpl = ((String) config.get("emails")).split(",");
-		for(String email : emailsSpl) {
-			String url = ((String) config.get("url"));
-			if ("encuesta-de-materias".equals(templateName)) {
-				List<Student> students = studentService.getStudentByEmail(email);
-				if (!students.isEmpty()) {
-					url += "/" + students.get(0).getCedula();
+		List<Template> lstTemplate = this.templateRepository.findByName(templateName);
+		if (lstTemplate != null && !lstTemplate.isEmpty()) {
+			Template template = lstTemplate.get(0);
+			List<Map<String, Object>> configs = template.getConfig();
+			if (configs != null && !configs.isEmpty()) {
+				Map<String, Object> config = configs.get(0);
+				if ("encuesta-de-materias".equals(templateName)) {
+					taskExecutor.execute(new Runnable() {
+			            @Override
+			            public void run() {
+			            	sendStudentsEmails(template);
+			            }
+			        });
+				} else {
+					String[] emailsSpl = ((String) config.get("emails")).split(",");
+					for(String email : emailsSpl) {
+						String url = ((String) config.get("url"));
+						emailService.sendEmail(email, (String) config.get("subject"), 
+								(String) config.get("message") + "\n\n" + url);
+					}
 				}
 			}
-			emailService.sendEmail(email, (String) config.get("subject"), 
-					(String) config.get("message") + "\n\n" + url);
 		}
-		//sendStudentsEmails(config);
 		return new StringResponse("OK");
 	}
 	
-	private void sendStudentsEmails(Map<String, Object> config) {
-		List<Student> students = null;
-		if (((boolean) config.get("allEmails")) && !((boolean) config.get("allPrograms"))) {
-			students = studentService.getEmailsByMatterAndGroup(Integer.parseInt((String) config.get("matter")), Integer.parseInt((String) config.get("group")));
-		} else {
-			students = studentService.getEmailsByProgramAndMatterAndGroup(Integer.parseInt((String) config.get("program")), Integer.parseInt((String) config.get("matter")), Integer.parseInt((String) config.get("group")));
-		}
-		for (Student student : students) {
-			String url = ((String) config.get("url")) + "/" + student.getCedula();
+	private void sendStudentsEmails(Template template) {
+		Map<String, Object> config = template.getConfig().get(0);
+		config.put("sending", true);
+		config.put("sending-percentage", -1);
+		updateConfig(template);
+		
+		List<Student> students = this.studentService.findAll();
+		int total = 1000;//students.size();
+		int count = 0;
+		int sended = 0;
+		config.put("sending-percentage", 0);
+		updateConfig(template);
+		for (Student student: students) {
+			String url = ((String) config.get("url")) + "/" + student.getCodigoPrograma() + "/" + student.getCodigoMateria() +
+					"/" + student.getGrupo() + "/" + student.getCedula();
+			
 			// Envio a emails personales
 			/*
 			if (student.getEmail() != null && !"".equals(student.getEmail())) {
-				emailService.sendEmail(student.getEmail(), (String) config.get("subject"), 
-						(String) config.get("message") + "\n\n" + url);
+				emailService.sendEmail(student.getEmail(), 
+						((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", group.getNombreMateria()), 
+						((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
+							.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
 			}
 			*/
+			
 			// Envio a emails institucionales
-			if (student.getEmailInstitu() != null && !"".equals(student.getEmailInstitu())) {
-				emailService.sendEmail(student.getEmailInstitu(), (String) config.get("subject"), 
-						(String) config.get("message") + "\n\n" + url);
+			if (student.getEmailInstitucional() != null && !"".equals(student.getEmailInstitucional())) {
+				emailService.sendEmail(student.getEmailInstitucional(), 
+						((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", student.getNombreMateria()), 
+						((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
+							.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
+				sended++;
+			}
+			count++;
+			int current = (count * 100) / total;
+			config.put("sending-percentage", current);
+			updateConfig(template);
+			if (count == 1000) break;
+		}
+		
+		config.put("sending", false);
+		config.put("sended", sended);
+		updateConfig(template);
+		
+		/*
+		List<Group> groups = this.studentService.getAllGroupsByMatterByProgram();
+		for (Group group: groups) {
+			List<Student> students = studentService.getEmailsByProgramAndMatterAndGroup(Integer.parseInt(group.getProgramCode()), 
+					Integer.parseInt(group.getMatterCode()), Integer.parseInt(group.getCode()));
+			for (Student student : students) {
+				
+				String url = ((String) config.get("url")) + "/" + group.getProgramCode() + "/" + group.getMatterCode() +
+						"/" + group.getCode() + "/" + student.getCedula();
+				
+				// Envio a emails personales
+				if (student.getEmail() != null && !"".equals(student.getEmail())) {
+					emailService.sendEmail(student.getEmail(), 
+							((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", group.getNombreMateria()), 
+							((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
+								.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
+				}
+				
+				// Envio a emails institucionales
+				if (student.getEmailInstitucional() != null && !"".equals(student.getEmailInstitucional())) {
+					emailService.sendEmail(student.getEmailInstitucional(), 
+							((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", group.getNombreMateria()), 
+							((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
+								.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
+				}
 			}
 		}
+		*/
 	}
 
 	private Map<String, Object> getTemplateConfigByConfigId(String templateName, String configId) {
 		Template template = findTemplateConfig(templateName, configId);
-		if (template.getConfig() != null) {
+		if (template != null && template.getConfig() != null) {
 			return template.getConfig().get(0);
 		}
 		return null;
@@ -106,37 +170,34 @@ public class TemplateService {
 	public StringResponse save(Template data, User user) {
 		Template template = findByName(data.getName());
 		List<Map<String, Object>> configs = template.getConfig();
-		if ("encuesta-de-materias".equals(template.getName()) && (Boolean) data.getConfig().get(0).get("allPrograms")) {
+		if (configs == null) {
 			configs = new ArrayList<Map<String, Object>>();
-			String[] arrConfigId = ((String) data.getConfig().get(0).get("configId")).split("\\+");
-			String preConfigId = arrConfigId[0] + "+" + arrConfigId[1] + "+" + arrConfigId[2];
-			List<Group> allGroups = studentService.getAllGroupsByMatterByProgram();	
-			for (Group group : allGroups) {
-				Map<String, Object> config = new HashMap<String, Object>(data.getConfig().get(0));
-				config.replace("configId", preConfigId + "+" + group.getProgramCode() + "+" + group.getMatterCode() + "+" + group.getCode());
-				configs.add(config);
+		}
+		int pos = 0;
+		for (Map<String, Object> config : configs) {
+			if (config.get("configId").equals(data.getConfig().get(0).get("configId"))) {
+				configs.set(pos, data.getConfig().get(0));
+				break;
 			}
-		} else {
-			if (configs == null) {
-				configs = new ArrayList<Map<String, Object>>();
-			}
-			int pos = 0;
-			for (Map<String, Object> config : configs) {
-				if (config.get("configId").equals(data.getConfig().get(0).get("configId"))) {
-					configs.set(pos, data.getConfig().get(0));
-					break;
-				}
-				pos++;
-			}
-			if (pos == configs.size()) {
-				configs.add(data.getConfig().get(0));
-			}
+			pos++;
+		}
+		if (pos == configs.size()) {
+			configs.add(data.getConfig().get(0));
 		}
 		Query query = new Query();
 		query.addCriteria(Criteria.where("name").is(data.getName()));
 		Update update = new Update();
 		data.getConfig().get(0).put("configCreator", user.getDocument());
 		update.set("config", configs);
+		WriteResult result = mongoTemplate.updateFirst(query, update, Template.class);
+		return new StringResponse(result == null ? "0" : result.getN() + "");
+    }
+	
+	public StringResponse updateConfig(Template template) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("name").is(template.getName()));
+		Update update = new Update();
+		update.set("config", template.getConfig());
 		WriteResult result = mongoTemplate.updateFirst(query, update, Template.class);
 		return new StringResponse(result == null ? "0" : result.getN() + "");
     }
@@ -151,6 +212,10 @@ public class TemplateService {
 
 	public Template findTemplateConfig(String template, String configId) {
 		return this.templateRepository.findByNameAndConfigId(template, configId);
+	}
+	
+	public Map<String, Object> getSendingProgress(String template) {
+		return this.templateRepository.findConfigSendingProgressByName(template).getConfig().get(0);
 	}
 
 	public Template findTemplateWithoutConfig(String template) {

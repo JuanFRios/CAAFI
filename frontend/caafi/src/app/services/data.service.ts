@@ -35,6 +35,14 @@ export class DataService {
     + pageNumber + '&pageSize=' + pageSize + '&filters=' + filters + '&dependency=' + dependencyName).get();
   }
 
+  getAllByCollection(collection: string, sortColumn: string, sortOrder: string, pageNumber: number,
+    pageSize: number, filters: string): Observable<any[]> {
+
+    return this.restangular.one('data/bycollection/' + collection + '?sortColumn=' + sortColumn +
+      '&sortOrder=' + sortOrder + '&pageNumber=' + pageNumber + '&pageSize=' + pageSize +
+      '&filters=' + filters).get();
+  }
+
   getByJson(json: string, fields: string): Observable<any[]> {
     return this.restangular.all('data/byJson/'
       + json + '/' + fields).getList();

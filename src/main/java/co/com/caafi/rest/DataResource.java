@@ -92,4 +92,15 @@ public class DataResource {
 	public Optional<FormData> getByFormAndCreator(@PathVariable String formId, @PathVariable String creator) {
 		return dataService.getByFormAndCreator(formId, creator);
 	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/bycollection/{collection}", method = RequestMethod.GET)
+	public List<Object> findByCollection(@PathVariable String collection,
+			@RequestParam(value = "sortColumn", defaultValue = "savedDate") final String sortColumn, 
+			@RequestParam(value = "sortOrder", defaultValue = "desc") final String sortOrder, 
+			@RequestParam(value = "pageNumber", defaultValue = "0") final int pageNumber, 
+			@RequestParam(value = "pageSize", defaultValue = "5") final int pageSize,
+			@RequestParam(value = "filters", defaultValue = "{}") String filters) {
+		return dataService.findByCollection(collection, sortColumn, sortOrder, pageNumber, pageSize, filters);
+	}
 }

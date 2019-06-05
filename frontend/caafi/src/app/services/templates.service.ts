@@ -43,6 +43,11 @@ export class TemplatesService {
     return this.http.get<Template>('template/config/' + formId + '/' + configId, this.utilService.getRequestOptions());
   }
 
+  getTemplateSendingProgress(formId: string) {
+    return this.restangular.one('template/sendingprogress/', formId).get();
+    //return this.http.get<Template>('template/sendingprogress/' + formId, this.utilService.getRequestOptions());
+  }
+
   getTemplateWithoutConfig(formId: string) {
     return this.http.get<Template>('template/withoutconfig/' + formId, this.utilService.getRequestOptions());
   }

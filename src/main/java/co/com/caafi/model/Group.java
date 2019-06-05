@@ -5,6 +5,7 @@ public class Group {
 	private String code;
 	private String matterCode;
 	private String programCode;
+	private String nombreMateria;
 
 	public String getCode() {
 		return code;
@@ -28,6 +29,14 @@ public class Group {
 
 	public void setProgramCode(String programCode) {
 		this.programCode = programCode;
+	}
+
+	public String getNombreMateria() {
+		return nombreMateria;
+	}
+
+	public void setNombreMateria(String nombreMateria) {
+		this.nombreMateria = nombreMateria;
 	}
 	
 }

@@ -83,25 +83,27 @@
         </div>
 
         <hr>
-        <h4>Configuración de la Encuesta</h4>
-        <form [formGroup]="configForm">
-            <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
-                <div class="container-formSurveyAllStudents">
-                    <mat-checkbox formControlName="allEmails" (change)="getEmailsDB()">Mostrar los correos electrónicos de todos los estudantes de la materia</mat-checkbox>
-                </div>
+        <h4>Correos electrónicos de estudiantes</h4>
+        <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
+            <div class="container-formSurveyAllStudents">
+                <mat-checkbox [(ngModel)]="allEmails" (change)="getEmailsDB()">Mostrar los correos electrónicos de todos los estudantes de la materia</mat-checkbox>
             </div>
-            <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
-                <div class="container-formSurveyEmailsDB">
-                    <mat-form-field>
-                        <textarea formControlName="emailsDB" matInput #survey_emailsDB placeholder="Correos electrónicos cargados de archivo"></textarea>
-                    </mat-form-field>
-                </div>
-            </div>
-            <div *ngIf="isMattersSurvery" class="container-formSurveyEmails">
+        </div>
+        <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
+            <div class="container-formSurveyEmailsDB">
                 <mat-form-field>
-                    <textarea formControlName="emails" matInput #survey_emails placeholder="Otros Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
+                    <textarea [(ngModel)]="emailsDB" matInput #survey_emailsDB placeholder="" [disabled]="true"></textarea>
                 </mat-form-field>
             </div>
+        </div>
+
+        <!--
+        <app-table #dataTable collection="student" [export]="true"></app-table>
+        -->
+
+        <hr>
+        <h4>Configuración de la Encuesta</h4>
+        <form [formGroup]="configForm">
             <div *ngIf="!isMattersSurvery" class="container-formSurveyEmails">
                 <mat-form-field>
                     <textarea formControlName="emails" matInput #survey_emails placeholder="Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
@@ -123,11 +125,7 @@
                     <owl-date-time #dtRange1></owl-date-time>
                 </mat-form-field>
             </div>
-            <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
-                <div class="container-formSurveyAllStudents">
-                    <mat-checkbox formControlName="allPrograms" (change)="allPrograms()">Aplicar configuración para todas las materias de todos los programas</mat-checkbox>
-                </div>
-            </div>
+            <mat-progress-bar *ngIf="showProgress" [mode]="progressMode" [value]="sendingProgressValue"></mat-progress-bar>
             <div class="buttons">
                 <button mat-raised-button color="primary" type="button" (click)="saveSurveyConfig()" class="form-button" [disabled]="!configFormValid()">Guardar configuración</button>
                 <button mat-raised-button color="primary" type="button" (click)="saveConfigAndSendSurvey()" class="form-button" [disabled]="!configFormValid()">Guardar configuración y enviar encuesta</button>
