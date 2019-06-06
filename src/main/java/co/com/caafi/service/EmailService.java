@@ -27,12 +27,12 @@ public class EmailService {
 		MimeMessage message = emailSender.createMimeMessage();
 		helper = new MimeMessageHelper(message);
 		try {
-			helper.setFrom("caafi@udea.edu.co");
-			helper.setValidateAddresses(false);
 			helper.setTo(to);
 			helper.setSubject(subject);
 			helper.setText("<html><body>" + text + "</body></html>", true);
+			logService.debug("Se va a enviar mensaje: ", message);
 			emailSender.send(message);
+			logService.debug("Se envió el mensaje: ", message);
 		} catch (MessagingException e) {
 			logger.error("Error enviando Email a: " + to + ", error: " + e.getMessage(), e);
 			logService.error("Error enviando Email a: " + to + ", error: " + e.getMessage() + ", thread: " 
