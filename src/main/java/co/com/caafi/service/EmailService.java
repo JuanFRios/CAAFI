@@ -1,6 +1,7 @@
 package co.com.caafi.service;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.slf4j.Logger;
@@ -27,7 +28,8 @@ public class EmailService {
 		MimeMessage message = emailSender.createMimeMessage();
 		helper = new MimeMessageHelper(message);
 		try {
-			helper.setTo(to);
+			helper.setFrom(new InternetAddress("caafi@udea.edu.co"));
+			helper.setTo(new InternetAddress(to));
 			helper.setSubject(subject);
 			helper.setText("<html><body>" + text + "</body></html>", true);
 			logService.debug("Se va a enviar mensaje: ", null);
