@@ -28,6 +28,7 @@ public class EmailService {
 		helper = new MimeMessageHelper(message);
 		try {
 			helper.setFrom("caafi@udea.edu.co");
+			helper.setValidateAddresses(false);
 			helper.setTo(to);
 			helper.setSubject(subject);
 			helper.setText("<html><body>" + text + "</body></html>", true);
