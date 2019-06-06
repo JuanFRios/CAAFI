@@ -122,7 +122,7 @@ public class ConfigService {
 		return subitems;
 	}
 
-	public Object findParamByName(String name) {
+	public Config findParamByName(String name) {
 		return this.configRepository.findParamByName(name);
 	}
 

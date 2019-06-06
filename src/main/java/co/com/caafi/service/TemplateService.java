@@ -100,8 +100,8 @@ public class TemplateService {
 			config.put("sended", sended);
 			updateConfig(template);
 			List<Student> students = null;
-			if ((boolean) this.configService.findParamByName("TESTING")) {
-				students = this.studentService.findByCedula(1061732895);
+			if ((boolean) this.configService.findParamByName("TESTING").getValue()) {
+				students = this.studentService.findByCedula((int) this.configService.findParamByName("TESTING_CEDULA").getValue());
 			} else {
 				students = this.studentService.findAll();
 			}

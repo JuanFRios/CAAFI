@@ -11,7 +11,7 @@ public interface ConfigRepository extends MongoRepository<Config, String> {
 	
 	public Config findByNameAndIsPublic(String name, boolean isPublic);
 
-	@Query(value = "{ 'name' : ?0, 'value.name' : ?1 }", fields = "{ 'value.$' : 1 }")
-	public Object findParamByName(String name);
+	@Query(value = "{ 'type':'parameter', 'name' : ?0 }", fields = "{ 'name': 1, 'value' : 1 }")
+	public Config findParamByName(String name);
 
 }
