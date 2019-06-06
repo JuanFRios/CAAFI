@@ -19,6 +19,9 @@ public class EmailService {
 	@Autowired
 	public LogService logService;
 	
+	@Autowired
+	private ConfigService configService;
+	
 	Logger logger = LoggerFactory.getLogger(EmailService.class);
 	
 	public void sendEmail(String to, String subject, String text) {
@@ -26,7 +29,7 @@ public class EmailService {
 		MimeMessage message = emailSender.createMimeMessage();
 		helper = new MimeMessageHelper(message);
 		try {
-			helper.setFrom("caafi@udea.edu.co");
+			helper.setFrom((String) this.configService.findParamByName("EMAIL_SENDER").getValue());
 			helper.setTo(to);
 			helper.setSubject(subject);
 			helper.setText("<html><body>" + text + "</body></html>", true);
