@@ -145,7 +145,7 @@ public class TemplateService {
 			updateConfig(template);
 		} catch (Exception e) {
 			logger.error("Error en envío de correos de encuestas, error: " + e.getMessage());
-			this.logService.error("Error en envío de correos de encuestas, error: " + e.getMessage(), e);
+			this.logService.error("Error en envío de correos de encuestas, error: " + e.getMessage(), null);
 			config.put("sending-error", e.getMessage());
 			config.put("sending", false);
 			config.put("sended", sended);
