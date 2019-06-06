@@ -1,7 +1,6 @@
 package co.com.caafi.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import com.mongodb.WriteResult;
 
-import co.com.caafi.model.Group;
 import co.com.caafi.model.StringResponse;
 import co.com.caafi.model.Student;
 import co.com.caafi.model.User;
