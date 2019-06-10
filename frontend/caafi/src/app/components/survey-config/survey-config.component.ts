@@ -26,6 +26,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
   dependencyId: string;
   fullLoading: boolean;
   dependencyName: string;
+  dependencyFormalName: string;
   varFields;
   fields: any;
   template: any;
@@ -104,6 +105,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
         });
       }
       this.dependencyName = $event.dependencyName;
+      this.dependencyFormalName = $event.dependencyFormalName;
       this.formData = new Object();
       this.formName = $event.formName;
       this.dependencyId = $event.dependencyId;
@@ -124,7 +126,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
         this.template = template;
         this.getPrograms();
         this.getMatters();
-        this.loadConfigMattersSurvey(template['config'][0]);
+        this.loadConfigMattersSurvey(template['config']);
         this.toggleLoading(false);
       },
         () => {
@@ -233,12 +235,14 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
       this.cleanConfig();
       this.configId = this.dependencyId + '+' + this.surveyType + '+' + this.formId;
       this.refreshDataTable();
-      this.configForm.setValue({
-        emails: this.template.config[0]['emails'],
-        subject: this.template.config[0]['subject'],
-        message: this.template.config[0]['message'],
-        dateTimeRange: this.template.config[0]['dateRange']
-      });
+      if (this.template.config != null) {
+        this.configForm.setValue({
+          emails: this.template.config['emails'],
+          subject: this.template.config['subject'],
+          message: this.template.config['message'],
+          dateTimeRange: this.template.config['dateRange']
+        });
+      }
     }
   }
 
@@ -296,6 +300,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
     this.program = null;
     this.matter = null;
     this.group = null;
+    this.emailsDB = null;
     this.filterInitDate = null;
     this.filterEndDate = null;
     this.configId = this.dependencyId + '+' + this.surveyType + '+' + this.formId;
@@ -305,6 +310,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
   }
 
   getEmailsDB() {
+    this.emailsDB = null;
     if (!this.allEmails) {
       if (this.program != null && this.matter != null && this.group != null) {
         this.studentService.getEmailsByProgramAndMatterAndGroup(this.program, this.matter, this.group)
@@ -366,30 +372,17 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
       this.fullLoading = true;
       const data: Template = new Template();
       data.name = this.formId;
-      data.config = new Array();
-      const conf = new Object();
-      if (this.isMattersSurvery) {
-        conf['subject'] = this.configForm.get('subject').value;
-        conf['message'] = this.configForm.get('message').value;
-        conf['dateRange'] = this.configForm.get('dateTimeRange').value;
-        conf['url'] = httpBaseURL + '/encuestas/' + this.dependencyId + '/' + this.surveyType + '/' + this.formId;
-        conf['program'] = this.program;
-        conf['matter'] = this.matter;
-        conf['group'] = this.group;
-        conf['configId'] = this.dependencyId + '+' + this.surveyType + '+' + this.formId;
-      } else {
-        conf['emails'] = this.configForm.get('emails').value;
-        conf['subject'] = this.configForm.get('subject').value;
-        conf['message'] = this.configForm.get('message').value;
-        conf['dateRange'] = this.configForm.get('dateTimeRange').value;
-        conf['url'] = httpBaseURL + '/encuestas/' + this.dependencyId + '/' + this.surveyType + '/' + this.formId + '/' + Date.now();
-        conf['configId'] = this.dependencyId + '+' + this.surveyType + '+' + this.formId;
-      }
-      data.config.push(conf);
+      data.config = new Object();
+      data.config['emails'] = this.configForm.get('emails') != null ? this.configForm.get('emails').value : null;
+      data.config['subject'] = this.configForm.get('subject') != null ? this.configForm.get('subject').value : null;
+      data.config['message'] = this.configForm.get('message') != null ? this.configForm.get('message').value : null;
+      data.config['dateRange'] = this.configForm.get('dateTimeRange') != null ? this.configForm.get('dateTimeRange').value : null;
+      data.config['url'] = httpBaseURL + '/encuestas/' + this.dependencyId + '/' + this.surveyType + '/' + this.formId;
+      data.config['dependency'] = this.dependencyFormalName;
       this.templatesService.saveTemplateConfig(data)
         .subscribe(result => {
           if (result.response > 0) {
-            this.requestCache.remove('template/config/' + this.formId + '/' + this.configId);
+            this.requestCache.remove('template/config/' + this.formId);
             this.notifier.notify('success', 'OK: Configuración encuesta guardada.');
           }
           this.fullLoading = false;
@@ -410,10 +403,9 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
 
   sendSurvey() {
     this.fullLoading = true;
-    this.templatesService.senTemplateByEmail(this.formId, this.configId)
+    this.templatesService.senTemplateByEmail(this.formId)
       .subscribe(result => {
         if (result.response === 'OK') {
-          //this.notifier.notify('success', 'OK: Encuesta enviada satisfactoriamente.');
           this.showProgress = true;
           this.surveyProgress();
 

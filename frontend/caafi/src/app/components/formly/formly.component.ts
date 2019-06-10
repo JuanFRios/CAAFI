@@ -22,6 +22,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
   @Input() formId: string;
   @Input() dependencyName: string;
+  @Input() dependencyFormalName: string;
   @Input() typeSubmit = true;
   @Input() noDependency = false;
   @Input() adminReport = false;
@@ -109,7 +110,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
   proccessFields(fields) {
     // Proceess Validators
-    this.evalJSFromJSON(fields, ['pattern', 'defaultValue', 'options', 'label',
+    this.evalJSFromJSON(fields, ['pattern', 'defaultValue', 'options', 'label', 'placeholder',
       'templateOptions?disabled', 'onInit', 'onDestroy', 'hideExpression', 'variable', 'watcher'], '');
   }
 

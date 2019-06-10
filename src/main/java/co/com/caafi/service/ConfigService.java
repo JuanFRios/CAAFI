@@ -126,4 +126,15 @@ public class ConfigService {
 		return this.configRepository.findParamByName(name);
 	}
 
+	public Map<String, Object> getDependencyName(String dependency) {
+		Config config = this.configRepository.findByNameWithoutSubitems("encuestas");
+		List<Map<String, Object>> values = (List<Map<String, Object>>) config.getValue();
+		for (Map<String, Object> value : values) {
+			if (value.get("path").equals(dependency)) {
+				return value;
+			}
+		}
+		return null;
+	}
+
 }

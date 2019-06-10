@@ -32,4 +32,8 @@ export class ConfigService {
     return this.http.get<Config>('config/reportdependency/' + dependency, this.utilService.getRequestOptions());
   }
 
+  getDependencyFormalName(dependency: string): Observable<Object> {
+    return this.http.get<Object>('config/public/dependencyname/' + dependency, this.utilService.getRequestOptions());
+  }
+
 }

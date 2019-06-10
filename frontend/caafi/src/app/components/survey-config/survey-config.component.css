@@ -216,7 +216,7 @@ button.sidenav-fab.mat-mini-fab.mat-accent {
 .container-formSurveyPrograms,
 .container-formSurveyEmailsDB,
 .container-formSurveyAllStudents {
-    flex: 100%;
+    width: 100%;
 }
 
 .container-formSurveyMatters,

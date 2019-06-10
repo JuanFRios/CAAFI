@@ -1,5 +1,7 @@
 package co.com.caafi.rest;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -48,5 +50,11 @@ public class ConfigResource {
 	@RequestMapping(path = "/reportdependency/{dependency}", method = RequestMethod.GET)
 	public Config findDependency(@PathVariable String dependency) {
 		return this.configService.findReportDependencies(dependency);
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/public/dependencyname/{dependency}", method = RequestMethod.GET)
+	public Map<String, Object> getDependencyName(@PathVariable String dependency) {
+		return this.configService.getDependencyName(dependency);
 	}
 }

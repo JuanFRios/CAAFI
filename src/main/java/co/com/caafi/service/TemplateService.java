@@ -1,6 +1,7 @@
 package co.com.caafi.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,22 +59,17 @@ public class TemplateService {
 	public Template findPublicTemplateByName(String name) {
 		return this.templateRepository.findByNameAndIsPublic(name, true).get(0);
 	}
-	
-	public Template findPublicTemplateByNameAndConfig(String name, String configId) {
-		return this.templateRepository.findByNameAndConfigAndIsPublic(name, configId, true).get(0);
-	}
 
 	public List<Template> findAll() {
 		return this.templateRepository.findAll();
 	}
 
-	public StringResponse sendTemplateByMail(String templateName, String configId) {
+	public StringResponse sendTemplateByMail(String templateName) {
 		List<Template> lstTemplate = this.templateRepository.findByName(templateName);
 		if (lstTemplate != null && !lstTemplate.isEmpty()) {
 			Template template = lstTemplate.get(0);
-			List<Map<String, Object>> configs = template.getConfig();
-			if (configs != null && !configs.isEmpty()) {
-				Map<String, Object> config = configs.get(0);
+			Map<String, Object> config = template.getConfig();
+			if (config != null) {
 				if ("encuesta-de-materias".equals(templateName)) {
 					taskExecutor.execute(new Runnable() {
 			            @Override
@@ -82,12 +78,37 @@ public class TemplateService {
 			            }
 			        });
 				} else {
-					String[] emailsSpl = ((String) config.get("emails")).split(",");
-					for(String email : emailsSpl) {
-						String url = ((String) config.get("url"));
-						emailService.sendEmail(email, (String) config.get("subject"), 
-								(String) config.get("message") + "\n\n" + url);
+					int sended = 0;
+					try {
+						String[] emailsSpl = ((String) config.get("emails")).split(",");
+						int total = emailsSpl.length;
+						config.put("sending", true);
+						config.put("sending-percentage", 0);
+						config.put("sended", sended);
+						updateConfig(template);
+						for(String email : emailsSpl) {
+							String url = ((String) config.get("url")) + "/" + (new Date()).getTime();
+							emailService.sendEmail(email, (String) config.get("subject"), 
+									((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
+										.replaceAll("\\{nombrePrograma\\}", (String) config.get("dependency"))
+										.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
+							sended++;
+							int current = (sended * 100) / total;
+							config.put("sending-percentage", current);
+							updateConfig(template);
+						}
+						config.put("sending", false);
+						config.put("sended", sended);
+						updateConfig(template);
+					} catch (Exception e) {
+						logger.error("Error en envío de correos de encuestas, error: " + e.getMessage());
+						this.logService.error("Error en envío de correos de encuestas", e.getMessage());
+						config.put("sending-error", e.getMessage());
+						config.put("sending", false);
+						config.put("sended", sended);
+						updateConfig(template);
 					}
+					
 				}
 			}
 		}
@@ -95,7 +116,7 @@ public class TemplateService {
 	}
 	
 	private void sendStudentsEmails(Template template) {
-		Map<String, Object> config = template.getConfig().get(0);
+		Map<String, Object> config = template.getConfig();
 		int sended = 0;
 		try {
 			config.put("sending", true);
@@ -139,7 +160,6 @@ public class TemplateService {
 				config.put("sending-percentage", current);
 				updateConfig(template);
 			}
-			
 			config.put("sending", false);
 			config.put("sended", sended);
 			updateConfig(template);
@@ -153,36 +173,12 @@ public class TemplateService {
 		}
 	}
 
-	private Map<String, Object> getTemplateConfigByConfigId(String templateName, String configId) {
-		Template template = findTemplateConfig(templateName, configId);
-		if (template != null && template.getConfig() != null) {
-			return template.getConfig().get(0);
-		}
-		return null;
-	}
-
 	public StringResponse save(Template data, User user) {
-		Template template = findByName(data.getName());
-		List<Map<String, Object>> configs = template.getConfig();
-		if (configs == null) {
-			configs = new ArrayList<Map<String, Object>>();
-		}
-		int pos = 0;
-		for (Map<String, Object> config : configs) {
-			if (config.get("configId").equals(data.getConfig().get(0).get("configId"))) {
-				configs.set(pos, data.getConfig().get(0));
-				break;
-			}
-			pos++;
-		}
-		if (pos == configs.size()) {
-			configs.add(data.getConfig().get(0));
-		}
 		Query query = new Query();
 		query.addCriteria(Criteria.where("name").is(data.getName()));
 		Update update = new Update();
-		data.getConfig().get(0).put("configCreator", user.getDocument());
-		update.set("config", configs);
+		data.getConfig().put("configCreator", user.getDocument());
+		update.set("config", data.getConfig());
 		WriteResult result = mongoTemplate.updateFirst(query, update, Template.class);
 		return new StringResponse(result == null ? "0" : result.getN() + "");
     }
@@ -203,16 +199,8 @@ public class TemplateService {
 	    System.out.println(
 	      "schedule tasks using cron jobs - " + now);
 	}
-
-	public Template findTemplateConfig(String template, String configId) {
-		return this.templateRepository.findByNameAndConfigId(template, configId);
-	}
 	
 	public Map<String, Object> getSendingProgress(String template) {
-		return this.templateRepository.findConfigSendingProgressByName(template).getConfig().get(0);
-	}
-
-	public Template findTemplateWithoutConfig(String template) {
-		return this.templateRepository.findByNameWithoutConfig(template);
+		return this.templateRepository.findConfigSendingProgressByName(template).getConfig();
 	}
 }

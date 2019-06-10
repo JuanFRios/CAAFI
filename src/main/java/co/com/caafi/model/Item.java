@@ -5,6 +5,7 @@ import java.util.List;
 public class Item {
 	
 	private String name;
+	private String formalName;
 	private String path;
 	private boolean allDataAccess;
 	private String evaluationDoc;
@@ -67,5 +68,11 @@ public class Item {
 	}
 	public void setAdminReport(boolean adminReport) {
 		this.adminReport = adminReport;
+	}
+	public String getFormalName() {
+		return formalName;
+	}
+	public void setFormalName(String formalName) {
+		this.formalName = formalName;
 	}
 }
