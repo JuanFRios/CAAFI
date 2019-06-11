@@ -13,7 +13,7 @@
 <div *ngIf="!isSaved && !isError && dataLoaded && template != null && formlyName != null">
     <!-- Formly -->
     <div>
-        <app-formly #formly [formId]="formId" [formData]="formData" [dependencyName]="formlyName" [template]="template" [creator]="cedula" [clearButton]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="saved()"></app-formly>
+        <app-formly #formly [formId]="formId" [formData]="formData" [dependencyName]="formlyName" [dependencyFormalName]="dependencyName" [template]="template" [creator]="cedula" [clearButton]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="saved()"></app-formly>
     </div>
 </div>
 <div *ngIf="isSaved">

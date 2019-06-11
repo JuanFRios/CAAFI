@@ -112,12 +112,14 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
     menuData['dependencyId'] = this.params['dependencyId'];
     menuData['formName'] = this.params['formId'] ? this.pathArray.find(o => o['path'] === this.params['formId'])['name'] : null;
     menuData['dependencyName'] =
-    this.params['dependencyId'] ? this.pathArray.find(o => o['path'] === this.params['dependencyId'])['name'] : null;
+      this.params['dependencyId'] ? this.pathArray.find(o => o['path'] === this.params['dependencyId'])['name'] : null;
     menuData['allDataAccess'] = this.activeItem ? this.activeItem['allDataAccess'] : false;
     menuData['noDependency'] = this.activeItem ? this.activeItem['noDependency'] : false;
     menuData['evaluationDoc'] = this.activeItem ? this.activeItem['evaluationDoc'] : null;
     menuData['noReport'] = this.activeItem ? this.activeItem['noReport'] : false;
     menuData['adminReport'] = this.activeItem ? this.activeItem['adminReport'] : false;
+    menuData['dependencyFormalName'] =
+      this.params['dependencyId'] ? this.pathArray.find(o => o['path'] === this.params['dependencyId'])['formalName'] : null;
     menuData['pathway'] = this.pathway;
     this.selectedItem.emit(menuData);
   }
@@ -130,12 +132,13 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
       return item;
     }
     if (root && item[iterItem].path === this.urlArray[iterUrl]) {
-      pathArray.push({'path': item[iterItem].path, 'name': item[iterItem].name});
+      pathArray.push({'path': item[iterItem].path, 'name': item[iterItem].name, 'formalName': item[iterItem].formalName});
       return this.getActiveItem(item[iterItem], 0, countPath, ++iterUrl, false, pathArray);
     } else if (root && item[iterItem].path !== this.urlArray[iterUrl]) {
       return this.getActiveItem(item, ++iterItem, countPath, iterUrl, true, pathArray);
     } else if (!root && item.subItems[iterItem].path === this.urlArray[iterUrl]) {
-      pathArray.push({'path': item.subItems[iterItem].path, 'name': item.subItems[iterItem].name});
+      pathArray.push({'path': item.subItems[iterItem].path, 'name': item.subItems[iterItem].name,
+        'formalName': item.subItems[iterItem].formalName});
       return this.getActiveItem(item.subItems[iterItem], 0, countPath, ++iterUrl, false, pathArray);
     } else {
       return this.getActiveItem(item, ++iterItem, countPath, iterUrl, false, pathArray);

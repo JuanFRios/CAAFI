@@ -14,4 +14,7 @@ public interface ConfigRepository extends MongoRepository<Config, String> {
 	@Query(value = "{ 'type':'parameter', 'name' : ?0 }", fields = "{ 'name': 1, 'value' : 1 }")
 	public Config findParamByName(String name);
 
+	@Query(value = "{ 'name' : ?0 }", fields = "{ 'value.path': 1, 'value.formalName' : 1 }")
+	public Config findByNameWithoutSubitems(String name);
+
 }

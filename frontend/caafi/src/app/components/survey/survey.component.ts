@@ -5,6 +5,7 @@ import { UtilService } from '../../services/util.service';
 import { NotifierService } from 'angular-notifier';
 import { StudentService } from '../../services/student.service';
 import { DataService } from '../../services/data.service';
+import { ConfigService } from '../../services/config.service';
 
 @Component({
   selector: 'app-survey',
@@ -29,8 +30,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
   message = null;
   isSaved = false;
   isError = false;
-  configId = null;
   formlyName = null;
+  dependencyName = null;
 
   constructor(
     private templatesService: TemplatesService,
@@ -38,7 +39,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
     private notifierService: NotifierService,
     private route: ActivatedRoute,
     private studentService: StudentService,
-    private dataService: DataService
+    private dataService: DataService,
+    private configService: ConfigService
   ) {
     this.notifier = notifierService;
     this.fullLoading = false;
@@ -50,15 +52,20 @@ export class SurveyComponent implements OnInit, OnDestroy {
       this.dependency = params.get('dependency');
       this.type = params.get('type');
       if (this.formId != null && this.dependency != null && this.type != null) {
+        // nombre de dependencia
+        this.configService.getDependencyFormalName(this.dependency).subscribe(depenendcyName => {
+          this.dependencyName = depenendcyName['formalName'];
+        });
+
         // Validar formulario, dependencia y tipo
-        this.configId =  this.dependency + '+' + this.type + '+' + this.formId;
         if (this.formId === 'encuesta-de-materias') {
           this.program = params.get('program');
           this.matter = params.get('matter');
           this.group = params.get('group');
           this.cedula = params.get('cedula');
           if (this.program != null && this.matter != null && this.group != null) {
-            this.formlyName = this.configId + '+' + this.program + '+' + this.matter + '+' + this.group;
+            this.formlyName = this.dependency + '+' + this.type + '+' + this.formId
+              + '+' + this.program + '+' + this.matter + '+' + this.group;
             if (this.cedula != null) {
               this.validateRegister().then(result => {
                 if (result) {
@@ -75,7 +82,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
             }
           }
         } else {
-          this.formlyName = this.configId;
+          this.formlyName = this.dependency + '+' + this.type + '+' + this.formId;
           this.dataLoaded = true;
           this.loadTemplate();
         }
@@ -102,11 +109,11 @@ export class SurveyComponent implements OnInit, OnDestroy {
    */
   loadTemplate() {
     this.toggleLoading(true);
-    this.templatesService.getPublicTemplateByNameAndConfig(this.formId, this.configId)
+    this.templatesService.getPublicTemplateByName(this.formId)
     .subscribe(template => {
 
-      const initDate = (new Date(template.config[0]['dateRange'][0])).getTime();
-      const endDate = (new Date(template.config[0]['dateRange'][1])).getTime();
+      const initDate = (new Date(template.config['dateRange'][0])).getTime();
+      const endDate = (new Date(template.config['dateRange'][1])).getTime();
       const currDate = (new Date()).getTime();
 
       if (currDate >= initDate && currDate <= endDate) {

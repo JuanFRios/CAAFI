@@ -49,16 +49,10 @@ public class TemplateResource {
 	}
 	
 	@CrossOrigin(origins = "*")
-	@RequestMapping(path = "/public/bynameandconfig/{name}/{configId}", method = RequestMethod.GET)
-	public Template findPublicTemplateByNameAndConfig(@PathVariable String name, @PathVariable String configId) {
-		return templateService.findPublicTemplateByNameAndConfig(name, configId);
-	}
-	
-	@CrossOrigin(origins = "*")
-	@RequestMapping(path = "/sendtemplatebymail/{template}/{configId}", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(path = "/sendtemplatebymail/{template}", method = RequestMethod.POST, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public StringResponse sendTemplateByMail(@PathVariable String template, @PathVariable String configId) throws JSONException {
-		return templateService.sendTemplateByMail(template, configId);
+	public StringResponse sendTemplateByMail(@PathVariable String template) throws JSONException {
+		return templateService.sendTemplateByMail(template);
 	}
 	
 	@CrossOrigin(origins = "*")
@@ -69,20 +63,8 @@ public class TemplateResource {
 	}
 	
 	@CrossOrigin(origins = "*")
-	@RequestMapping(path = "/config/{template}/{configId}", method = RequestMethod.GET)
-	public Template getTemplateConfig(@PathVariable String template, @PathVariable String configId) {
-		return templateService.findTemplateConfig(template, configId);
-	}
-	
-	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/sendingprogress/{template}", method = RequestMethod.GET)
 	public Map<String, Object> getSendingProgress(@PathVariable String template) {
 		return templateService.getSendingProgress(template);
-	}
-	
-	@CrossOrigin(origins = "*")
-	@RequestMapping(path = "/withoutconfig/{template}", method = RequestMethod.GET)
-	public Template getTemplateWithoutConfig(@PathVariable String template) {
-		return templateService.findTemplateWithoutConfig(template);
 	}
 }
