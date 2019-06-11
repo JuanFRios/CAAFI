@@ -86,7 +86,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
   onSelectMenuItem($event) {
     this.surveyType = this.route.snapshot.paramMap.get('type');
     if ($event.dependencyId != null && this.surveyType != null && $event.formId != null) {
-      this.configId = $event.dependencyId + '+' + this.surveyType + '+' + $event.formId;
+      this.configId = encodeURIComponent($event.dependencyId + '+' + this.surveyType + '+' + $event.formId);
       this.formId = $event.formId;
       if (this.formId === 'encuesta-de-materias') {
         this.isMattersSurvery = true;
@@ -174,7 +174,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
   }
 
   loadMatters() {
-    this.configId = this.dependencyId + '+' + this.surveyType + '+' + this.formId + '+' + this.program;
+    this.configId = encodeURIComponent(this.dependencyId + '+' + this.surveyType + '+' + this.formId + '+' + this.program);
     this.studentService.getMattersByProgram(this.program)
       .subscribe(result => {
         this.matters = result;
@@ -188,7 +188,8 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
 
   loadGroups() {
     if (this.program != null) {
-      this.configId = this.dependencyId + '+' + this.surveyType + '+' + this.formId + '+' + this.program + '+' + this.matter;
+      this.configId = encodeURIComponent(this.dependencyId + '+' + this.surveyType + '+' +
+        this.formId + '+' + this.program + '+' + this.matter);
       this.studentService.getGroupsByProgramAndMatter(this.program, this.matter)
         .subscribe(result => {
           this.groups = result;
@@ -201,8 +202,8 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
   }
 
   setGroup() {
-    this.configId = this.dependencyId + '+' + this.surveyType + '+' + this.formId + '+'
-        + this.program + '+' + this.matter + '+' + this.group;
+    this.configId = encodeURIComponent(this.dependencyId + '+' + this.surveyType + '+' + this.formId + '+'
+        + this.program + '+' + this.matter + '+' + this.group);
   }
 
   cleanConfig() {
@@ -233,7 +234,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
   loadConfigSurvey() {
     if (this.formId != null && this.dependencyId != null && this.surveyType != null) {
       this.cleanConfig();
-      this.configId = this.dependencyId + '+' + this.surveyType + '+' + this.formId;
+      this.configId = encodeURIComponent(this.dependencyId + '+' + this.surveyType + '+' + this.formId);
       this.refreshDataTable();
       if (this.template.config != null) {
         this.configForm.setValue({
@@ -283,7 +284,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
     if (this.isMattersSurvery) {
       this.getEmailsDB();
       if (this.program == null && this.matter != null) {
-        this.configId = this.matter;
+        this.configId = encodeURIComponent(this.matter);
       }
     }
 
@@ -303,7 +304,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
     this.emailsDB = null;
     this.filterInitDate = null;
     this.filterEndDate = null;
-    this.configId = this.dependencyId + '+' + this.surveyType + '+' + this.formId;
+    this.configId = encodeURIComponent(this.dependencyId + '+' + this.surveyType + '+' + this.formId);
     this.dataTable.dependencyName = this.configId;
     this.dataTable.filters = encodeURIComponent(JSON.stringify({}));
     this.refreshDataTable();
