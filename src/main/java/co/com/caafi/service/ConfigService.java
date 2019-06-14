@@ -6,14 +6,22 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import com.mongodb.WriteResult;
 
 import co.com.caafi.model.Config;
 import co.com.caafi.model.ConfigTemplate;
 import co.com.caafi.model.Dependency;
 import co.com.caafi.model.Form;
 import co.com.caafi.model.Item;
+import co.com.caafi.model.StringResponse;
 import co.com.caafi.model.User;
+import co.com.caafi.model.template.Template;
 import co.com.caafi.repository.ConfigRepository;
 import co.com.caafi.repository.ConfigTemplateRepository;
 
@@ -134,6 +142,31 @@ public class ConfigService {
 				return value;
 			}
 		}
+		return null;
+	}
+
+	public Config save(Config config, User user) {
+		Config configDB = findByName(config.getName());
+		if (configDB == null) {
+			configDB = new Config();
+			configDB.setName(config.getName());
+			configDB.setType(config.getType());
+		}
+		Map<String, Object> value = (Map<String, Object>) config.getValue();
+		value.put("configCreator", user.getDocument());
+		configDB.setValue(value);
+		
+		
+		
+		/*
+		Query query = new Query();
+		query.addCriteria(Criteria.where("name").is(data.getName()));
+		Update update = new Update();
+		data.getConfig().put("configCreator", user.getDocument());
+		update.set("config", data.getConfig());
+		WriteResult result = mongoTemplate.updateFirst(query, update, Template.class);
+		return new StringResponse(result == null ? "0" : result.getN() + "");
+		*/
 		return null;
 	}
 

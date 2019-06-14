@@ -8,6 +8,7 @@ public class Config {
 	@Id
 	private String id;
 	private String name;
+	private String type;
 	private Object value;
 	private boolean isPublic;
 
@@ -41,6 +42,14 @@ public class Config {
 
 	public void setPublic(boolean isPublic) {
 		this.isPublic = isPublic;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

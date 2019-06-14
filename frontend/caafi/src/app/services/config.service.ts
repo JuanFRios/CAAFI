@@ -36,4 +36,10 @@ export class ConfigService {
     return this.http.get<Object>('config/public/dependencyname/' + dependency, this.utilService.getRequestOptions());
   }
 
+  saveConfig(data: Config): Observable<Config> {
+    const options: Object = {};
+    options['withCredentials'] = true;
+    return this.http.post<Config>('config', data, options);
+  }
+
 }
