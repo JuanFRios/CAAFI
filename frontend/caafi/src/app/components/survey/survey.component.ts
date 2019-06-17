@@ -77,8 +77,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
                 }
               });
             } else {
-              this.loadTemplate();
-              this.loadData();
+              this.isError = true;
             }
           }
         } else {
@@ -110,22 +109,27 @@ export class SurveyComponent implements OnInit, OnDestroy {
   loadTemplate() {
     this.toggleLoading(true);
     this.templatesService.getPublicTemplateByName(this.formId)
-    .subscribe(template => {
-
-      const initDate = (new Date(template.config['dateRange'][0])).getTime();
-      const endDate = (new Date(template.config['dateRange'][1])).getTime();
-      const currDate = (new Date()).getTime();
-
-      if (currDate >= initDate && currDate <= endDate) {
-        this.utilService.loadTemplateFeatures(template, false);
-        this.template = template;
-      } else {
-        this.isSaved = true;
-        this.message = 'Esta encuesta no esta disponible';
-        this.notifier.notify( 'error', 'ERROR: 10' ); // La encuesta esta inhabilitada
-      }
-
-      this.toggleLoading(false);
+      .subscribe(template => {
+      this.configService.getPublicConfigByName(encodeURIComponent(this.dependency + '+' + this.type + '+' + this.formId))
+        .subscribe(config => {
+          const initDate = (new Date(config.value['dateRange'][0])).getTime();
+          const endDate = (new Date(config.value['dateRange'][1])).getTime();
+          const currDate = (new Date()).getTime();
+          if (currDate >= initDate && currDate <= endDate) {
+            this.utilService.loadTemplateFeatures(template, false);
+            this.template = template;
+          } else {
+            this.isSaved = true;
+            this.message = 'Esta encuesta no esta disponible';
+            this.notifier.notify( 'error', 'ERROR: 10' ); // La encuesta esta inhabilitada
+          }
+          this.toggleLoading(false);
+        },
+        error => {
+          this.toggleLoading(false);
+          this.isError = true;
+          this.notifier.notify( 'error', 'ERROR: 11' ); // Error con la configuración
+        });
     },
     error => {
       this.toggleLoading(false);

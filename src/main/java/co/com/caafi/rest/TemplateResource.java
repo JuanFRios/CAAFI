@@ -49,10 +49,10 @@ public class TemplateResource {
 	}
 	
 	@CrossOrigin(origins = "*")
-	@RequestMapping(path = "/sendtemplatebymail/{template}", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(path = "/sendtemplatebymail/{template}/{config}", method = RequestMethod.POST, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public StringResponse sendTemplateByMail(@PathVariable String template) throws JSONException {
-		return templateService.sendTemplateByMail(template);
+	public StringResponse sendTemplateByMail(@PathVariable String template, @PathVariable String config) throws JSONException {
+		return templateService.sendTemplateByMail(template, config);
 	}
 	
 	@CrossOrigin(origins = "*")

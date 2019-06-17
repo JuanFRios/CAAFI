@@ -11,7 +11,7 @@ import { RequestCache } from '../../services/request-cache.service';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ConfigService } from '../../services/config.service';
-import { Config } from 'src/app/common/config';
+import { Config } from '../../common/config';
 
 @Component({
   selector: 'app-survey-config',
@@ -211,7 +211,8 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
 
   loadConfigSurvey() {
     this.cleanConfig();
-    this.configService.getByName(this.configId).subscribe(result => {
+    this.configService.getByName(encodeURIComponent(this.dependencyId + '+' + this.surveyType + '+' + this.formId))
+      .subscribe(result => {
       if (result != null && result.value != null) {
         if (this.isMattersSurvery) {
           this.configForm.controls['subject'].setValue(result.value['subject']);
@@ -349,8 +350,9 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
     return new Promise(resolve => {
       this.fullLoading = true;
       const config: Config = new Config();
-      config.name = this.configId;
+      config.name = this.dependencyId + '+' + this.surveyType + '+' + this.formId;
       config.type = 'surveyConfig';
+      config.publicResource = true;
       const data: Object = new Object();
       data['emails'] = this.configForm.get('emails') != null ? this.configForm.get('emails').value : null;
       data['subject'] = this.configForm.get('subject') != null ? this.configForm.get('subject').value : null;
@@ -361,13 +363,9 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
       config.value = data;
       this.configService.saveConfig(config)
         .subscribe(result => {
-          /*
-          if (result.response > 0) {
-            this.requestCache.remove('template/config/' + this.formId);
-            this.notifier.notify('success', 'OK: Configuración encuesta guardada.');
-          }
-          */
-         console.log(result);
+          this.requestCache.remove('config/byname/' +
+            encodeURIComponent(this.dependencyId + '+' + this.surveyType + '+' + this.formId));
+          this.notifier.notify('success', 'OK: Configuración encuesta guardada.');
           this.fullLoading = false;
           resolve();
         },
@@ -386,12 +384,12 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
 
   sendSurvey() {
     this.fullLoading = true;
-    this.templatesService.senTemplateByEmail(this.formId)
+    this.templatesService.senTemplateByEmail(this.formId,
+      encodeURIComponent(this.dependencyId + '+' + this.surveyType + '+' + this.formId))
       .subscribe(result => {
         if (result.response === 'OK') {
           this.showProgress = true;
           this.surveyProgress();
-
         } else {
           this.notifier.notify('warning', 'ADVERTENCIA: La encuesta no se envío.');
         }
@@ -405,19 +403,20 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
 
   surveyProgress() {
     const progressInterval = setInterval(() => {
-      this.templatesService.getTemplateSendingProgress(this.formId).subscribe(result => {
-        if (result['sending']) {
+      this.configService.getByNameNoCache(this.dependencyId + '+' + this.surveyType + '+' + this.formId)
+        .subscribe(config => {
+        if (config.value['sending']) {
           this.showProgress = true;
-          if (result['sending-percentage'] >= 0) {
+          if (config.value['sending-percentage'] >= 0) {
             this.progressMode = 'determinate';
-            this.sendingProgressValue = result['sending-percentage'];
+            this.sendingProgressValue = config.value['sending-percentage'];
           } else {
             this.progressMode = 'query';
           }
         } else {
           this.showProgress = false;
           this.progressMode = 'query';
-          this.notifier.notify('success', 'OK: Encuesta enviada satisfactoriamente. Total enviados: ' + result['sended']);
+          this.notifier.notify('success', 'OK: Encuesta enviada satisfactoriamente. Total enviados: ' + config.value['sended']);
           clearInterval(progressInterval);
         }
       });

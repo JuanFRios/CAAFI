@@ -1,19 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Config } from '../common/config';
-import { RestangularModule, Restangular } from 'ngx-restangular';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Restangular } from 'ngx-restangular';
+import { HttpClient } from '@angular/common/http';
 import { UtilService } from './util.service';
 
 @Injectable()
 export class ConfigService {
 
   constructor(
+    private restangular: Restangular,
     private http: HttpClient,
     private utilService: UtilService) { }
 
   getByName(name: string): Observable<Config> {
     return this.http.get<Config>('config/byname/' + name, this.utilService.getRequestOptions());
+  }
+
+  getByNameNoCache(name: string): Observable<Config> {
+    return this.restangular.one('config/byname/', name).get();
   }
 
   getPublicConfigByName(name: string): Observable<Config> {

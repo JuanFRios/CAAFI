@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.mongodb.WriteResult;
 
+import co.com.caafi.model.Config;
 import co.com.caafi.model.Group;
 import co.com.caafi.model.StringResponse;
 import co.com.caafi.model.Student;
@@ -53,7 +54,7 @@ public class TemplateService {
 	Logger logger = LoggerFactory.getLogger(TemplateService.class);
 
 	public Template findByName(String name) {
-		return this.templateRepository.findByName(name).get(0);
+		return this.templateRepository.findByName(name);
 	}
 	
 	public Template findPublicTemplateByName(String name) {
@@ -64,85 +65,82 @@ public class TemplateService {
 		return this.templateRepository.findAll();
 	}
 
-	public StringResponse sendTemplateByMail(String templateName) {
-		List<Template> lstTemplate = this.templateRepository.findByName(templateName);
-		if (lstTemplate != null && !lstTemplate.isEmpty()) {
-			Template template = lstTemplate.get(0);
-			Map<String, Object> config = template.getConfig();
-			if (config != null) {
-				if ("encuesta-de-materias".equals(templateName)) {
-					taskExecutor.execute(new Runnable() {
-			            @Override
-			            public void run() {
-			            	sendStudentsEmails(template);
-			            }
-			        });
-				} else {
-					int sended = 0;
-					try {
-						String[] emailsSpl = ((String) config.get("emails")).split(",");
-						int total = emailsSpl.length;
-						config.put("sending", true);
-						config.put("sending-percentage", 0);
-						config.put("sended", sended);
-						updateConfig(template);
-						for(String email : emailsSpl) {
-							String url = ((String) config.get("url")) + "/" + (new Date()).getTime();
-							emailService.sendEmail(email, (String) config.get("subject"), 
-									((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
-										.replaceAll("\\{nombrePrograma\\}", (String) config.get("dependency"))
-										.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
-							sended++;
-							int current = (sended * 100) / total;
-							config.put("sending-percentage", current);
-							updateConfig(template);
-						}
-						config.put("sending", false);
-						config.put("sended", sended);
-						updateConfig(template);
-					} catch (Exception e) {
-						logger.error("Error en envío de correos de encuestas, error: " + e.getMessage());
-						this.logService.error("Error en envío de correos de encuestas", e.getMessage());
-						config.put("sending-error", e.getMessage());
-						config.put("sending", false);
-						config.put("sended", sended);
-						updateConfig(template);
-					}
-					
-				}
-			}
+	public StringResponse sendTemplateByMail(String templateName, String configName) {
+		Template template = this.templateRepository.findByName(templateName);
+		Config config = this.configService.findByName(configName);
+		if (template != null && config != null) {
+			taskExecutor.execute(new Runnable() {
+	            @Override
+	            public void run() {
+	            		if ("encuesta-de-materias".equals(templateName)) {
+	            			sendStudentsEmails(template, config);
+	            		} else {
+	            			sendEmails(template, config);
+	            		}
+	            }
+	        });
 		}
 		return new StringResponse("OK");
 	}
 	
-	private void sendStudentsEmails(Template template) {
-		Map<String, Object> config = template.getConfig();
+	private void sendEmails(Template template, Config config) {
 		int sended = 0;
+		Map<String, Object> configValue = (Map<String, Object>) config.getValue();
 		try {
-			config.put("sending", true);
-			config.put("sending-percentage", -1);
-			config.put("sended", sended);
-			updateConfig(template);
-			List<Student> students = null;
-			if ((boolean) this.configService.findParamByName("TESTING").getValue()) {
-				students = this.studentService.findByCedula((int) this.configService.findParamByName("TESTING_CEDULA").getValue());
-			} else {
-				students = this.studentService.findAll();
+			String[] emailsSpl = ((String) configValue.get("emails")).split(",");
+			int total = emailsSpl.length;
+			configValue.put("sending", true);
+			configValue.put("sending-percentage", 0);
+			configValue.put("sended", sended);
+			this.configService.save(config);
+			for(String email : emailsSpl) {
+				String url = ((String) configValue.get("url")) + "/" + (new Date()).getTime();
+				emailService.sendEmail(email, (String) configValue.get("subject"), 
+						((String) configValue.get("message")).replaceAll("(\r\n|\n)", "<br />")
+							.replaceAll("\\{nombrePrograma\\}", (String) configValue.get("dependency"))
+							.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
+				sended++;
+				int current = (sended * 100) / total;
+				configValue.put("sending-percentage", current);
+				this.configService.save(config);
 			}
+			configValue.put("sending", false);
+			configValue.put("sended", sended);
+			this.configService.save(config);
+		} catch (Exception e) {
+			logger.error("Error en envío de correos de encuestas, error: " + e.getMessage());
+			this.logService.error("Error en envío de correos de encuestas", e.getMessage());
+			configValue.put("sending-error", e.getMessage());
+			configValue.put("sending", false);
+			configValue.put("sended", sended);
+			this.configService.save(config);
+		}
+	}
+	
+	private void sendStudentsEmails(Template template, Config config) {
+		int sended = 0;
+		Map<String, Object> configValue = (Map<String, Object>) config.getValue();
+		try {
+			configValue.put("sending", true);
+			configValue.put("sending-percentage", -1);
+			configValue.put("sended", sended);
+			this.configService.save(config);
+			List<Student> students = null;
+			students = this.studentService.findAll();
 			int total = students.size();
 			int count = 0;
-			config.put("sending-percentage", 0);
-			updateConfig(template);
+			configValue.put("sending-percentage", 0);
+			this.configService.save(config);
 			for (Student student: students) {
-				String url = ((String) config.get("url")) + "/" + student.getCodigoPrograma() + "/" + student.getCodigoMateria() +
+				String url = ((String) configValue.get("url")) + "/" + student.getCodigoPrograma() + "/" + student.getCodigoMateria() +
 						"/" + student.getGrupo() + "/" + student.getCedula();
 				
 				// Envio a emails personales
 				/*
 				if (student.getEmail() != null && !"".equals(student.getEmail())) {
 					emailService.sendEmail(student.getEmail(), 
-							((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", group.getNombreMateria()), 
-							((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
+							((String) configValue.get("subject")).replaceAll("\\{nombreMateria\\}", group.getNombreMateria()), 
+							((String) configValue.get("message")).replaceAll("(\r\n|\n)", "<br />")
 								.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
 				}
 				*/
@@ -150,26 +148,26 @@ public class TemplateService {
 				// Envio a emails institucionales
 				if (student.getEmailInstitucional() != null && !"".equals(student.getEmailInstitucional())) {
 					emailService.sendEmail(student.getEmailInstitucional(), 
-							((String) config.get("subject")).replaceAll("\\{nombreMateria\\}", student.getNombreMateria()), 
-							((String) config.get("message")).replaceAll("(\r\n|\n)", "<br />")
+							((String) configValue.get("subject")).replaceAll("\\{nombreMateria\\}", student.getNombreMateria()), 
+							((String) configValue.get("message")).replaceAll("(\r\n|\n)", "<br />")
 								.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
 					sended++;
 				}
 				count++;
 				int current = (count * 100) / total;
-				config.put("sending-percentage", current);
-				updateConfig(template);
+				configValue.put("sending-percentage", current);
+				this.configService.save(config);
 			}
-			config.put("sending", false);
-			config.put("sended", sended);
-			updateConfig(template);
+			configValue.put("sending", false);
+			configValue.put("sended", sended);
+			this.configService.save(config);
 		} catch (Exception e) {
 			logger.error("Error en envío de correos de encuestas, error: " + e.getMessage());
 			this.logService.error("Error en envío de correos de encuestas", e.getMessage());
-			config.put("sending-error", e.getMessage());
-			config.put("sending", false);
-			config.put("sended", sended);
-			updateConfig(template);
+			configValue.put("sending-error", e.getMessage());
+			configValue.put("sending", false);
+			configValue.put("sended", sended);
+			this.configService.save(config);
 		}
 	}
 

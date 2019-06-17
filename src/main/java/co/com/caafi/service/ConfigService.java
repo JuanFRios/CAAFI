@@ -1,5 +1,7 @@
 package co.com.caafi.service;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +39,7 @@ public class ConfigService {
 	}
 	
 	public Config findPublicConfigByName(String name) {
-		return this.configRepository.findByNameAndIsPublic(name, true);
+		return this.configRepository.findByNameAndPublicResource(name, true);
 	}
 
 	public ConfigTemplate findTemplateConfigByRol(User user,String name) {
@@ -153,21 +155,15 @@ public class ConfigService {
 			configDB.setType(config.getType());
 		}
 		Map<String, Object> value = (Map<String, Object>) config.getValue();
+		
 		value.put("configCreator", user.getDocument());
 		configDB.setValue(value);
 		
-		
-		
-		/*
-		Query query = new Query();
-		query.addCriteria(Criteria.where("name").is(data.getName()));
-		Update update = new Update();
-		data.getConfig().put("configCreator", user.getDocument());
-		update.set("config", data.getConfig());
-		WriteResult result = mongoTemplate.updateFirst(query, update, Template.class);
-		return new StringResponse(result == null ? "0" : result.getN() + "");
-		*/
-		return null;
+		return this.configRepository.save(configDB);
+	}
+	
+	public Config save(Config config) {
+		return this.configRepository.save(config);
 	}
 
 }

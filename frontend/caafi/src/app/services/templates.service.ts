@@ -30,8 +30,8 @@ export class TemplatesService {
     return this.http.get<Template>('template/public/byname/' + name, this.utilService.getRequestOptions());
   }
 
-  senTemplateByEmail(template: string): Observable<any> {
-    return this.restangular.all('template/sendtemplatebymail/' + template).post();
+  senTemplateByEmail(template: string, config: string): Observable<any> {
+    return this.restangular.all('template/sendtemplatebymail/' + template + '/' + config).post();
   }
 
   saveTemplateConfig(data: Template): Observable<any> {
