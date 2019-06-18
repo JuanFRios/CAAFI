@@ -156,8 +156,9 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
     this.saving = true;
 
+    this.uploadFiles(template);
+
     this.data = new Data();
-    const formsData: FormData[] = this.getFiles(template);
     this.data.data = template;
     this.data.login = this.loginService.isLogIn();
     this.data.template = this.formId;
@@ -170,9 +171,6 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
     this.dataService.save(this.data)
       .subscribe(res => {
-        for (let i = 0, len = formsData.length; i < len; i++) {
-          this.uploadFile(formsData[i]);
-        }
         this.reset();
         this.currentId = null;
         this.dataSaved.emit(null);
@@ -189,24 +187,54 @@ export class FormlyComponent implements OnInit, OnDestroy {
     this.fileService.upload(file);
   }
 
-  getFiles(template) {
-    const formsData: FormData[] = [];
-    for (const i in template) {
-      if (template[i] && template[i][0] && typeof template[i][0].name === 'string' && template[i].length > 0) {
-        const file: File = template[i][0];
-        const formData: FormData = new FormData();
-        const fecha_actual = new Date();
-        const ano = fecha_actual.getFullYear();
-        const mes = fecha_actual.getMonth() + 1;
-        const dia = fecha_actual.getDate();
-        const formato_fecha = '_' + ano + '-' + mes + '-' + dia;
-        const nombre_archivo = i + formato_fecha;
-        template[i] = nombre_archivo + '.pdf';
-        formData.append('file', file, nombre_archivo);
-        formsData.push(formData);
+  uploadFiles(template: Object) {
+
+    const keys = Object.keys(template);
+    let p = Promise.resolve();
+    for (const key of keys) {
+      if (template[key] instanceof FileList) {
+        p = p.then(_ => new Promise(resolve => {
+          const file: File = template[key][0];
+          const formData: FormData = new FormData();
+          formData.append('file', file);
+          this.fileService.upload(formData).subscribe(response => {
+            template[key] = response['fileDownloadUri'];
+            resolve();
+          });
+        }));
       }
     }
-    return formsData;
+
+    /*
+    for (let i = 0, p = Promise.resolve(); i < Object.keys(template).length; i++) {
+      if (template[Object.keys(template)[i]] instanceof FileList) {
+        p = p.then(_ => new Promise(resolve => {
+          const file: File = template[i][0];
+          const formData: FormData = new FormData();
+          formData.append('file', file);
+          this.fileService.upload(formData).subscribe(response => {
+            template[i] = response['fileDownloadUri'];
+            resolve();
+          });
+        }));
+      }
+    }
+    */
+
+    /*
+    return new Promise(resolve => {
+      for (const i in template) {
+        if (template[i] instanceof FileList) {
+          const file: File = template[i][0];
+          const formData: FormData = new FormData();
+          formData.append('file', file);
+          this.fileService.upload(formData).subscribe(response => {
+            template[i] = file.name;
+          });
+        }
+      }
+    });
+    */
   }
 
   copyData($event) {

@@ -176,7 +176,7 @@ export function required(err, field) {
     FormlyModule.forRoot({
       types: [
         { name: 'repeat', component: RepeatTypeComponent },
-        { name: 'file', component: FormlyFieldFileComponent },
+        { name: 'file', component: FormlyFieldFileComponent, wrappers: ['form-field'] },
         {
           name: 'variable',
           component: VariableTypeComponent,
