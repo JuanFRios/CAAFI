@@ -110,8 +110,8 @@ export class DataService {
           data[i] = dataRepeat.slice(0, -10);
         } else if (files.includes(i)) {
           data[i] = this._sanitizer
-            .bypassSecurityTrustHtml('<a href="' + baseURL + '/file/download?name=' + data[i] + '" download>'
-            + data[i] + '</a>');
+            .bypassSecurityTrustHtml('<a href="' + data[i] + '" download="download"><span style="font-size: 20px; color: #0a351c">' +
+              '<i class="fas fa-download"></i></span></a>');
         }
       }
     }

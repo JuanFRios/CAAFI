@@ -52,26 +52,6 @@ public class FileResource {
                 file.getContentType(), file.getSize());
     }
 	
-	/*
-	@RequestMapping(path = "/download", method = RequestMethod.GET)
-	public ResponseEntity<Resource> download(@RequestParam("name") String name) throws IOException {
-		File file = fileService.getFile(name);
-
-	    InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-	    
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.add("Content-Disposition", String.format("inline; filename=\"" + file.getName() + "\""));
-        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.add("Pragma", "no-cache");
-        headers.add("Expires", "0");
-	    return ResponseEntity.ok()
-	            .headers(headers)
-	            .contentLength(file.length())
-	            .contentType(MediaType.parseMediaType("application/octet-stream"))
-	            .body(resource);
-	}
-	*/
-	
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/downloadFile/{fileName:.+}", method = RequestMethod.GET)
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {

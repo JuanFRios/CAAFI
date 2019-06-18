@@ -1,1 +1,2 @@
-{{ to.label }} <input type="file" [formControl]="formControl" [formlyAttributes]="field">
+{{ to.label }} &nbsp; <a *ngIf="href != null" [href]="href" [download]="download"><span style="font-size: 20px; color: #0a351c"><i class="fas fa-download"></i></span></a> &nbsp;&nbsp;&nbsp;
+<input type="file" [formControl]="formControl" [formlyAttributes]="field">

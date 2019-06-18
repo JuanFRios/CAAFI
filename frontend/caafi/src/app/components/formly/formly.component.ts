@@ -12,6 +12,7 @@ import { FileService } from '../../services/file.service';
 import { UtilService } from '../../services/util.service';
 import { RepeatTypeComponent } from '../types/repeat-section/repeat-section.component';
 import { LoginService } from '../../services/login.service';
+//import { resolve } from 'path';
 
 @Component({
   selector: 'app-formly',
@@ -133,7 +134,8 @@ export class FormlyComponent implements OnInit, OnDestroy {
             }
             this.options['formState'][fields[i]] = 0;
           } else {
-            fields[i] = eval(fields[i]); // no-eval
+            // tslint:disable-next-line:no-eval
+            fields[i] = eval(fields[i]);
           }
         } catch (e) { }
       }
@@ -156,31 +158,31 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
     this.saving = true;
 
-    this.uploadFiles(template);
+    this.uploadFiles(template).then(() => {
+      this.data = new Data();
+      this.data.data = template;
+      this.data.login = this.loginService.isLogIn();
+      this.data.template = this.formId;
+      this.data.origin = this.dependencyName;
+      this.data.creator = this.creator;
 
-    this.data = new Data();
-    this.data.data = template;
-    this.data.login = this.loginService.isLogIn();
-    this.data.template = this.formId;
-    this.data.origin = this.dependencyName;
-    this.data.creator = this.creator;
+      if (this.currentId != null) {
+        this.data.id = this.currentId;
+      }
 
-    if (this.currentId != null) {
-      this.data.id = this.currentId;
-    }
-
-    this.dataService.save(this.data)
-      .subscribe(res => {
-        this.reset();
-        this.currentId = null;
-        this.dataSaved.emit(null);
-        this.saving = false;
-        this.notifier.notify( 'success', 'OK: El formulario ha sido guardado exitosamente.' );
-      },
-        error => {
+      this.dataService.save(this.data)
+        .subscribe(res => {
+          this.reset();
+          this.currentId = null;
+          this.dataSaved.emit(null);
           this.saving = false;
-          this.notifier.notify( 'error', 'ERROR: Error al guardar el formulario.' );
-        });
+          this.notifier.notify( 'success', 'OK: El formulario ha sido guardado exitosamente.' );
+        },
+          error => {
+            this.saving = false;
+            this.notifier.notify( 'error', 'ERROR: Error al guardar el formulario.' );
+          });
+    });
   }
 
   uploadFile(file) {
@@ -189,14 +191,32 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
   uploadFiles(template: Object) {
 
+    const promises: Promise<any>[] = [];
     const keys = Object.keys(template);
-    let p = Promise.resolve();
     for (const key of keys) {
-      if (template[key] instanceof FileList) {
-        p = p.then(_ => new Promise(resolve => {
+      if (this.template.repeatSections.includes(key)) {
+        const uris = new Array();
+        for (let i = 0; i < template[key].length; i++) {
+          promises.push(new Promise(resolve => {
+            const file: File = template[key][i];
+            // tslint:disable-next-line:no-bitwise
+            const extension = file.name.slice((file.name.lastIndexOf('.') - 1 >>> 0) + 2);
+            const formData: FormData = new FormData();
+            formData.append('file', file, key + '_' + (new Date()).getTime() + '.' + extension);
+            this.fileService.upload(formData).subscribe(response => {
+              uris.push(response['fileDownloadUri']);
+              resolve();
+            });
+          }));
+        }
+        template[key] = uris;
+      } else if (template[key] instanceof FileList) {
+        promises.push(new Promise(resolve => {
           const file: File = template[key][0];
+          // tslint:disable-next-line:no-bitwise
+          const extension = file.name.slice((file.name.lastIndexOf('.') - 1 >>> 0) + 2);
           const formData: FormData = new FormData();
-          formData.append('file', file);
+          formData.append('file', file, key + '_' + (new Date()).getTime() + '.' + extension);
           this.fileService.upload(formData).subscribe(response => {
             template[key] = response['fileDownloadUri'];
             resolve();
@@ -205,36 +225,11 @@ export class FormlyComponent implements OnInit, OnDestroy {
       }
     }
 
-    /*
-    for (let i = 0, p = Promise.resolve(); i < Object.keys(template).length; i++) {
-      if (template[Object.keys(template)[i]] instanceof FileList) {
-        p = p.then(_ => new Promise(resolve => {
-          const file: File = template[i][0];
-          const formData: FormData = new FormData();
-          formData.append('file', file);
-          this.fileService.upload(formData).subscribe(response => {
-            template[i] = response['fileDownloadUri'];
-            resolve();
-          });
-        }));
-      }
-    }
-    */
-
-    /*
-    return new Promise(resolve => {
-      for (const i in template) {
-        if (template[i] instanceof FileList) {
-          const file: File = template[i][0];
-          const formData: FormData = new FormData();
-          formData.append('file', file);
-          this.fileService.upload(formData).subscribe(response => {
-            template[i] = file.name;
-          });
-        }
-      }
+    return new Promise( resolve => {
+      Promise.all(promises).then(() => {
+        resolve();
+      });
     });
-    */
   }
 
   copyData($event) {
@@ -243,10 +238,10 @@ export class FormlyComponent implements OnInit, OnDestroy {
   }
 
   editData($event) {
-    this.loadData($event);
+    this.loadData($event, true);
   }
 
-  loadData(id) {
+  loadData(id, isEdit: boolean = false) {
     this.fullLoading.emit(true);
     this.reset();
     this.dataService.getById(id)
@@ -272,7 +267,9 @@ export class FormlyComponent implements OnInit, OnDestroy {
             }
           }
         }
-        this.currentId = id;
+        if (isEdit) {
+          this.currentId = id;
+        }
         this.fullLoading.emit(false);
       },
         error => {
