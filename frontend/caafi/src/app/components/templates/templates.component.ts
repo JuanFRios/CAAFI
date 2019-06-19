@@ -19,6 +19,7 @@ export class TemplatesComponent implements OnInit, AfterViewInit {
   fields: any;
   template: any;
   allDataAccess = false;
+  export = false;
 
   constructor(
     private templatesService: TemplatesService,

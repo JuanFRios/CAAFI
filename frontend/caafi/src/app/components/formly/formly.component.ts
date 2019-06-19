@@ -195,21 +195,24 @@ export class FormlyComponent implements OnInit, OnDestroy {
     const keys = Object.keys(template);
     for (const key of keys) {
       if (this.template.repeatSections.includes(key)) {
-        const uris = new Array();
         for (let i = 0; i < template[key].length; i++) {
-          promises.push(new Promise(resolve => {
-            const file: File = template[key][i];
-            // tslint:disable-next-line:no-bitwise
-            const extension = file.name.slice((file.name.lastIndexOf('.') - 1 >>> 0) + 2);
-            const formData: FormData = new FormData();
-            formData.append('file', file, key + '_' + (new Date()).getTime() + '.' + extension);
-            this.fileService.upload(formData).subscribe(response => {
-              uris.push(response['fileDownloadUri']);
-              resolve();
-            });
-          }));
+          const subKeys = Object.keys(template[key][i]);
+          for (const subKey of subKeys) {
+            if (template[key][i][subKey] instanceof FileList) {
+              promises.push(new Promise(resolve => {
+                const file: File = template[key][i][subKey][0];
+                // tslint:disable-next-line:no-bitwise
+                const extension = file.name.slice((file.name.lastIndexOf('.') - 1 >>> 0) + 2);
+                const formData: FormData = new FormData();
+                formData.append('file', file, key + '_' + subKey + '_' + (new Date()).getTime() + '.' + extension);
+                this.fileService.upload(formData).subscribe(response => {
+                  template[key][i][subKey] = response['fileDownloadUri'];
+                  resolve();
+                });
+              }));
+            }
+          }
         }
-        template[key] = uris;
       } else if (template[key] instanceof FileList) {
         promises.push(new Promise(resolve => {
           const file: File = template[key][0];

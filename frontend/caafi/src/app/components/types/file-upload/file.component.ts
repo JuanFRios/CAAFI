@@ -18,20 +18,25 @@ export class FormlyFieldFileComponent extends FieldType implements OnInit, OnDes
   }
 
   ngOnInit() {
+    this.setValues();
     this.valueChangeObserver = this.formControl.valueChanges.subscribe(() => {
-      if (this.formControl != null && this.formControl.value != null) {
-        if (this.formControl.value instanceof FileList) {
-          const blob = this.formControl.value[0];
-          const url = window.URL.createObjectURL(blob);
-          this.href = this.sanitizer.bypassSecurityTrustUrl(url);
-          this.download = this.formControl.value[0].name;
-        } else {
-          this.href = this.formControl.value;
-        }
-      } else {
-        this.href = null;
-      }
+      this.setValues();
     });
+  }
+
+  setValues() {
+    if (this.formControl != null && this.formControl.value != null) {
+      if (this.formControl.value instanceof FileList) {
+        const blob = this.formControl.value[0];
+        const url = window.URL.createObjectURL(blob);
+        this.href = this.sanitizer.bypassSecurityTrustUrl(url);
+        this.download = this.formControl.value[0].name;
+      } else {
+        this.href = this.formControl.value;
+      }
+    } else {
+      this.href = null;
+    }
   }
 
   ngOnDestroy() {

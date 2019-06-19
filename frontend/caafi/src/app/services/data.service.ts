@@ -95,19 +95,25 @@ export class DataService {
             data[i] = 'No';
           }
         } else if (repeatSections.includes(i)) {
-          let dataRepeat = '';
+          let dataRepeat = '<div>';
           for (let j = 0; j < data[i].length; j++) {
-            dataRepeat += '{ ';
+            dataRepeat += '<p>{ ';
             for (const k in data[i][j]) {
-              if (typeof data[i][j][k] === 'object') {
-                dataRepeat += namesRepeats[k] + ': ' + data[i][j][k].toString() + ', ';
+              if (k === 'file') {
+                dataRepeat += 'Archivo: <a href="' + data[i][j][k] +
+                  '" download="download"><span style="font-size: 20px; color: #0a351c">' +
+                  '<i class="fas fa-download"></i></span></a>, ';
               } else {
-                dataRepeat += namesRepeats[k] + ': ' + data[i][j][k] + ', ';
+                if (typeof data[i][j][k] === 'object') {
+                  dataRepeat += namesRepeats[k] + ': ' + data[i][j][k].toString() + ', ';
+                } else {
+                  dataRepeat += namesRepeats[k] + ': ' + data[i][j][k] + ', ';
+                }
               }
             }
-            dataRepeat = dataRepeat.slice(0, -2) + ' }, <br><br>';
+            dataRepeat = dataRepeat.slice(0, -2) + ' },</p>';
           }
-          data[i] = dataRepeat.slice(0, -10);
+          data[i] = this._sanitizer.bypassSecurityTrustHtml(dataRepeat.slice(0, -5) + '</p></div>');
         } else if (files.includes(i)) {
           data[i] = this._sanitizer
             .bypassSecurityTrustHtml('<a href="' + data[i] + '" download="download"><span style="font-size: 20px; color: #0a351c">' +
