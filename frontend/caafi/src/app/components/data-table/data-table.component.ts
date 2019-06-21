@@ -233,7 +233,7 @@ export class DataTableComponent implements OnInit, OnDestroy {
           this.template.dates, this.template.booleans, this.template.files, this.template.namesRepeats,
           this.template.displayedColumnsNames);
           this.excelService.exportAsExcelFile(proccessedData,
-            'reporte-' + this.dependencyName + '-' + this.formId, this.formId);
+            'reporte-' + this.dependencyName + '-' + this.formId, this.formId.substr(0, 31));
           this.exportCSVSpinnerButtonOptions.active = false;
           this.exportCSVSpinnerButtonOptions.text = 'Exportar';
       });

@@ -40,6 +40,7 @@ export class TemplatesComponent implements OnInit, AfterViewInit {
       this.formId = $event.formId;
       this.dependencyName = $event.dependencyName;
       this.allDataAccess = $event.allDataAccess;
+      this.export = $event.export;
       this.loadTemplate($event.formId);
     }
   }

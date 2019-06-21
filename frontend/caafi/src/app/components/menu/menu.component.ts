@@ -36,6 +36,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
   noReport = false;
   adminReport = false;
   urlArray: string[];
+  export = false;
 
   constructor(
     private configService: ConfigService,
@@ -118,6 +119,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
     menuData['evaluationDoc'] = this.activeItem ? this.activeItem['evaluationDoc'] : null;
     menuData['noReport'] = this.activeItem ? this.activeItem['noReport'] : false;
     menuData['adminReport'] = this.activeItem ? this.activeItem['adminReport'] : false;
+    menuData['export'] = this.activeItem ? this.activeItem['export'] : false;
     menuData['dependencyFormalName'] =
       this.params['dependencyId'] ? this.pathArray.find(o => o['path'] === this.params['dependencyId'])['formalName'] : null;
     menuData['pathway'] = this.pathway;
