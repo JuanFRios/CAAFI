@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FieldType } from '@ngx-formly/core';
 import { Subscription } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -8,6 +8,8 @@ import { DomSanitizer } from '@angular/platform-browser';
   templateUrl: './file.component.html'
 })
 export class FormlyFieldFileComponent extends FieldType implements OnInit, OnDestroy {
+
+  @ViewChild('inputFile') inputFile: ElementRef;
 
   href: any = null;
   download: string = null;
@@ -36,7 +38,18 @@ export class FormlyFieldFileComponent extends FieldType implements OnInit, OnDes
       }
     } else {
       this.href = null;
+      if (this.inputFile != null) {
+        this.inputFile.nativeElement.value = '';
+      }
     }
+  }
+
+  removeFile(event: any) {
+    event.preventDefault();
+
+    this.formControl.setValue(null);
+    this.inputFile.nativeElement.value = '';
+    this.href = null;
   }
 
   ngOnDestroy() {

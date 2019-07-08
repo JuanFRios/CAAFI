@@ -101,7 +101,7 @@ export class DataService {
             for (const k in data[i][j]) {
               if (k === 'file') {
                 dataRepeat += 'Archivo: <a href="' + data[i][j][k] +
-                  '" download="download"><span style="font-size: 20px; color: #0a351c">' +
+                  '" download><span style="font-size: 20px; color: #0a351c">' +
                   '<i class="fas fa-download"></i></span></a>, ';
               } else {
                 if (typeof data[i][j][k] === 'object') {
@@ -116,7 +116,7 @@ export class DataService {
           data[i] = this._sanitizer.bypassSecurityTrustHtml(dataRepeat.slice(0, -5) + '</p></div>');
         } else if (files.includes(i)) {
           data[i] = this._sanitizer
-            .bypassSecurityTrustHtml('<a href="' + data[i] + '" download="download"><span style="font-size: 20px; color: #0a351c">' +
+            .bypassSecurityTrustHtml('<a href="' + data[i] + '" download><span style="font-size: 20px; color: #0a351c">' +
               '<i class="fas fa-download"></i></span></a>');
         }
       }

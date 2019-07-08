@@ -47,6 +47,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
         return this._template.getValue();
     }
 
+  initFormData: Object = {};
   data: Data;
   options: FormlyFormOptions = {};
   form: FormGroup;
@@ -98,10 +99,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
     if (this.options.resetModel) {
       this.options.resetModel();
     }
-
-    if (this.formData == null) {
-      this.formData = new Object();
-    }
+    this.formData = this.initFormData;
     const fields = this.template.fields;
     this.proccessFields(fields);
     this.formFields = fields;
@@ -111,7 +109,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
   proccessFields(fields) {
     // Proceess Validators
-    this.evalJSFromJSON(fields, ['pattern', 'defaultValue', 'options', 'label', 'placeholder',
+    this.evalJSFromJSON(fields, ['pattern', 'defaultValue', 'options', 'label', 'placeholder', 'type',
       'templateOptions?disabled', 'onInit', 'onDestroy', 'hideExpression', 'variable', 'watcher'], '');
   }
 
@@ -133,6 +131,8 @@ export class FormlyComponent implements OnInit, OnDestroy {
               this.options['formState'] = {};
             }
             this.options['formState'][fields[i]] = 0;
+          } else if (i === 'type' && fields[i] === 'repeat') {
+            this.initFormData[fields['key']] = [{}];
           } else {
             // tslint:disable-next-line:no-eval
             fields[i] = eval(fields[i]);
@@ -150,6 +150,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
   reset() {
     this.options.resetModel();
+    this.formData = this.initFormData;
     this.currentId = null;
     this.reseted.emit(null);
   }
@@ -249,27 +250,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
     this.reset();
     this.dataService.getById(id)
       .subscribe(formData => {
-        for (const i in formData.data) {
-          if (formData.data[i] != null) {
-            if (this.template.repeatSections.includes(i)) {
-              for (const j in formData.data[i]) {
-                if (formData.data[i][j] != null) {
-                  if (!this.form.get(i).get(j)) {
-                    const element: HTMLElement = document.getElementById('button-add-' + i) as HTMLElement;
-                    element.click();
-                  }
-                  this.form.get(i).get(j).patchValue(formData.data[i][j]);
-                  this.formData[i][j] = formData.data[i][j];
-                }
-              }
-            } else {
-              if (this.form.get(i)) {
-                this.form.get(i).patchValue(formData.data[i]);
-                this.formData[i] = formData.data[i];
-              }
-            }
-          }
-        }
+        this.formData = formData.data;
         if (isEdit) {
           this.currentId = id;
         }

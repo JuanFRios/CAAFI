@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, OnChanges, SimpleChanges, DoCheck } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { FieldType, FormlyFormBuilder } from '@ngx-formly/core';
+import { FieldType, FormlyFormBuilder, FieldArrayType } from '@ngx-formly/core';
 import { Subject } from 'rxjs';
 import { takeUntil, startWith, tap } from 'rxjs/operators';
 import * as clonedeep from 'lodash.clonedeep';
@@ -9,7 +9,8 @@ import * as clonedeep from 'lodash.clonedeep';
   selector: 'app-formly-repeat-section',
   templateUrl: './repeat-section.component.html'
 })
-export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy, AfterViewInit {
+export class RepeatTypeComponent extends FieldArrayType {
+  /*
   formControl: FormArray;
   field: any;
   fields = [];
@@ -58,4 +59,5 @@ export class RepeatTypeComponent extends FieldType implements OnInit, OnDestroy,
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
+  */
 }
