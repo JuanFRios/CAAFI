@@ -99,9 +99,10 @@ export class FormlyComponent implements OnInit, OnDestroy {
     if (this.options.resetModel) {
       this.options.resetModel();
     }
-    this.formData = this.initFormData;
     const fields = this.template.fields;
+    this.initFormData = {};
     this.proccessFields(fields);
+    this.formData = this.initFormData;
     this.formFields = fields;
     this.formLoaded = true;
     this.form = new FormGroup({});
