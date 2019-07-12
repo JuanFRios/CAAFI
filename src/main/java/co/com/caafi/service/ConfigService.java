@@ -153,6 +153,7 @@ public class ConfigService {
 			configDB = new Config();
 			configDB.setName(config.getName());
 			configDB.setType(config.getType());
+			configDB.setPublicResource(config.isPublicResource());
 		}
 		Map<String, Object> value = (Map<String, Object>) config.getValue();
 		

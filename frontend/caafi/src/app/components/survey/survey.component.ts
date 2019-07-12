@@ -110,7 +110,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
     this.toggleLoading(true);
     this.templatesService.getPublicTemplateByName(this.formId)
       .subscribe(template => {
-      this.configService.getPublicConfigByName(encodeURIComponent(this.dependency + '+' + this.type + '+' + this.formId))
+      this.configService.getPublicConfigByName(this.dependency + '+' + this.type + '+' + this.formId)
         .subscribe(config => {
           const initDate = (new Date(config.value['dateRange'][0])).getTime();
           const endDate = (new Date(config.value['dateRange'][1])).getTime();

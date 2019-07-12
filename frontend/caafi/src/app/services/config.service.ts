@@ -22,7 +22,8 @@ export class ConfigService {
   }
 
   getPublicConfigByName(name: string): Observable<Config> {
-    return this.http.get<Config>('config/public/byname/' + name, this.utilService.getRequestOptions());
+    return this.restangular.one('config/public/byname/', name).get();
+    //return this.http.get<Config>('config/public/byname/' + name, this.utilService.getRequestOptions());
   }
 
   getTemplateConfig(name: string): Observable<Config> {
