@@ -62,6 +62,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
   valueChangesSubscription: Subscription;
   currentId: string;
   saving: boolean;
+  first = true;
 
   constructor(
     private dataService: DataService,
@@ -100,10 +101,21 @@ export class FormlyComponent implements OnInit, OnDestroy {
     if (this.options.resetModel) {
       this.options.resetModel();
     }
-    const fields = this.template.fields;
-    this.initFormData = {};
-    this.proccessFields(fields);
+
+    // Initialice Data
+    if (this.first) {
+      if (this.formData != null) {
+        this.initFormData = this.utilService.deepCopy(this.formData);
+      } else {
+        this.initFormData = {};
+      }
+      this.first = false;
+    }
     this.formData = this.initFormData;
+
+    // Process fields
+    const fields = this.template.fields;
+    this.proccessFields(fields);
     this.formFields = fields;
     this.formLoaded = true;
     this.form = new FormGroup({});
@@ -134,7 +146,9 @@ export class FormlyComponent implements OnInit, OnDestroy {
             }
             this.options['formState'][fields[i]] = 0;
           } else if (i === 'type' && fields[i] === 'repeat') {
-            this.initFormData[fields['key']] = [{}];
+            if (this.formData[fields['key']] == null) {
+              this.formData[fields['key']] = [{}];
+            }
           } else {
             // tslint:disable-next-line:no-eval
             fields[i] = eval(fields[i]);

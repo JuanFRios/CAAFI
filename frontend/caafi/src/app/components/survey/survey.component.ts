@@ -143,12 +143,14 @@ export class SurveyComponent implements OnInit, OnDestroy {
       this.loadMatter().then(result2 => {
         if (this.cedula != null) {
           this.loadGroup().then(result3 => {
+            console.log(this.formData);
             this.dataLoaded = true;
           });
         } else {
           this.validateGroup().then(result4 => {
             if (result4) {
               this.formData['grupo'] = this.group;
+              console.log(this.formData);
               this.dataLoaded = true;
             } else {
               this.isError = true;

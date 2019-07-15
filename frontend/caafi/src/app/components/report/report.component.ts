@@ -41,6 +41,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   filter = '';
   selectedTabDependency = new FormControl(0);
   subscribeContainers: Subscription;
+  first = true;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -289,8 +290,15 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    if (this.subscribeContainers != null) {
+      this.subscribeContainers.unsubscribe();
+    }
     this.subscribeContainers = this.containers.changes.subscribe((comps: QueryList<ContainerComponent>) => {
       this.containers.reset(comps.toArray());
+
+      this.indexDependenciesTab = 0;
+      this.indexReportsTab = 0;
+      this.createDataTable();
     });
   }
 
