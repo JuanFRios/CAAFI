@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChildren
 import { FormGroup } from '@angular/forms';
 import { Data } from '../../common/data';
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
-import { pairwise, takeUntil, startWith, tap } from 'rxjs/operators';
+import { takeUntil, startWith, tap } from 'rxjs/operators';
 import { Subject, Subscription, BehaviorSubject } from '../../../../node_modules/rxjs';
 import { NotifierService } from 'angular-notifier';
 import { MatDialog, DateAdapter } from '@angular/material';
