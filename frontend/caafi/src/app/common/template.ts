@@ -1,4 +1,4 @@
-import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
+import { FormlyFieldConfig } from '@ngx-formly/core';
 
 export class Template {
   id: string;

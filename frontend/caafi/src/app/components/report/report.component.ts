@@ -161,9 +161,9 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
   createDataTable() {
     if (!this.creating) {
-      this.creating = true;
       const container = this.getContainer();
       if (container != null) {
+        this.creating = true;
         const containerRef = container.viewContainerRef;
         containerRef.clear();
         const factory: ComponentFactory<DataTableComponent> = this.resolver.resolveComponentFactory(DataTableComponent);
