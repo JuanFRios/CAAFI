@@ -5,6 +5,4 @@ import { FieldType } from '@ngx-formly/material';
   selector: 'app-form-variable-type',
   templateUrl: './variable.component.html'
 })
-export class VariableTypeComponent extends FieldType {
-  field: any;
-}
+export class VariableTypeComponent extends FieldType {}

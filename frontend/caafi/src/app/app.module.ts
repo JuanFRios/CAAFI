@@ -38,7 +38,6 @@ import { FileService } from './services/file.service';
 import { ListService } from './services/list.service';
 
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { TooltipWrapperComponent } from './components/wrappers/tooltip/tooltip-wrapper.component';
 
 import { AppComponent } from './app.component';
 import { SafePipe } from './safe.pipe';
@@ -160,7 +159,6 @@ export function required(err, field) {
     RepeatTypeComponent,
     FileValueAccessor,
     FormlyFieldFileComponent,
-    TooltipWrapperComponent,
     SurveyComponent,
     TableComponent,
     SafePipe
@@ -177,16 +175,7 @@ export function required(err, field) {
       types: [
         { name: 'repeat', component: RepeatTypeComponent },
         { name: 'file', component: FormlyFieldFileComponent },
-        {
-          name: 'variable',
-          component: VariableTypeComponent,
-          defaultOptions: {
-            defaultValue: '',
-            templateOptions: {
-              variableOptions: {}
-            }
-          }
-        }
+        { name: 'variable', component: VariableTypeComponent }
       ],
       validationMessages: [
         { name: 'required', message: required },
@@ -194,10 +183,7 @@ export function required(err, field) {
         { name: 'maxlength', message: maxlengthValidationMessage },
         { name: 'min', message: minValidationMessage },
         { name: 'max', message: maxValidationMessage },
-      ],
-      wrappers: [
-        { name: 'tooltip', component: TooltipWrapperComponent },
-      ],
+      ]
     }),
     FormlyMatDatepickerModule,
     FormlyMaterialModule,

@@ -14,6 +14,7 @@ public class Item {
 	private List<Item> subItems;
 	private boolean noReport;
 	private boolean adminReport;
+	private boolean export;
 	
 	public String getName() {
 		return name;
@@ -74,5 +75,11 @@ public class Item {
 	}
 	public void setFormalName(String formalName) {
 		this.formalName = formalName;
+	}
+	public boolean isExport() {
+		return export;
+	}
+	public void setExport(boolean export) {
+		this.export = export;
 	}
 }

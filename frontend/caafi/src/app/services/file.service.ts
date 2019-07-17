@@ -13,6 +13,6 @@ export class FileService {
    * @param file FormData
    */
   upload(file: FormData): Observable<FormData> {
-    return this.restangular.all('file').post(file);
+    return this.restangular.all('file/uploadFile').post(file);
   }
 }

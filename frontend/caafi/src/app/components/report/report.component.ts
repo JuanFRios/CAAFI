@@ -41,6 +41,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   filter = '';
   selectedTabDependency = new FormControl(0);
   subscribeContainers: Subscription;
+  first = true;
+  creating = false;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -158,25 +160,29 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   createDataTable() {
-    const container = this.getContainer();
-    if (container != null) {
-      const containerRef = container.viewContainerRef;
-      containerRef.clear();
-      const factory: ComponentFactory<DataTableComponent> = this.resolver.resolveComponentFactory(DataTableComponent);
-      setTimeout(() => {
-        this.loadReportTemplate(container.formId).then(resolve => {
-          const componentRef = containerRef.createComponent(factory);
-          componentRef.instance.formId = container.formId;
-          componentRef.instance.activeActions = container.activeActions;
-          componentRef.instance.allDataAccess = container.allDataAccess;
-          componentRef.instance.dependencyName = container.dependencyName;
-          componentRef.instance.export = container.export;
-          componentRef.instance.template = resolve;
-          componentRef.instance.filters = this.filters;
-          componentRef.instance.extFilter = this.filter;
-          container.activeDataTable = componentRef.instance;
+    if (!this.creating) {
+      const container = this.getContainer();
+      if (container != null) {
+        this.creating = true;
+        const containerRef = container.viewContainerRef;
+        containerRef.clear();
+        const factory: ComponentFactory<DataTableComponent> = this.resolver.resolveComponentFactory(DataTableComponent);
+        setTimeout(() => {
+          this.loadReportTemplate(container.formId).then(resolve => {
+            const componentRef = containerRef.createComponent(factory);
+            componentRef.instance.formId = container.formId;
+            componentRef.instance.activeActions = container.activeActions;
+            componentRef.instance.allDataAccess = container.allDataAccess;
+            componentRef.instance.dependencyName = container.dependencyName;
+            componentRef.instance.export = container.export;
+            componentRef.instance.template = resolve;
+            componentRef.instance.filters = this.filters;
+            componentRef.instance.extFilter = this.filter;
+            container.activeDataTable = componentRef.instance;
+            this.creating = false;
+          });
         });
-      });
+      }
     }
   }
 
@@ -289,8 +295,15 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    if (this.subscribeContainers != null) {
+      this.subscribeContainers.unsubscribe();
+    }
     this.subscribeContainers = this.containers.changes.subscribe((comps: QueryList<ContainerComponent>) => {
       this.containers.reset(comps.toArray());
+
+      this.indexDependenciesTab = 0;
+      this.indexReportsTab = 0;
+      this.createDataTable();
     });
   }
 

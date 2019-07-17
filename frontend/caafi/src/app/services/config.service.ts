@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Config } from '../common/config';
-import { RestangularModule, Restangular } from 'ngx-restangular';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Restangular } from 'ngx-restangular';
+import { HttpClient } from '@angular/common/http';
 import { UtilService } from './util.service';
 
 @Injectable()
 export class ConfigService {
 
   constructor(
+    private restangular: Restangular,
     private http: HttpClient,
     private utilService: UtilService) { }
 
@@ -16,8 +17,13 @@ export class ConfigService {
     return this.http.get<Config>('config/byname/' + name, this.utilService.getRequestOptions());
   }
 
+  getByNameNoCache(name: string): Observable<Config> {
+    return this.restangular.one('config/byname/', name).get();
+  }
+
   getPublicConfigByName(name: string): Observable<Config> {
-    return this.http.get<Config>('config/public/byname/' + name, this.utilService.getRequestOptions());
+    return this.restangular.one('config/public/byname/', name).get();
+    //return this.http.get<Config>('config/public/byname/' + name, this.utilService.getRequestOptions());
   }
 
   getTemplateConfig(name: string): Observable<Config> {
@@ -34,6 +40,12 @@ export class ConfigService {
 
   getDependencyFormalName(dependency: string): Observable<Object> {
     return this.http.get<Object>('config/public/dependencyname/' + dependency, this.utilService.getRequestOptions());
+  }
+
+  saveConfig(data: Config): Observable<Config> {
+    const options: Object = {};
+    options['withCredentials'] = true;
+    return this.http.post<Config>('config', data, options);
   }
 
 }

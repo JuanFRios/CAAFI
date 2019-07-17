@@ -1,19 +1,29 @@
 package co.com.caafi.service;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import com.mongodb.WriteResult;
 
 import co.com.caafi.model.Config;
 import co.com.caafi.model.ConfigTemplate;
 import co.com.caafi.model.Dependency;
 import co.com.caafi.model.Form;
 import co.com.caafi.model.Item;
+import co.com.caafi.model.StringResponse;
 import co.com.caafi.model.User;
+import co.com.caafi.model.template.Template;
 import co.com.caafi.repository.ConfigRepository;
 import co.com.caafi.repository.ConfigTemplateRepository;
 
@@ -29,7 +39,7 @@ public class ConfigService {
 	}
 	
 	public Config findPublicConfigByName(String name) {
-		return this.configRepository.findByNameAndIsPublic(name, true);
+		return this.configRepository.findByNameAndPublicResource(name, true);
 	}
 
 	public ConfigTemplate findTemplateConfigByRol(User user,String name) {
@@ -135,6 +145,26 @@ public class ConfigService {
 			}
 		}
 		return null;
+	}
+
+	public Config save(Config config, User user) {
+		Config configDB = findByName(config.getName());
+		if (configDB == null) {
+			configDB = new Config();
+			configDB.setName(config.getName());
+			configDB.setType(config.getType());
+			configDB.setPublicResource(config.isPublicResource());
+		}
+		Map<String, Object> value = (Map<String, Object>) config.getValue();
+		
+		value.put("configCreator", user.getDocument());
+		configDB.setValue(value);
+		
+		return this.configRepository.save(configDB);
+	}
+	
+	public Config save(Config config) {
+		return this.configRepository.save(config);
 	}
 
 }

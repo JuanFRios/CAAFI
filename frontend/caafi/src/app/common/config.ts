@@ -2,10 +2,7 @@ export class Config {
     type: string;
     name: string;
     value: any;
+    publicResource: boolean;
 
-    constructor(type: string, name: string, value: any) {
-        this.type = type;
-        this.name = name;
-        this.value = value;
-    }
+    constructor() {}
 }

@@ -9,7 +9,7 @@ import co.com.caafi.model.template.Template;
 
 public interface TemplateRepository extends MongoRepository<Template, String> {
 
-	public List<Template> findByName(String name);
+	public Template findByName(String name);
 	
 	public List<Template> findByNameAndIsPublic(String name, boolean isPublic);
 

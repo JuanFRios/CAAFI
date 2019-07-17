@@ -8,8 +8,9 @@ public class Config {
 	@Id
 	private String id;
 	private String name;
+	private String type;
 	private Object value;
-	private boolean isPublic;
+	private boolean publicResource;
 
 	public String getId() {
 		return id;
@@ -35,12 +36,20 @@ public class Config {
 		this.value = value;
 	}
 
-	public boolean isPublic() {
-		return isPublic;
+	public String getType() {
+		return type;
 	}
 
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public boolean isPublicResource() {
+		return publicResource;
+	}
+
+	public void setPublicResource(boolean publicResource) {
+		this.publicResource = publicResource;
 	}
 
 }

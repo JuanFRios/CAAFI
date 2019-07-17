@@ -19,6 +19,7 @@ export class TemplatesComponent implements OnInit, AfterViewInit {
   fields: any;
   template: any;
   allDataAccess = false;
+  export = false;
 
   constructor(
     private templatesService: TemplatesService,
@@ -39,6 +40,7 @@ export class TemplatesComponent implements OnInit, AfterViewInit {
       this.formId = $event.formId;
       this.dependencyName = $event.dependencyName;
       this.allDataAccess = $event.allDataAccess;
+      this.export = $event.export;
       this.loadTemplate($event.formId);
     }
   }

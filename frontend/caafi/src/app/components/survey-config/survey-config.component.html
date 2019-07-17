@@ -12,7 +12,7 @@
 <div *ngIf="template != null">
     <!-- Formly -->
     <div *ngIf="formData != null">
-        <app-formly #formly [formId]="formId" [template]="template" [dependencyFormalName]="dependencyFormalName" [formData]="formData" [clearButton]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)"></app-formly>
+        <app-formly #formly [formId]="formId" [template]="template" [dependencyName]="formlyName" [dependencyFormalName]="dependencyName" [formData]="formData" [clearButton]="false" [saveButton]="false" (fullLoading)="toggleLoading($event)" (dataSaved)="dataTable.refresh($event)"></app-formly>
     </div>
 
     <div class="container">

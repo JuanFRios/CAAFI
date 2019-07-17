@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChildren
 import { FormGroup } from '@angular/forms';
 import { Data } from '../../common/data';
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
-import { pairwise, takeUntil, startWith, tap } from 'rxjs/operators';
+import { takeUntil, startWith, tap } from 'rxjs/operators';
 import { Subject, Subscription, BehaviorSubject } from '../../../../node_modules/rxjs';
 import { NotifierService } from 'angular-notifier';
 import { MatDialog, DateAdapter } from '@angular/material';
@@ -12,6 +12,7 @@ import { FileService } from '../../services/file.service';
 import { UtilService } from '../../services/util.service';
 import { RepeatTypeComponent } from '../types/repeat-section/repeat-section.component';
 import { LoginService } from '../../services/login.service';
+//import { resolve } from 'path';
 
 @Component({
   selector: 'app-formly',
@@ -29,6 +30,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
   @Input() formData: Object = null;
   @Input() creator: string = null;
   @Input() clearButton = true;
+  @Input() saveButton = true;
   @Output() fullLoading = new EventEmitter();
   @Output() dataSaved = new EventEmitter();
   @Output() buttonClicked = new EventEmitter();
@@ -46,6 +48,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
         return this._template.getValue();
     }
 
+  initFormData: Object = {};
   data: Data;
   options: FormlyFormOptions = {};
   form: FormGroup;
@@ -59,6 +62,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
   valueChangesSubscription: Subscription;
   currentId: string;
   saving: boolean;
+  first = true;
 
   constructor(
     private dataService: DataService,
@@ -98,9 +102,18 @@ export class FormlyComponent implements OnInit, OnDestroy {
       this.options.resetModel();
     }
 
-    if (this.formData == null) {
-      this.formData = new Object();
+    // Initialice Data
+    if (this.first) {
+      if (this.formData != null) {
+        this.initFormData = this.utilService.deepCopy(this.formData);
+      } else {
+        this.initFormData = {};
+      }
+      this.first = false;
     }
+    this.formData = this.initFormData;
+
+    // Process fields
     const fields = this.template.fields;
     this.proccessFields(fields);
     this.formFields = fields;
@@ -110,7 +123,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
   proccessFields(fields) {
     // Proceess Validators
-    this.evalJSFromJSON(fields, ['pattern', 'defaultValue', 'options', 'label', 'placeholder',
+    this.evalJSFromJSON(fields, ['pattern', 'defaultValue', 'options', 'label', 'placeholder', 'type',
       'templateOptions?disabled', 'onInit', 'onDestroy', 'hideExpression', 'variable', 'watcher'], '');
   }
 
@@ -132,8 +145,13 @@ export class FormlyComponent implements OnInit, OnDestroy {
               this.options['formState'] = {};
             }
             this.options['formState'][fields[i]] = 0;
+          } else if (i === 'type' && fields[i] === 'repeat') {
+            if (this.formData[fields['key']] == null) {
+              this.formData[fields['key']] = [{}];
+            }
           } else {
-            fields[i] = eval(fields[i]); // no-eval
+            // tslint:disable-next-line:no-eval
+            fields[i] = eval(fields[i]);
           }
         } catch (e) { }
       }
@@ -148,6 +166,7 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
   reset() {
     this.options.resetModel();
+    this.formData = this.initFormData;
     this.currentId = null;
     this.reseted.emit(null);
   }
@@ -156,57 +175,81 @@ export class FormlyComponent implements OnInit, OnDestroy {
 
     this.saving = true;
 
-    this.data = new Data();
-    const formsData: FormData[] = this.getFiles(template);
-    this.data.data = template;
-    this.data.login = this.loginService.isLogIn();
-    this.data.template = this.formId;
-    this.data.origin = this.dependencyName;
-    this.data.creator = this.creator;
+    this.uploadFiles(template).then(() => {
+      this.data = new Data();
+      this.data.data = template;
+      this.data.login = this.loginService.isLogIn();
+      this.data.template = this.formId;
+      this.data.origin = this.dependencyName;
+      this.data.creator = this.creator;
 
-    if (this.currentId != null) {
-      this.data.id = this.currentId;
-    }
+      if (this.currentId != null) {
+        this.data.id = this.currentId;
+      }
 
-    this.dataService.save(this.data)
-      .subscribe(res => {
-        for (let i = 0, len = formsData.length; i < len; i++) {
-          this.uploadFile(formsData[i]);
-        }
-        this.reset();
-        this.currentId = null;
-        this.dataSaved.emit(null);
-        this.saving = false;
-        this.notifier.notify( 'success', 'OK: El formulario ha sido guardado exitosamente.' );
-      },
-        error => {
+      this.dataService.save(this.data)
+        .subscribe(res => {
+          this.reset();
+          this.currentId = null;
+          this.dataSaved.emit(null);
           this.saving = false;
-          this.notifier.notify( 'error', 'ERROR: Error al guardar el formulario.' );
-        });
+          this.notifier.notify( 'success', 'OK: El formulario ha sido guardado exitosamente.' );
+        },
+          error => {
+            this.saving = false;
+            this.notifier.notify( 'error', 'ERROR: Error al guardar el formulario.' );
+          });
+    });
   }
 
   uploadFile(file) {
     this.fileService.upload(file);
   }
 
-  getFiles(template) {
-    const formsData: FormData[] = [];
-    for (const i in template) {
-      if (template[i] && template[i][0] && typeof template[i][0].name === 'string' && template[i].length > 0) {
-        const file: File = template[i][0];
-        const formData: FormData = new FormData();
-        const fecha_actual = new Date();
-        const ano = fecha_actual.getFullYear();
-        const mes = fecha_actual.getMonth() + 1;
-        const dia = fecha_actual.getDate();
-        const formato_fecha = '_' + ano + '-' + mes + '-' + dia;
-        const nombre_archivo = i + formato_fecha;
-        template[i] = nombre_archivo + '.pdf';
-        formData.append('file', file, nombre_archivo);
-        formsData.push(formData);
+  uploadFiles(template: Object) {
+
+    const promises: Promise<any>[] = [];
+    const keys = Object.keys(template);
+    for (const key of keys) {
+      if (this.template.repeatSections.includes(key)) {
+        for (let i = 0; i < template[key].length; i++) {
+          const subKeys = Object.keys(template[key][i]);
+          for (const subKey of subKeys) {
+            if (template[key][i][subKey] instanceof FileList) {
+              promises.push(new Promise(resolve => {
+                const file: File = template[key][i][subKey][0];
+                // tslint:disable-next-line:no-bitwise
+                const extension = file.name.slice((file.name.lastIndexOf('.') - 1 >>> 0) + 2);
+                const formData: FormData = new FormData();
+                formData.append('file', file, key + '_' + subKey + '_' + (new Date()).getTime() + '.' + extension);
+                this.fileService.upload(formData).subscribe(response => {
+                  template[key][i][subKey] = response['fileDownloadUri'];
+                  resolve();
+                });
+              }));
+            }
+          }
+        }
+      } else if (template[key] instanceof FileList) {
+        promises.push(new Promise(resolve => {
+          const file: File = template[key][0];
+          // tslint:disable-next-line:no-bitwise
+          const extension = file.name.slice((file.name.lastIndexOf('.') - 1 >>> 0) + 2);
+          const formData: FormData = new FormData();
+          formData.append('file', file, key + '_' + (new Date()).getTime() + '.' + extension);
+          this.fileService.upload(formData).subscribe(response => {
+            template[key] = response['fileDownloadUri'];
+            resolve();
+          });
+        }));
       }
     }
-    return formsData;
+
+    return new Promise( resolve => {
+      Promise.all(promises).then(() => {
+        resolve();
+      });
+    });
   }
 
   copyData($event) {
@@ -215,36 +258,18 @@ export class FormlyComponent implements OnInit, OnDestroy {
   }
 
   editData($event) {
-    this.loadData($event);
+    this.loadData($event, true);
   }
 
-  loadData(id) {
+  loadData(id, isEdit: boolean = false) {
     this.fullLoading.emit(true);
     this.reset();
     this.dataService.getById(id)
       .subscribe(formData => {
-        for (const i in formData.data) {
-          if (formData.data[i] != null) {
-            if (this.template.repeatSections.includes(i)) {
-              for (const j in formData.data[i]) {
-                if (formData.data[i][j] != null) {
-                  if (!this.form.get(i).get(j)) {
-                    const element: HTMLElement = document.getElementById('button-add-' + i) as HTMLElement;
-                    element.click();
-                  }
-                  this.form.get(i).get(j).patchValue(formData.data[i][j]);
-                  this.formData[i][j] = formData.data[i][j];
-                }
-              }
-            } else {
-              if (this.form.get(i)) {
-                this.form.get(i).patchValue(formData.data[i]);
-                this.formData[i] = formData.data[i];
-              }
-            }
-          }
+        this.formData = formData.data;
+        if (isEdit) {
+          this.currentId = id;
         }
-        this.currentId = id;
         this.fullLoading.emit(false);
       },
         error => {

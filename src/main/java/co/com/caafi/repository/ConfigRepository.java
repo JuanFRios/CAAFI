@@ -9,7 +9,7 @@ public interface ConfigRepository extends MongoRepository<Config, String> {
 
 	public Config findByName(String name);
 	
-	public Config findByNameAndIsPublic(String name, boolean isPublic);
+	public Config findByNameAndPublicResource(String name, boolean isPublic);
 
 	@Query(value = "{ 'type':'parameter', 'name' : ?0 }", fields = "{ 'name': 1, 'value' : 1 }")
 	public Config findParamByName(String name);
