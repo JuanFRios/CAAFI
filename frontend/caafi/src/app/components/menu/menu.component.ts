@@ -123,6 +123,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
     menuData['dependencyFormalName'] =
       this.params['dependencyId'] ? this.pathArray.find(o => o['path'] === this.params['dependencyId'])['formalName'] : null;
     menuData['pathway'] = this.pathway;
+    menuData['collection'] = this.activeItem ? this.activeItem['collection'] : false;
     this.selectedItem.emit(menuData);
   }
 

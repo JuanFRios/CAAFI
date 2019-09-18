@@ -12,6 +12,7 @@ import { MatTabChangeEvent } from '@angular/material';
 import { DataService } from '../../services/data.service';
 import { ExcelService } from '../../services/excel.service';
 import { FormControl } from '@angular/forms';
+import { CollectionService } from '../../services/collecton.service';
 
 @Component({
   selector: 'app-report',
@@ -43,6 +44,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   subscribeContainers: Subscription;
   first = true;
   creating = false;
+  collection: string = null;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -76,7 +78,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     private componentFactoryResolver: ComponentFactoryResolver,
     private resolver: ComponentFactoryResolver,
     private dataService: DataService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private collectionService: CollectionService
   ) {
     this.notifier = notifierService;
   }
@@ -103,7 +106,12 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
           this.dependenciesReport = dependencies;
         });
       }
-      this.loadReport($event.formId);
+      if ($event.collection) {
+        this.collection = $event.collection;
+        this.loadReportFromCollection($event.collection);
+      } else {
+        this.loadReport($event.formId);
+      }
     }
   }
 
@@ -128,6 +136,23 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
           error => {
             this.toggleLoading(false);
             this.notifier.notify( 'error', 'ERROR: Error al cargar el formulario.' );
+            resolve();
+        });
+    });
+  }
+
+  loadReportFromCollection(collection: string) {
+    this.toggleLoading(true);
+    return new Promise(resolve => {
+      this.collectionService.getByName(collection)
+        .subscribe(data => {
+          console.log(data);
+          this.toggleLoading(false);
+          resolve();
+        },
+          error => {
+            this.toggleLoading(false);
+            this.notifier.notify( 'error', 'ERROR: Error al cargar los datos.' );
             resolve();
         });
     });
