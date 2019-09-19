@@ -5,13 +5,17 @@ import { Observable } from 'rxjs';
 import { RestangularModule, Restangular } from 'ngx-restangular';
 import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 import { baseURL } from '../common/baseurl';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { UtilService } from './util.service';
 
 @Injectable()
 export class DataService {
 
   constructor(
     private restangular: Restangular,
-    private _sanitizer: DomSanitizer
+    private _sanitizer: DomSanitizer,
+    private http: HttpClient,
+    private utilService: UtilService
   ) { }
 
   getAll(): Observable<Data[]> {
@@ -185,6 +189,18 @@ export class DataService {
 
   getDataByFormAndCreator(formId, creator): Observable<Data> {
     return this.restangular.one('data/public/getByFormAndCreator/' + formId + '/' + creator).get();
+  }
+
+  countAllByCollection(collection: string): Observable<any[]> {
+    return this.http.get<any>(baseURL + '/' + collection + '/count', this.utilService.getRequestOptions());
+  }
+
+  getByCollection(collection, filter, sortColumn, sortDirection, pageIndex, pageSize): Observable<any[]> {
+    const params = new HttpParams().set('filter', filter).set('sortColumn', sortColumn).set('sortDirection', sortDirection)
+      .set('pageIndex', pageIndex).set('pageSize', pageSize);
+    const httpOptions = this.utilService.getRequestOptions();
+    httpOptions['params'] = params;
+    return this.http.get<any>(baseURL + '/' + collection, httpOptions);
   }
 
 }
