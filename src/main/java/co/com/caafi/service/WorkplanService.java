@@ -17,7 +17,7 @@ public class WorkplanService {
 	private WorkplanRepository workplanRepository;
 
 	public List<Workplan> get(String filter, String sortColumn, String sortDirection, int pageIndex, int pageSize) {
-		return this.workplanRepository.findAll(filter, new PageRequest(pageIndex, pageSize,
+		return this.workplanRepository.customFindAll(filter, new PageRequest(pageIndex, pageSize,
 				new Sort(Sort.Direction.valueOf(sortDirection.toUpperCase()), sortColumn)));
 	}
 

@@ -192,7 +192,7 @@ export class DataService {
   }
 
   countAllByCollection(collection: string): Observable<any[]> {
-    return this.http.get<any>(baseURL + '/' + collection + '/count', this.utilService.getRequestOptions());
+    return this.http.get<any>(collection + '/count', this.utilService.getRequestOptions());
   }
 
   getByCollection(collection, filter, sortColumn, sortDirection, pageIndex, pageSize): Observable<any[]> {
@@ -200,7 +200,7 @@ export class DataService {
       .set('pageIndex', pageIndex).set('pageSize', pageSize);
     const httpOptions = this.utilService.getRequestOptions();
     httpOptions['params'] = params;
-    return this.http.get<any>(baseURL + '/' + collection, httpOptions);
+    return this.http.get<any>(collection, httpOptions);
   }
 
 }

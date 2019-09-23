@@ -45,6 +45,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   first = true;
   creating = false;
   collection: string = null;
+  columns: object = null;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -107,8 +108,14 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       }
       if ($event.collection) {
+        this.template = null;
         this.collection = $event.collection;
-        this.loadReportFromCollection($event.collection);
+        this.columns = {
+          'idPlan': {name: 'id_plan', type: 'text'},
+          'documento': {name: 'documento', type: 'text'},
+          'nombre': {name: 'nombre', type: 'text'}
+        };
+        //this.loadReportFromCollection($event.collection);
       } else {
         this.loadReport($event.formId);
       }
@@ -142,6 +149,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loadReportFromCollection(collection: string) {
+    /*
     this.toggleLoading(true);
     return new Promise(resolve => {
       this.collectionService.getByName(collection)
@@ -156,6 +164,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
             resolve();
         });
     });
+    */
   }
 
   loadReportTemplate(formId): Promise<any> {

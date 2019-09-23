@@ -13,5 +13,5 @@ import co.com.caafi.model.Workplan;
 public interface WorkplanRepository extends MongoRepository<Workplan, String> {
 	
 	@Query("{ $where: '(JSON.stringify(this).toLowerCase().indexOf( ?0.toLowerCase() ) != -1);' }")
-    List<Workplan> findAll(String filter, PageRequest pageRequest);
+    List<Workplan> customFindAll(String filter, PageRequest pageRequest);
 }

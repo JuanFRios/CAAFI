@@ -19,12 +19,7 @@
 
     <!-- Data Table -->
     <div *ngIf="!noReport">
-        <div *ngIf="!collection">
-            <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="allDataAccess" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
-        </div>
-        <div *ngIf="collection">
-            <p>hello world</p>
-        </div>
+        <app-data-table #dataTable [formId]="formId" [dependencyName]="dependencyName" [allDataAccess]="allDataAccess" [template]="template" [activeActions]="false" [export]="true" (copyData)="formly.copyData($event)" (editData)="formly.editData($event)" (deleteData)="formly.deleteData($event)"></app-data-table>
     </div>
 
     <div *ngIf="noReport">
@@ -47,4 +42,7 @@
         </div>
         -->
     </div>
+</div>
+<div *ngIf="template == null && collection != null && columns != null" class="container">
+    <app-table [collection]="collection" [columns]="columns"></app-table>
 </div>

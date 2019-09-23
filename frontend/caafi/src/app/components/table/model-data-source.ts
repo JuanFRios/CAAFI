@@ -23,7 +23,7 @@ export class ModelDataSource implements DataSource<any> {
     this.loadingSubject.complete();
   }
 
-  loadData(collection: string, filter = '', sortColumn = 'savedDate', sortDirection = 'desc', pageIndex = 0, pageSize = 5) {
+  loadData(collection: string, filter = '', sortColumn = 'id_plan', sortDirection = 'desc', pageIndex = 0, pageSize = 5) {
     this.loadingSubject.next(true);
 
     return new Promise( resolve => {
