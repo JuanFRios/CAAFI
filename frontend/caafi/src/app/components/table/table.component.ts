@@ -6,6 +6,8 @@ import { merge } from 'rxjs/internal/observable/merge';
 import { fromEvent } from 'rxjs';
 import { Router } from '@angular/router';
 import { DataService } from '../../services/data.service';
+import { MatProgressButtonOptions } from 'mat-progress-buttons';
+import { ExportToCsv } from 'export-to-csv';
 
 @Component({
   selector: 'app-table',
@@ -16,17 +18,19 @@ export class TableComponent implements OnInit, AfterViewInit {
 
   @Input() collection: string;
   @Input() columns: object;
+  @Input() export: boolean;
 
   tableName = null;
   dataSource: ModelDataSource;
   columnsList: string[];
   displayedColumns: string[];
+  filters = {};
+  dataCount = 1;
+  btnExportOpts: MatProgressButtonOptions;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('input') input: ElementRef;
-
-  dataCount = 1;
 
   constructor(
     private dataService: DataService,
@@ -34,11 +38,24 @@ export class TableComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
+    this.btnExportOpts = {
+      active: false,
+      text: 'Exportar',
+      spinnerSize: 19,
+      raised: true,
+      stroked: false,
+      buttonColor: 'primary',
+      spinnerColor: 'primary',
+      fullWidth: false,
+      disabled: !this.export,
+      mode: 'indeterminate',
+    };
+
     this.displayedColumns = Object.keys(this.columns);
-    this.dataService.countAllByCollection(this.collection).subscribe(length => {
+    this.dataSource = new ModelDataSource(this.dataService);
+    this.dataSource.countData(this.collection).then(length => {
       this.dataCount = +length;
     });
-    this.dataSource = new ModelDataSource(this.dataService);
     this.dataSource.loadData(this.collection);
   }
 
@@ -76,12 +93,53 @@ export class TableComponent implements OnInit, AfterViewInit {
       this.sort.active,
       this.sort.active ? this.sort.direction : 'desc',
       this.paginator.pageIndex,
-      this.paginator.pageSize);
+      this.paginator.pageSize,
+      this.filters);
+
+    this.dataSource.countData(
+      this.collection,
+      this.input.nativeElement.value,
+      this.filters
+    ).then(length => {
+      this.dataCount = +length;
+    });
   }
 
-  onRowClicked(row: any) {
-    console.log('Row clicked: ', row);
-    this.router.navigate(['convocatorias/convocatoria/', row._Id]);
+  applyFilters(filters): Promise<any> {
+    return new Promise(resolve => {
+      this.filters = filters;
+      this.loadDataPage();
+      resolve();
+    });
+  }
+
+  exportCSV() {
+    console.log('export');
+
+    const options = {
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true,
+      showTitle: true,
+      title: this.collection,
+      useTextFile: false,
+      useBom: true,
+      useKeysAsHeaders: true
+    };
+
+    const csvExporter = new ExportToCsv(options);
+
+    this.dataSource.loadReport(
+      this.collection,
+      this.input.nativeElement.value,
+      this.sort.active,
+      this.sort.active ? this.sort.direction : 'desc',
+      this.paginator.pageIndex,
+      -1,
+      this.filters).then(data => {
+        csvExporter.generateCsv(data);
+      });
   }
 
 }

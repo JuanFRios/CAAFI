@@ -1,0 +1,21 @@
+export const tableColumns = {
+    'idPlan': {name: 'id_plan', type: 'text'},
+    'documento': {name: 'documento', type: 'text'},
+    'nombre': {name: 'nombre', type: 'text'},
+    'tipoEmpleado': {name: 'clase_emp', type: 'text'},
+    'dedicacion': {name: 'dedicacion', type: 'text'},
+    'docencia': {name: 'docencia', type: 'text'},
+    'otrasDocencias': {name: 'otras_doce', type: 'text'},
+    'investigacion': {name: 'investigac', type: 'text'},
+    'otrasInvestigaciones': {name: 'otras_inve', type: 'text'},
+    'extension': {name: 'extension', type: 'text'},
+    'otrasExtensiones': {name: 'otras_exte', type: 'text'},
+    'admon': {name: 'admon', type: 'text'},
+    'otras': {name: 'otras', type: 'text'},
+    'idEstado': {name: 'id_estado', type: 'text'},
+    'codigoFacultad': {name: 'codfac', type: 'text'},
+    'idCentroCosto': {name: 'ccosto_pro', type: 'text'},
+    'centroCosto': {name: 'ccosto', type: 'text'},
+    'semestre': {name: 'stre_plan', type: 'text'},
+    'diasPlan': {name: 'dias_plan', type: 'text'}
+};

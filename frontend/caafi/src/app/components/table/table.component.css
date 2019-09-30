@@ -4,6 +4,10 @@
     margin: 30px auto;
 }
 
+.table {
+  padding-bottom: 10px;
+}
+
 .table .wrapper-table-content {
   overflow: scroll;
 }
@@ -38,4 +42,9 @@ mat-form-field {
 mat-row:hover {
   background-color: rgb(238, 238, 238);
   cursor: pointer;
+}
+
+.export mat-spinner-button {
+  display: table;
+  margin: auto;
 }

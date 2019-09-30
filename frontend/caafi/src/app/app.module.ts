@@ -58,6 +58,8 @@ import { StudentService } from './services/student.service';
 import { SurveyComponent } from './components/survey/survey.component';
 import { TableComponent } from './components/table/table.component';
 import { CollectionService } from './services/collecton.service';
+import { FormComponent } from './components/form/form.component';
+import { FormService } from './services/form.service';
 
 // here is the default text string
 export class DefaultIntl extends OwlDateTimeIntl {
@@ -149,6 +151,7 @@ export function required(err, field) {
     MenuComponent,
     MenuItemComponent,
     FormlyComponent,
+    FormComponent,
     DataTableComponent,
     TemplatesComponent,
     SurveyConfigComponent,
@@ -222,6 +225,7 @@ export function required(err, field) {
       ExcelService,
       StudentService,
       CollectionService,
+      FormService,
       { provide: OwlDateTimeIntl, useClass: DefaultIntl },
       RequestCache,
       { provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true }

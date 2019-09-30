@@ -13,6 +13,9 @@ import { DataService } from '../../services/data.service';
 import { ExcelService } from '../../services/excel.service';
 import { FormControl } from '@angular/forms';
 import { CollectionService } from '../../services/collecton.service';
+import * as columns from './table-columns';
+import { FormComponent } from '../form/form.component';
+import { TableComponent } from '../table/table.component';
 
 @Component({
   selector: 'app-report',
@@ -46,6 +49,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   creating = false;
   collection: string = null;
   columns: object = null;
+  filterForm: string  = null;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -69,6 +73,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChildren(ContainerComponent) containers: QueryList<ContainerComponent>;
   @ViewChild(DataTableComponent) activeDataTable: DataTableComponent;
+  @ViewChild(FormComponent) formComponent: FormComponent;
+  @ViewChild(TableComponent) tableComponent: TableComponent;
 
   constructor(
     private templatesService: TemplatesService,
@@ -110,16 +116,20 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       if ($event.collection) {
         this.template = null;
         this.collection = $event.collection;
-        this.columns = {
-          'idPlan': {name: 'id_plan', type: 'text'},
-          'documento': {name: 'documento', type: 'text'},
-          'nombre': {name: 'nombre', type: 'text'}
-        };
+        this.filterForm = $event.collection + '-filters';
+        this.columns = columns.columnsMap[$event.collection];
         //this.loadReportFromCollection($event.collection);
       } else {
         this.loadReport($event.formId);
       }
     }
+  }
+
+  filterDataCollection(filters) {
+    console.log(filters);
+    this.tableComponent.applyFilters(filters).then(response => {
+      this.formComponent.saved(false);
+    });
   }
 
   /**

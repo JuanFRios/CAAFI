@@ -1,8 +1,10 @@
 package co.com.caafi.rest;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,15 +23,15 @@ public class WorkplanResource {
 	
 	@CrossOrigin(origins = "*")
 	@GetMapping()
-    public List<Workplan> get(@RequestParam String filter, @RequestParam String sortColumn,
+    public List<Workplan> get(@RequestParam String textFilter, @RequestParam String sortColumn,
                                   @RequestParam String sortDirection, @RequestParam int pageIndex,
-                                  @RequestParam int pageSize) {
-        return this.workplanService.get(filter, sortColumn, sortDirection, pageIndex, pageSize);
+                                  @RequestParam int pageSize, @RequestParam String filters) {
+        return this.workplanService.get(textFilter, sortColumn, sortDirection, pageIndex, pageSize, filters);
     }
 
 	@CrossOrigin(origins = "*")
     @GetMapping("/count")
-    public long get() {
-        return this.workplanService.countAll();
+    public long count(@RequestParam String textFilter, @RequestParam String filters) {
+        return this.workplanService.count(textFilter, filters);
     }
 }

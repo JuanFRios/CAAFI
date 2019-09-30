@@ -20,12 +20,16 @@
     
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     
-                <mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"></mat-row>                
     
             </mat-table>
         </div>
 
         <mat-paginator [length]="dataCount" [pageSize]="5" [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
+
+        <div *ngIf="export" class="export">
+            <mat-spinner-button [options]="btnExportOpts" (click)="exportCSV()"></mat-spinner-button>
+        </div>
     </div>
 
 </div>

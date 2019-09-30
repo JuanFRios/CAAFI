@@ -1,11 +1,26 @@
 package co.com.caafi.service;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.CriteriaDefinition;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.util.JSON;
 
 import co.com.caafi.model.Workplan;
 import co.com.caafi.repository.WorkplanRepository;
@@ -15,18 +30,96 @@ public class WorkplanService {
 
 	@Autowired
 	private WorkplanRepository workplanRepository;
+	
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
-	public List<Workplan> get(String filter, String sortColumn, String sortDirection, int pageIndex, int pageSize) {
-		return this.workplanRepository.customFindAll(filter, new PageRequest(pageIndex, pageSize,
-				new Sort(Sort.Direction.valueOf(sortDirection.toUpperCase()), sortColumn)));
+	public List<Workplan> get(String textFilter, String sortColumn, String sortDirection, 
+			int pageIndex, int pageSize, String filters) {
+
+		Order order = new Order(Sort.Direction.valueOf(sortDirection.toUpperCase()), sortColumn);
+		Sort sort = new Sort(order);
+
+		BasicQuery query = new BasicQuery("{ $where: '(JSON.stringify(this).toLowerCase().indexOf( \"" + 
+				textFilter + "\".toLowerCase() ) != -1);' }");
+
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, String> filtersMap = null;
+		try {
+			filtersMap = mapper.readValue(filters, Map.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+				
+		if (filtersMap != null && !filtersMap.isEmpty()) {
+			List<Criteria> criteria = new ArrayList<>();
+			for (Map.Entry<String, String> entry : filtersMap.entrySet()) {
+				if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+					criteria.add(getCriteria(entry.getKey(), entry.getValue()));
+				}
+			}
+			if (!criteria.isEmpty()) {
+				query.addCriteria(new Criteria().andOperator(criteria.stream().toArray(Criteria[]::new)));
+			}
+		}
+		
+		if (pageSize != -1) { // if pageSize is -1 gets all data
+			query.with(new PageRequest(pageIndex, pageSize, sort));
+		}
+		List<Workplan> result = mongoTemplate.find(query, Workplan.class, "workplan");
+		return result;
+	}
+	
+	private Criteria getCriteria(String key, String value) {
+		String[] entryKey = key.split("-");
+		String type = entryKey[0];
+		String name = entryKey[1];
+		switch(type) {
+		case "te": // Text Equals
+			return Criteria.where(name).is(value);
+		case "tge": // Text Greater or Equals than
+			return Criteria.where(name).gte(value);
+		case "tle": // Text Less or Equals than
+			return Criteria.where(name).lte(value);
+		default:
+			return null;
+		}
+	}
+
+	public List<Workplan> get(String textFilter, String filters) {
+		BasicQuery query = new BasicQuery("{ $where: '(JSON.stringify(this).toLowerCase().indexOf( \"" + 
+				textFilter + "\".toLowerCase() ) != -1);' }");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, String> filtersMap = null;
+		try {
+			filtersMap = mapper.readValue(filters, Map.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if (filtersMap != null && !filtersMap.isEmpty()) {
+			List<Criteria> criteria = new ArrayList<>();
+			for (Map.Entry<String, String> entry : filtersMap.entrySet()) {
+				if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+					criteria.add(getCriteria(entry.getKey(), entry.getValue()));
+				}
+			}
+			if (!criteria.isEmpty()) {
+				query.addCriteria(new Criteria().andOperator(criteria.stream().toArray(Criteria[]::new)));
+			}
+		}
+		
+		List<Workplan> result = mongoTemplate.find(query, Workplan.class, "workplan");
+		return result;
 	}
 
 	public List<Workplan> getAll() {
 		return this.workplanRepository.findAll();
 	}
 
-	public long countAll() {
-		return getAll().size();
+	public long count(String textFilter, String filters) {
+		return get(textFilter, filters).size();
 	}
 
 }

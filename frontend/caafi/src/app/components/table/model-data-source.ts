@@ -23,16 +23,42 @@ export class ModelDataSource implements DataSource<any> {
     this.loadingSubject.complete();
   }
 
-  loadData(collection: string, filter = '', sortColumn = 'id_plan', sortDirection = 'desc', pageIndex = 0, pageSize = 5) {
+  loadData(collection: string, textFilter = '', sortColumn = 'id_plan', sortDirection = 'desc',
+    pageIndex = 0, pageSize = 5, filters = {}) {
     this.loadingSubject.next(true);
 
     return new Promise( resolve => {
-      this.dataService.getByCollection(collection, filter, sortColumn, sortDirection, pageIndex, pageSize).pipe(
+      this.dataService.getByCollection(collection, textFilter, sortColumn, sortDirection, pageIndex, pageSize, filters).pipe(
         catchError(() => of([])),
         finalize(() => this.loadingSubject.next(false))
       ).subscribe(data => {
         this.dataSubject.next(data);
         resolve(data);
+      });
+    });
+  }
+
+  loadReport(collection: string, textFilter = '', sortColumn = 'id_plan', sortDirection = 'desc',
+    pageIndex = 0, pageSize = 5, filters = {}) {
+    this.loadingSubject.next(true);
+
+    return new Promise( resolve => {
+      this.dataService.getByCollection(collection, textFilter, sortColumn, sortDirection, pageIndex, pageSize, filters).pipe(
+        catchError(() => of([])),
+        finalize(() => {})
+      ).subscribe(data => {
+        resolve(data);
+      });
+    });
+  }
+
+  countData(collection: string, textFilter = '', filters = {}) {
+    return new Promise( resolve => {
+      this.dataService.countByCollection(collection, textFilter, filters).pipe(
+        catchError(() => of([])),
+        finalize(() => {})
+      ).subscribe(lenght => {
+        resolve(lenght);
       });
     });
   }

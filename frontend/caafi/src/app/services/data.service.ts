@@ -191,13 +191,17 @@ export class DataService {
     return this.restangular.one('data/public/getByFormAndCreator/' + formId + '/' + creator).get();
   }
 
-  countAllByCollection(collection: string): Observable<any[]> {
-    return this.http.get<any>(collection + '/count', this.utilService.getRequestOptions());
+  countByCollection(collection, textFilter, filters): Observable<any[]> {
+    const params = new HttpParams().set('textFilter', textFilter).set('filters', JSON.stringify(filters));
+    const httpOptions = this.utilService.getRequestOptions();
+    httpOptions['params'] = params;
+    return this.http.get<any>(collection + '/count', httpOptions);
   }
 
-  getByCollection(collection, filter, sortColumn, sortDirection, pageIndex, pageSize): Observable<any[]> {
-    const params = new HttpParams().set('filter', filter).set('sortColumn', sortColumn).set('sortDirection', sortDirection)
-      .set('pageIndex', pageIndex).set('pageSize', pageSize);
+  getByCollection(collection, textFilter, sortColumn, sortDirection, pageIndex, pageSize, filters): Observable<any[]> {
+    const params = new HttpParams().set('textFilter', textFilter).set('sortColumn', sortColumn)
+      .set('sortDirection', sortDirection).set('pageIndex', pageIndex).set('pageSize', pageSize)
+      .set('filters', JSON.stringify(filters));
     const httpOptions = this.utilService.getRequestOptions();
     httpOptions['params'] = params;
     return this.http.get<any>(collection, httpOptions);
