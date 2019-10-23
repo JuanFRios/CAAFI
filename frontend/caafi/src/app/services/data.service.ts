@@ -186,5 +186,4 @@ export class DataService {
   getDataByFormAndCreator(formId, creator, semester): Observable<Data> {
     return this.restangular.one('data/public/getByFormAndCreator/' + semester + '/' + formId + '/' + creator).get();
   }
-
 }
