@@ -13,4 +13,5 @@ public interface StudentRepository extends MongoRepository<Student, String> {
 
 	public List<Student> findByCedula(int cedula);
 	
+	public List<Student> findBySemestre(int semestre);
 }

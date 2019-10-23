@@ -53,6 +53,8 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
   sendingProgressValue = 0;
   showProgress = false;
   progressMode = 'query';
+  semesters = [];
+  semester = null;
 
   constructor(
     private templatesService: TemplatesService,
@@ -83,10 +85,12 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
       if (this.formId === 'encuesta-de-materias') {
         this.isMattersSurvery = true;
         this.configForm = this.formBuilder.group({
+          semester: ['', Validators.required],
           subject: ['', Validators.required],
           message: ['', Validators.required],
           dateTimeRange: ['', Validators.required]
         });
+        this.loadSemesters();
       } else {
         this.isMattersSurvery = false;
         this.configForm = this.formBuilder.group({
@@ -103,6 +107,16 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
       this.dependencyId = $event.dependencyId;
       this.loadTemplate($event.formId);
     }
+  }
+
+  loadSemesters() {
+    this.studentService.getSemesters()
+      .subscribe(result => {
+        this.semesters = result;
+      },
+        () => {
+          this.notifier.notify('error', 'ERROR: Error al traer los semestres.');
+        });
   }
 
   /**
@@ -189,6 +203,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
       this.allEmails = true;
       this.emailsDB = null;
       this.configForm.setValue({
+        semester: null,
         subject: null,
         message: null,
         dateTimeRange: null
@@ -215,6 +230,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
       .subscribe(result => {
       if (result != null && result.value != null) {
         if (this.isMattersSurvery) {
+          this.configForm.controls['semester'].setValue(result.value['semester']);
           this.configForm.controls['subject'].setValue(result.value['subject']);
           this.configForm.controls['message'].setValue(result.value['message']);
           this.configForm.controls['dateTimeRange'].setValue(result.value['dateRange']);
@@ -257,14 +273,17 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
       filters['dale-savedDate'] = this.filterEndDate;
     }
 
-    this.dataTable.filters = encodeURIComponent(JSON.stringify(filters));
-
     if (this.isMattersSurvery) {
       this.getEmailsDB();
       if (this.program == null && this.matter != null) {
         this.configId = encodeURIComponent(this.matter);
       }
+      if (this.semester != null) {
+        filters['ne-semestre'] = this.semester;
+      }
     }
+
+    this.dataTable.filters = encodeURIComponent(JSON.stringify(filters));
 
     this.refreshDataTable();
   }
@@ -282,6 +301,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
     this.emailsDB = null;
     this.filterInitDate = null;
     this.filterEndDate = null;
+    this.semester = null;
     this.configId = encodeURIComponent(this.dependencyId + '+' + this.surveyType + '+' + this.formId);
     this.dataTable.dependencyName = this.configId;
     this.dataTable.filters = encodeURIComponent(JSON.stringify({}));
@@ -355,6 +375,7 @@ export class SurveyConfigComponent implements OnInit, OnDestroy {
       config.publicResource = true;
       const data: Object = new Object();
       data['emails'] = this.configForm.get('emails') != null ? this.configForm.get('emails').value : null;
+      data['semester'] = this.configForm.get('semester') != null ? this.configForm.get('semester').value : null;
       data['subject'] = this.configForm.get('subject') != null ? this.configForm.get('subject').value : null;
       data['message'] = this.configForm.get('message') != null ? this.configForm.get('message').value : null;
       data['dateRange'] = this.configForm.get('dateTimeRange') != null ? this.configForm.get('dateTimeRange').value : null;

@@ -21,6 +21,6 @@ export const routes: Routes = [
   { path: 'encuestas', component: SurveyConfigComponent, canActivate: [AuthGuard] },
   { path: 'encuestas/:dependency/:type/:form', component: SurveyConfigComponent, canActivate: [AuthGuard], pathMatch: 'full' },
   { path: 'encuestas/:dependency/:type/:form/:id', component: SurveyComponent },
-  { path: 'encuestas/:dependency/:type/:form/:program/:matter/:group/:cedula', component: SurveyComponent },
+  { path: 'encuestas/:dependency/:type/:form/:semester/:program/:matter/:group/:cedula', component: SurveyComponent },
   { path: '**', redirectTo: 'home' }
 ];

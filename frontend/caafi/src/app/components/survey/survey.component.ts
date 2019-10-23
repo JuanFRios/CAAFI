@@ -32,6 +32,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
   isError = false;
   formlyName = null;
   dependencyName = null;
+  semester = null;
 
   constructor(
     private templatesService: TemplatesService,
@@ -59,13 +60,15 @@ export class SurveyComponent implements OnInit, OnDestroy {
 
         // Validar formulario, dependencia y tipo
         if (this.formId === 'encuesta-de-materias') {
+          this.semester = params.get('semester');
           this.program = params.get('program');
           this.matter = params.get('matter');
           this.group = params.get('group');
           this.cedula = params.get('cedula');
-          if (this.program != null && this.matter != null && this.group != null) {
+          if (this.semester != null && this.program != null && this.matter != null && this.group != null) {
             this.formlyName = this.dependency + '+' + this.type + '+' + this.formId
               + '+' + this.program + '+' + this.matter + '+' + this.group;
+            this.formData['semestre'] = this.semester;
             if (this.cedula != null) {
               this.validateRegister().then(result => {
                 if (result) {
@@ -92,7 +95,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
   validateRegister() {
     return new Promise(resolve => {
       this.dataService.getDataByFormAndCreator(this.dependency + '+' + this.type + '+' + this.formId + '+'
-        + this.program + '+' + this.matter + '+' + this.group, this.cedula)
+        + this.program + '+' + this.matter + '+' + this.group, this.cedula, this.semester)
       .subscribe(result => {
         resolve(result['present']);
       },
@@ -115,7 +118,9 @@ export class SurveyComponent implements OnInit, OnDestroy {
           const initDate = (new Date(config.value['dateRange'][0])).getTime();
           const endDate = (new Date(config.value['dateRange'][1])).getTime();
           const currDate = (new Date()).getTime();
-          if (currDate >= initDate && currDate <= endDate) {
+          if ((this.formId === 'encuesta-de-materias' && currDate >= initDate && currDate <= endDate 
+            && config.value['semester'] == this.semester) || (this.formId !== 'encuesta-de-materias' 
+            && currDate >= initDate && currDate <= endDate)) {
             this.utilService.loadTemplateFeatures(template, false);
             this.template = template;
           } else {

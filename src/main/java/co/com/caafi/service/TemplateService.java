@@ -123,13 +123,15 @@ public class TemplateService {
 			configValue.put("sended", sended);
 			this.configService.save(config);
 			List<Student> students = null;
-			students = this.studentService.findAll();
+			students = this.studentService.findBySemester((int)configValue.get("semester"));
 			int total = students.size();
 			int count = 0;
 			configValue.put("sending-percentage", 0);
 			this.configService.save(config);
 			for (Student student: students) {
-				String url = ((String) configValue.get("url")) + "/" + student.getCodigoPrograma() + "/" + student.getCodigoMateria() +
+				String url = ((String) configValue.get("url")) + "/" + configValue.get("semester") + 
+						"/" + student.getCodigoPrograma() + 
+						"/" + student.getCodigoMateria() +
 						"/" + student.getGrupo() + "/" + student.getCedula();
 				
 				// Envio a emails personales

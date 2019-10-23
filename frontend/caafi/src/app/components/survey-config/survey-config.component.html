@@ -19,6 +19,18 @@
         <hr>
         <h4>Datos de la Encuesta</h4>
         <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
+            <div class="container-formSurveySemester">
+                <mat-form-field>
+                    <mat-label>Semestre</mat-label>
+                    <mat-select #survey_semester [(ngModel)]="semester">
+                        <mat-option *ngFor="let semester of semesters" [value]="semester.code">
+                            {{semester.code}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div *ngIf="isMattersSurvery" class="container-mattersSurvery">
             <div class="container-formSurveyPrograms">
                 <mat-form-field>
                     <mat-label>Programa Académico</mat-label>
@@ -109,6 +121,16 @@
             <div *ngIf="!isMattersSurvery" class="container-formSurveyEmails">
                 <mat-form-field>
                     <textarea formControlName="emails" matInput #survey_emails placeholder="Correos electrónicos para el envío de la encuesta (separados por comas)"></textarea>
+                </mat-form-field>
+            </div>
+            <div *ngIf="isMattersSurvery" class="container-formSurveySemester">
+                <mat-form-field>
+                    <mat-label>Semestre</mat-label>
+                    <mat-select formControlName="semester">
+                        <mat-option *ngFor="let semester of semesters" [value]="semester.code">
+                            {{semester.code}}
+                        </mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
             <div class="container-formSurveySubject">

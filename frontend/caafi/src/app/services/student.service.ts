@@ -4,6 +4,7 @@ import { Config } from '../common/config';
 import { RestangularModule, Restangular } from 'ngx-restangular';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UtilService } from './util.service';
+import { Semester } from '../common/semester';
 import { Program } from '../common/program';
 import { Matter } from '../common/matter';
 import { Group } from '../common/group';
@@ -15,6 +16,10 @@ export class StudentService {
     private http: HttpClient,
     private utilService: UtilService,
     private restangular: Restangular) { }
+
+  getSemesters(): Observable<Semester[]> {
+    return this.http.get<Semester[]>('student/semesters', this.utilService.getRequestOptions());
+  }
 
   getPrograms(): Observable<Program[]> {
     return this.http.get<Program[]>('student/programs', this.utilService.getRequestOptions());

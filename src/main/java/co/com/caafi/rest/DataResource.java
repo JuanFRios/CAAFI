@@ -88,9 +88,10 @@ public class DataResource {
 	}
 	
 	@CrossOrigin(origins = "*")
-	@RequestMapping(path = "/public/getByFormAndCreator/{formId}/{creator}", method = RequestMethod.GET)
-	public Optional<FormData> getByFormAndCreator(@PathVariable String formId, @PathVariable String creator) {
-		return dataService.getByFormAndCreator(formId, creator);
+	@RequestMapping(path = "/public/getByFormAndCreator/{semester}/{formId}/{creator}", method = RequestMethod.GET)
+	public Optional<FormData> getByFormAndCreator(@PathVariable String semester, @PathVariable String formId, 
+			@PathVariable String creator) {
+		return dataService.getByFormAndCreator(semester, formId, creator);
 	}
 	
 	@CrossOrigin(origins = "*")

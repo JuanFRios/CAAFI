@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import co.com.caafi.model.Group;
 import co.com.caafi.model.Matter;
 import co.com.caafi.model.Program;
+import co.com.caafi.model.Semester;
 import co.com.caafi.model.Student;
 import co.com.caafi.repository.StudentRepository;
 
@@ -33,6 +34,13 @@ public class StudentService {
 		MatchOperation filter = Aggregation.match(new Criteria("programa").is(programa));
 		Aggregation aggregation = Aggregation.newAggregation(filter, group);
 		return mongoTemplate.aggregate(aggregation, "student", Student.class).getMappedResults();
+	}
+	
+	public List<Semester> getSemesters() {	
+		GroupOperation group = Aggregation.group("semestre").first("semestre").as("code");
+		SortOperation sort = Aggregation.sort(Direction.DESC, "semestre");
+		Aggregation aggregation = Aggregation.newAggregation(group, sort);
+		return mongoTemplate.aggregate(aggregation, "student", Semester.class).getMappedResults();
 	}
 	
 	public List<Program> getPrograms() {	
@@ -146,6 +154,10 @@ public class StudentService {
 
 	public List<Student> findByCedula(int cedula) {
 		return this.studentRepository.findByCedula(cedula);
+	}
+
+	public List<Student> findBySemester(int semester) {
+		return this.studentRepository.findBySemestre(semester);
 	}
 
 }

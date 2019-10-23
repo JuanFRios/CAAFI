@@ -16,6 +16,7 @@ import co.com.caafi.model.ConfigTemplate;
 import co.com.caafi.model.Group;
 import co.com.caafi.model.Matter;
 import co.com.caafi.model.Program;
+import co.com.caafi.model.Semester;
 import co.com.caafi.model.Student;
 import co.com.caafi.model.User;
 import co.com.caafi.service.ConfigService;
@@ -28,6 +29,12 @@ public class StudentResource {
 	@Autowired
 	private StudentService studentService;
 
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/semesters", method = RequestMethod.GET)
+	public List<Semester> findSemesters() {
+		return this.studentService.getSemesters();
+	}
+	
 	@CrossOrigin(origins = "*")
 	@RequestMapping(path = "/programs", method = RequestMethod.GET)
 	public List<Program> findPrograms() {
