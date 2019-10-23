@@ -179,6 +179,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
     return new Promise(resolve => {
       this.studentService.getProgramByCode(this.program)
       .subscribe(program => {
+        this.formData['codigoProgramaAcademico'] = program.code;
         this.formData['programaAcademico'] = program.name;
         resolve();
       },
@@ -193,6 +194,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
     return new Promise(resolve => {
       this.studentService.getMatterByCode(this.matter)
       .subscribe(matter => {
+        this.formData['codigoCurso'] = matter.code;
         this.formData['nombreCurso'] = matter.name;
         resolve();
       },

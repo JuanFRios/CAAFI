@@ -32,7 +32,7 @@ public interface DataRepository extends MongoRepository<FormData, String> {
     @Query(value = "{ template: ?0, deleted: false, $where:'eval(?1) && eval(?2) && eval(?3);' }", count = true)
     public long countByTemplate(String template, String dependencyFilter, String filter, String filters);
     
-    @Query(value = "{ 'origin' : ?0, 'creator' : ?1 }", fields = "{ '_id' : 1 }")
+    @Query(value = "{ 'origin' : ?0, deleted: false, 'creator' : ?1 }", fields = "{ '_id' : 1 }")
     public Optional<FormData> findByOriginAndCreator(String formId, String creator);
 
 }
