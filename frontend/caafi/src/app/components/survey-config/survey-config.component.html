@@ -96,10 +96,12 @@
 
         <div *ngIf="isMattersSurvery">
             <hr>
-            <h4>Correos electrónicos de estudiantes</h4>
+            <h4 *ngIf="formId === 'encuesta-de-materias'">Correos electrónicos de estudiantes</h4>
+            <h4 *ngIf="formId === 'encuesta-de-materias-profesores'">Correos electrónicos de profesores</h4>
             <div class="container-mattersSurvery">
                 <div class="container-formSurveyAllStudents">
-                    <mat-checkbox [(ngModel)]="allEmails" (change)="getEmailsDB()">Mostrar los correos electrónicos de todos los estudantes de la materia</mat-checkbox>
+                    <mat-checkbox *ngIf="formId === 'encuesta-de-materias'" [(ngModel)]="allEmails" (change)="getEmailsDB()">Mostrar los correos electrónicos de todos los estudantes de la materia</mat-checkbox>
+                    <mat-checkbox *ngIf="formId === 'encuesta-de-materias-profesores'" [(ngModel)]="allEmails" (change)="getEmailsDB()">Mostrar los correos electrónicos de todos los profesores de la materia</mat-checkbox>
                 </div>
             </div>
             <div class="container-mattersSurvery">

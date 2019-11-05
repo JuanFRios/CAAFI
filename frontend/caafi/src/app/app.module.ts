@@ -57,6 +57,7 @@ import { CachingInterceptor } from './services/caching-interceptor.interceptor';
 import { StudentService } from './services/student.service';
 import { SurveyComponent } from './components/survey/survey.component';
 import { TableComponent } from './components/table/table.component';
+import { TeacherService } from './services/teacher.service';
 
 // here is the default text string
 export class DefaultIntl extends OwlDateTimeIntl {
@@ -220,6 +221,7 @@ export function required(err, field) {
       UtilService,
       ExcelService,
       StudentService,
+      TeacherService,
       { provide: OwlDateTimeIntl, useClass: DefaultIntl },
       RequestCache,
       { provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true }

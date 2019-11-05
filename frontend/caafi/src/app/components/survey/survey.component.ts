@@ -6,6 +6,7 @@ import { NotifierService } from 'angular-notifier';
 import { StudentService } from '../../services/student.service';
 import { DataService } from '../../services/data.service';
 import { ConfigService } from '../../services/config.service';
+import { TeacherService } from '../../services/teacher.service';
 
 @Component({
   selector: 'app-survey',
@@ -41,7 +42,8 @@ export class SurveyComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private studentService: StudentService,
     private dataService: DataService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private teacherService: TeacherService
   ) {
     this.notifier = notifierService;
     this.fullLoading = false;
@@ -59,15 +61,34 @@ export class SurveyComponent implements OnInit, OnDestroy {
         });
 
         // Validar formulario, dependencia y tipo
-        if (this.formId === 'encuesta-de-materias') {
+        if (this.formId === 'encuesta-de-materias' || this.formId === 'encuesta-de-materias-profesores') {
           this.semester = params.get('semester');
           this.program = params.get('program');
           this.matter = params.get('matter');
           this.group = params.get('group');
           this.cedula = params.get('cedula');
-          if (this.semester != null && this.program != null && this.matter != null && this.group != null) {
+          if (this.formId === 'encuesta-de-materias' && this.semester != null && this.program != null &&
+            this.matter != null && this.group != null) {
             this.formlyName = this.dependency + '+' + this.type + '+' + this.formId
               + '+' + this.program + '+' + this.matter + '+' + this.group;
+            this.formData['semestre'] = this.semester;
+            if (this.cedula != null) {
+              this.validateRegister().then(result => {
+                if (result) {
+                  this.message = 'Usted ya realizó la encuesta, muchas gracias.';
+                  this.isSaved = true;
+                } else {
+                  this.loadTemplate();
+                  this.loadData();
+                }
+              });
+            } else {
+              this.isError = true;
+            }
+          } else if (this.formId === 'encuesta-de-materias-profesores' && this.semester != null &&
+            this.matter != null && this.group != null) {
+            this.formlyName = this.dependency + '+' + this.type + '+' + this.formId
+            + '+' + this.matter + '+' + this.group;
             this.formData['semestre'] = this.semester;
             if (this.cedula != null) {
               this.validateRegister().then(result => {
@@ -94,8 +115,15 @@ export class SurveyComponent implements OnInit, OnDestroy {
 
   validateRegister() {
     return new Promise(resolve => {
-      this.dataService.getDataByFormAndCreator(this.dependency + '+' + this.type + '+' + this.formId + '+'
-        + this.program + '+' + this.matter + '+' + this.group, this.cedula, this.semester)
+      let surveyMattersConfigId = '';
+      if (this.formId === 'encuesta-de-materias') {
+        surveyMattersConfigId = this.dependency + '+' + this.type + '+' + this.formId + '+'
+        + this.program + '+' + this.matter + '+' + this.group;
+      } else if (this.formId === 'encuesta-de-materias-profesores') {
+        surveyMattersConfigId = this.dependency + '+' + this.type + '+' + this.formId + '+'
+        + this.matter + '+' + this.group;
+      }
+      this.dataService.getDataByFormAndCreator(surveyMattersConfigId, this.cedula, this.semester)
       .subscribe(result => {
         resolve(result['present']);
       },
@@ -118,9 +146,9 @@ export class SurveyComponent implements OnInit, OnDestroy {
           const initDate = (new Date(config.value['dateRange'][0])).getTime();
           const endDate = (new Date(config.value['dateRange'][1])).getTime();
           const currDate = (new Date()).getTime();
-          if ((this.formId === 'encuesta-de-materias' && currDate >= initDate && currDate <= endDate 
-            && config.value['semester'] == this.semester) || (this.formId !== 'encuesta-de-materias' 
-            && currDate >= initDate && currDate <= endDate)) {
+          if (((this.formId === 'encuesta-de-materias' || this.formId === 'encuesta-de-materias-profesores')
+            && currDate >= initDate && currDate <= endDate && config.value['semester'] === this.semester) ||
+            (this.formId !== 'encuesta-de-materias' && currDate >= initDate && currDate <= endDate)) {
             this.utilService.loadTemplateFeatures(template, false);
             this.template = template;
           } else {
@@ -169,68 +197,109 @@ export class SurveyComponent implements OnInit, OnDestroy {
 
   validateGroup() {
     return new Promise(resolve => {
-      this.studentService.getGroupByProgramAndMatterAndGroup(this.program, this.matter, this.group)
-      .subscribe(result => {
-        resolve(result['present']);
-      },
-      error => {
-        this.isError = true;
-        this.notifier.notify( 'error', 'ERROR: 7' ); // Error desconocido
-      });
+      if (this.formId === 'encuesta-de-materias') {
+        this.studentService.getGroupByProgramAndMatterAndGroup(this.program, this.matter, this.group)
+        .subscribe(result => {
+          resolve(result['present']);
+        },
+        error => {
+          this.isError = true;
+          this.notifier.notify( 'error', 'ERROR: 7' ); // Error desconocido
+        });
+      }
     });
   }
 
   loadProgram() {
-    return new Promise(resolve => {
-      this.studentService.getProgramByCode(this.program)
-      .subscribe(program => {
-        this.formData['codigoProgramaAcademico'] = program.code;
-        this.formData['programaAcademico'] = program.name;
-        resolve();
-      },
-      error => {
-        this.isError = true;
-        this.notifier.notify( 'error', 'ERROR: 3' ); // El programa académico no existe
+      return new Promise(resolve => {
+        if (this.formId === 'encuesta-de-materias') {
+          this.studentService.getProgramByCode(this.program)
+          .subscribe(program => {
+            this.formData['codigoProgramaAcademico'] = program.code;
+            this.formData['programaAcademico'] = program.name;
+            resolve();
+          },
+          error => {
+            this.isError = true;
+            this.notifier.notify( 'error', 'ERROR: 3' ); // El programa académico no existe
+          });
+        } else {
+          resolve();
+        }
       });
-    });
   }
 
   loadMatter() {
     return new Promise(resolve => {
-      this.studentService.getMatterByCode(this.matter)
-      .subscribe(matter => {
-        this.formData['codigoCurso'] = matter.code;
-        this.formData['nombreCurso'] = matter.name;
-        resolve();
-      },
-      error => {
-        this.isError = true;
-        this.notifier.notify( 'error', 'ERROR: 4' ); // La materia no existe
-      });
+      if (this.formId === 'encuesta-de-materias') {
+        this.studentService.getMatterByCode(this.matter)
+        .subscribe(matter => {
+          this.formData['codigoCurso'] = matter.code;
+          this.formData['nombreCurso'] = matter.name;
+          resolve();
+        },
+        error => {
+          this.isError = true;
+          this.notifier.notify( 'error', 'ERROR: 4' ); // La materia no existe
+        });
+      } else if (this.formId === 'encuesta-de-materias-profesores') {
+        this.teacherService.getMatterByCode(this.matter)
+        .subscribe(matter => {
+          this.formData['codigoCurso'] = matter.code;
+          this.formData['nombreCurso'] = matter.name;
+          resolve();
+        },
+        error => {
+          this.isError = true;
+          this.notifier.notify( 'error', 'ERROR: 4' ); // La materia no existe
+        });
+      }
     });
   }
 
   loadGroup() {
     return new Promise(resolve => {
-      this.studentService.getGrupoByStudentAndProgramAndMatter(this.cedula, this.program, this.matter)
-      .subscribe(group => {
-        if (group != null) {
-          if (this.group !== group.code) {
-            this.isError = true;
-            this.notifier.notify( 'error', 'ERROR: 6' ); // El grupo en la url no corresponde al grupo en el que se encuetra el estudiante
+      if (this.formId === 'encuesta-de-materias') {
+        this.studentService.getGrupoByStudentAndProgramAndMatter(this.cedula, this.program, this.matter)
+        .subscribe(group => {
+          if (group != null) {
+            if (this.group !== group.code) {
+              this.isError = true;
+              this.notifier.notify( 'error', 'ERROR: 6' ); // El grupo en la url no corresponde al grupo en el que se encuetra el estudiante
+            } else {
+              this.formData['grupo'] = group.code;
+              resolve();
+            }
           } else {
-            this.formData['grupo'] = group.code;
-            resolve();
+            this.isError = true;
+            this.notifier.notify( 'error', 'ERROR: 9' ); // El estudiante no pertenece a ningún grupo de la materia
           }
-        } else {
+        },
+        error => {
           this.isError = true;
-          this.notifier.notify( 'error', 'ERROR: 9' ); // El estudiante no pertenece a ningún grupo de la materia
-        }
-      },
-      error => {
-        this.isError = true;
-        this.notifier.notify( 'error', 'ERROR: 5' ); // Error desconocido
-      });
+          this.notifier.notify( 'error', 'ERROR: 5' ); // Error desconocido
+        });
+      } else if (this.formId === 'encuesta-de-materias-profesores') {
+        this.teacherService.getGroupByTeacherAndMatter(this.cedula, this.matter)
+        .subscribe(group => {
+          if (group != null) {
+            if (this.group !== group.code) {
+              this.isError = true;
+              this.notifier.notify( 'error', 'ERROR: 6' ); // El grupo en la url no corresponde al grupo en el que se encuetra el estudiante
+            } else {
+              this.formData['grupo'] = group.code;
+              resolve();
+            }
+          } else {
+            this.isError = true;
+            this.notifier.notify( 'error', 'ERROR: 9' ); // El estudiante no pertenece a ningún grupo de la materia
+          }
+        },
+        error => {
+          this.isError = true;
+          this.notifier.notify( 'error', 'ERROR: 5' ); // Error desconocido
+        });
+      }
     });
   }
 
