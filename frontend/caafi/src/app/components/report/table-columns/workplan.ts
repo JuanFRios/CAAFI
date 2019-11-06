@@ -16,6 +16,7 @@ export const tableColumns = {
     'codigoFacultad': {name: 'codfac', type: 'text'},
     'idCentroCosto': {name: 'ccosto_pro', type: 'text'},
     'centroCosto': {name: 'ccosto', type: 'text'},
+    'centroCostoDesc': {name: 'ccosto_desc', type: 'text'},
     'semestre': {name: 'stre_plan', type: 'text'},
     'diasPlan': {name: 'dias_plan', type: 'text'}
 };

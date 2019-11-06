@@ -17,6 +17,7 @@ export class Workplan {
     codigoFacultad: number;
     idCentroCosto: number;
     centroCosto: string;
+    centroCostoDesc: string;
     semestre: string;
     diasPlan: number;
 }

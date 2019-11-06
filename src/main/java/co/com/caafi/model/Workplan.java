@@ -62,6 +62,9 @@ public class Workplan {
 	@Field("ccosto")
 	private String centroCosto;
 	
+	@Field("ccosto_desc")
+	private String centroCostoDesc;
+	
 	@Field("stre_plan")
 	private String semestre;
 	
@@ -210,6 +213,14 @@ public class Workplan {
 
 	public void setCentroCosto(String centroCosto) {
 		this.centroCosto = centroCosto;
+	}
+
+	public String getCentroCostoDesc() {
+		return centroCostoDesc;
+	}
+
+	public void setCentroCostoDesc(String centroCostoDesc) {
+		this.centroCostoDesc = centroCostoDesc;
 	}
 
 	public String getSemestre() {
