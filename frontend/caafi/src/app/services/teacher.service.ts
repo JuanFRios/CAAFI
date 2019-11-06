@@ -10,7 +10,7 @@ import { Matter } from '../common/matter';
 import { Group } from '../common/group';
 
 @Injectable()
-export class StudentService {
+export class TeacherService {
 
   constructor(
     private http: HttpClient,
@@ -18,7 +18,7 @@ export class StudentService {
     private restangular: Restangular) { }
 
   getSemesters(): Observable<Semester[]> {
-    return this.http.get<Semester[]>('student/semesters', this.utilService.getRequestOptions());
+    return this.http.get<Semester[]>('teacher/semesters', this.utilService.getRequestOptions());
   }
 
   getPrograms(): Observable<Program[]> {
@@ -30,7 +30,7 @@ export class StudentService {
   }
 
   getMatters(): Observable<Matter[]> {
-    return this.http.get<Matter[]>('student/matters', this.utilService.getRequestOptions());
+    return this.http.get<Matter[]>('teacher/matters', this.utilService.getRequestOptions());
   }
 
   getGroupsByProgramAndMatter(program: string, matter: string): Observable<Group[]> {
@@ -38,7 +38,7 @@ export class StudentService {
   }
 
   getGroupsByMatter(matter: string): Observable<Group[]> {
-    return this.http.get<Matter[]>('student/groupsByMatter/' + matter, this.utilService.getRequestOptions());
+    return this.http.get<Matter[]>('teacher/groupsByMatter/' + matter, this.utilService.getRequestOptions());
   }
 
   getEmailsByProgramAndMatterAndGroup(program: string, matter: string, group: string): Observable<string[]> {
@@ -56,12 +56,17 @@ export class StudentService {
   }
 
   getMatterByCode(code: string): Observable<Matter> {
-    return this.http.get<Matter>('student/public/matterByCode/' + code, this.utilService.getRequestOptions());
+    return this.http.get<Matter>('teacher/public/matterByCode/' + code, this.utilService.getRequestOptions());
   }
 
   getGrupoByStudentAndProgramAndMatter(student: string, program: string, matter: string): Observable<Group> {
     return this.http.get<Group>('student/public/groupByStudentAndProgramAndMatter/' + student + '/'
       + program + '/' + matter, this.utilService.getRequestOptions());
+  }
+
+  getGroupByTeacherAndMatter(teacher: string, matter: string): Observable<Group> {
+    return this.http.get<Group>('teacher/public/groupByTeacherAndMatter/' + teacher +
+      '/' + matter, this.utilService.getRequestOptions());
   }
 
   getGroupByProgramAndMatterAndGroup(program: string, matter: string, group: string): Observable<Group> {

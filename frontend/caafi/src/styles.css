@@ -2008,15 +2008,15 @@ button.btn-agregar {
 
 @media only screen and (max-device-width: 480px) {
     .w-50 {
-        width: 100%;
+        width: 100% !important;
     }
-    .mat-form-field-appearance-legacy .mat-form-field-infix {
-        padding-top: 20px;
+    .mat-form-field-infix {
+        padding-top: 20px !important;
     }
-    .mat-form-field-appearance-legacy.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
-        overflow: visible;
-        text-overflow: clip;
-        white-space: normal;
+    .mat-form-field-label {
+        overflow: visible !important;
+        text-overflow: clip !important;
+        white-space: normal !important;
     }
 }
 

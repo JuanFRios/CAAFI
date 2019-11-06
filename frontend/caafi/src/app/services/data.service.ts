@@ -187,8 +187,8 @@ export class DataService {
     return newData;
   }
 
-  getDataByFormAndCreator(formId, creator): Observable<Data> {
-    return this.restangular.one('data/public/getByFormAndCreator/' + formId + '/' + creator).get();
+  getDataByFormAndCreator(formId, creator, semester): Observable<Data> {
+    return this.restangular.one('data/public/getByFormAndCreator/' + semester + '/' + formId + '/' + creator).get();
   }
 
   countByCollection(collection, textFilter, filters): Observable<any[]> {

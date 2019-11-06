@@ -20,6 +20,7 @@ import com.mongodb.WriteResult;
 import co.com.caafi.model.Config;
 import co.com.caafi.model.StringResponse;
 import co.com.caafi.model.Student;
+import co.com.caafi.model.Teacher;
 import co.com.caafi.model.User;
 import co.com.caafi.model.template.Template;
 import co.com.caafi.repository.TemplateRepository;
@@ -38,6 +39,9 @@ public class TemplateService {
 	
 	@Autowired
 	private StudentService studentService;
+	
+	@Autowired
+	private TeacherService teacherService;
 	
 	@Autowired
     private TaskExecutor taskExecutor;
@@ -71,6 +75,8 @@ public class TemplateService {
 	            public void run() {
 	            		if ("encuesta-de-materias".equals(templateName)) {
 	            			sendStudentsEmails(template, config);
+	            		} else if ("encuesta-de-materias-profesores".equals(templateName)) {
+	            			sendTeachersEmails(template, config);
 	            		} else {
 	            			sendEmails(template, config);
 	            		}
@@ -123,13 +129,15 @@ public class TemplateService {
 			configValue.put("sended", sended);
 			this.configService.save(config);
 			List<Student> students = null;
-			students = this.studentService.findAll();
+			students = this.studentService.findBySemester((int)configValue.get("semester"));
 			int total = students.size();
 			int count = 0;
 			configValue.put("sending-percentage", 0);
 			this.configService.save(config);
 			for (Student student: students) {
-				String url = ((String) configValue.get("url")) + "/" + student.getCodigoPrograma() + "/" + student.getCodigoMateria() +
+				String url = ((String) configValue.get("url")) + "/" + configValue.get("semester") + 
+						"/" + student.getCodigoPrograma() + 
+						"/" + student.getCodigoMateria() +
 						"/" + student.getGrupo() + "/" + student.getCedula();
 				
 				// Envio a emails personales
@@ -146,6 +154,51 @@ public class TemplateService {
 				if (student.getEmailInstitucional() != null && !"".equals(student.getEmailInstitucional())) {
 					emailService.sendEmail(student.getEmailInstitucional(), 
 							((String) configValue.get("subject")).replaceAll("\\{nombreMateria\\}", student.getNombreMateria()), 
+							((String) configValue.get("message")).replaceAll("(\r\n|\n)", "<br />")
+								.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
+					sended++;
+				}
+				count++;
+				int current = (count * 100) / total;
+				configValue.put("sending-percentage", current);
+				this.configService.save(config);
+			}
+			configValue.put("sending", false);
+			configValue.put("sended", sended);
+			this.configService.save(config);
+		} catch (Exception e) {
+			logger.error("Error en envío de correos de encuestas, error: " + e.getMessage());
+			this.logService.error("Error en envío de correos de encuestas", e.getMessage());
+			configValue.put("sending-error", e.getMessage());
+			configValue.put("sending", false);
+			configValue.put("sended", sended);
+			this.configService.save(config);
+		}
+	}
+	
+	private void sendTeachersEmails(Template template, Config config) {
+		int sended = 0;
+		Map<String, Object> configValue = (Map<String, Object>) config.getValue();
+		try {
+			configValue.put("sending", true);
+			configValue.put("sending-percentage", -1);
+			configValue.put("sended", sended);
+			this.configService.save(config);
+			List<Teacher> teachers = null;
+			teachers = this.teacherService.findBySemester((int)configValue.get("semester"));
+			int total = teachers.size();
+			int count = 0;
+			configValue.put("sending-percentage", 0);
+			this.configService.save(config);
+			for (Teacher teacher: teachers) {
+				String url = ((String) configValue.get("url")) + "/" + configValue.get("semester") +  
+						"/" + teacher.getCodigoMateria() +
+						"/" + teacher.getGrupo() + "/" + teacher.getCedula();
+				
+				// Envio a emails institucionales
+				if (teacher.getEmailInstitucional() != null && !"".equals(teacher.getEmailInstitucional())) {
+					emailService.sendEmail(teacher.getEmailInstitucional(), 
+							((String) configValue.get("subject")).replaceAll("\\{nombreMateria\\}", teacher.getNombreMateria()), 
 							((String) configValue.get("message")).replaceAll("(\r\n|\n)", "<br />")
 								.replaceAll("\\{enlace\\}", "<a href=\"" + url + "\">Por favor haz click aquí para ir a la encuesta</a>"));
 					sended++;

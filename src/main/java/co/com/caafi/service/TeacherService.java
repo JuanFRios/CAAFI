@@ -18,16 +18,18 @@ import co.com.caafi.model.Matter;
 import co.com.caafi.model.Program;
 import co.com.caafi.model.Semester;
 import co.com.caafi.model.Student;
+import co.com.caafi.model.Teacher;
 import co.com.caafi.repository.StudentRepository;
+import co.com.caafi.repository.TeacherRepository;
 
 @Service
-public class StudentService {
+public class TeacherService {
 	
 	@Autowired
     MongoTemplate mongoTemplate;
 	
 	@Autowired
-	StudentRepository studentRepository;
+	TeacherRepository teacherRepository;
 	
 	public List<Student> getStudentsByProgram(String programa) {	
 		GroupOperation group = Aggregation.group("cedula", "email", "emailInstitucional");
@@ -40,7 +42,7 @@ public class StudentService {
 		GroupOperation group = Aggregation.group("semestre").first("semestre").as("code");
 		SortOperation sort = Aggregation.sort(Direction.DESC, "semestre");
 		Aggregation aggregation = Aggregation.newAggregation(group, sort);
-		return mongoTemplate.aggregate(aggregation, "student", Semester.class).getMappedResults();
+		return mongoTemplate.aggregate(aggregation, "teacher", Semester.class).getMappedResults();
 	}
 	
 	public List<Program> getPrograms() {	
@@ -78,7 +80,7 @@ public class StudentService {
 		GroupOperation group = Aggregation.group("codigoMateria").first("codigoMateria").as("code").first("nombreMateria").as("name");
 		SortOperation sort = Aggregation.sort(Direction.ASC, "code");
 		Aggregation aggregation = Aggregation.newAggregation(group, sort);
-		return mongoTemplate.aggregate(aggregation, "student", Matter.class).getMappedResults();
+		return mongoTemplate.aggregate(aggregation, "teacher", Matter.class).getMappedResults();
 	}
 	
 	public List<Group> getGroupsByMatter(int matter) {
@@ -86,7 +88,7 @@ public class StudentService {
 		MatchOperation filter = Aggregation.match(new Criteria("codigoMateria").is(matter));
 		SortOperation sort = Aggregation.sort(Direction.ASC, "code");
 		Aggregation aggregation = Aggregation.newAggregation(filter, group, sort);
-		return mongoTemplate.aggregate(aggregation, "student", Group.class).getMappedResults();
+		return mongoTemplate.aggregate(aggregation, "teacher", Group.class).getMappedResults();
 	}
 	
 	public List<Group> getAllGroupsByMatterByProgram() {
@@ -118,7 +120,7 @@ public class StudentService {
 		MatchOperation filter = Aggregation.match(new Criteria("codigoMateria").is(code));
 		SortOperation sort = Aggregation.sort(Direction.ASC, "code");
 		Aggregation aggregation = Aggregation.newAggregation(filter, group, sort);
-		return mongoTemplate.aggregate(aggregation, "student", Matter.class).getMappedResults().get(0);
+		return mongoTemplate.aggregate(aggregation, "teacher", Matter.class).getMappedResults().get(0);
 	}
 
 	public List<Student> getStudentByEmail(String email) {
@@ -143,21 +145,35 @@ public class StudentService {
 		Aggregation aggregation = Aggregation.newAggregation(filter, group, sort);
 		return mongoTemplate.aggregate(aggregation, "student", Group.class).getMappedResults().get(0);
 	}
-
-	public Optional<Student> getGroupByProgramAndMatterAndGroup(int program, int matter, int group) {
-		return this.studentRepository.findByCodigoProgramaAndCodigoMateriaAndGrupo(program, matter, group);
+	
+	public Group getGroupByTeacherAndMatter(String cedula, int matter) {
+		long cedulaLong = -1;
+		try {
+			cedulaLong = Long.parseLong(cedula);
+		} catch (Exception e) {}
+		GroupOperation group = Aggregation.group("grupo").first("grupo").as("code");
+		MatchOperation filter = Aggregation.match(new Criteria().orOperator(
+				new Criteria("cedula").is(cedula), new Criteria("cedula").is(cedulaLong))
+					.and("codigoMateria").is(matter));
+		SortOperation sort = Aggregation.sort(Direction.ASC, "grupo");
+		Aggregation aggregation = Aggregation.newAggregation(filter, group, sort);
+		return mongoTemplate.aggregate(aggregation, "teacher", Group.class).getMappedResults().get(0);
 	}
 
-	public List<Student> findAll() {
-		return studentRepository.findAll();
+	public Optional<Teacher> getGroupByProgramAndMatterAndGroup(int program, int matter, int group) {
+		return this.teacherRepository.findByCodigoProgramaAndCodigoMateriaAndGrupo(program, matter, group);
 	}
 
-	public List<Student> findByCedula(int cedula) {
-		return this.studentRepository.findByCedula(cedula);
+	public List<Teacher> findAll() {
+		return teacherRepository.findAll();
 	}
 
-	public List<Student> findBySemester(int semester) {
-		return this.studentRepository.findBySemestre(semester);
+	public List<Teacher> findByCedula(int cedula) {
+		return this.teacherRepository.findByCedula(cedula);
+	}
+
+	public List<Teacher> findBySemester(int semester) {
+		return this.teacherRepository.findBySemestre(semester);
 	}
 
 }

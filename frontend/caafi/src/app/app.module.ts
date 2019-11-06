@@ -60,6 +60,7 @@ import { TableComponent } from './components/table/table.component';
 import { CollectionService } from './services/collecton.service';
 import { FormComponent } from './components/form/form.component';
 import { FormService } from './services/form.service';
+import { TeacherService } from './services/teacher.service';
 
 // here is the default text string
 export class DefaultIntl extends OwlDateTimeIntl {
@@ -226,6 +227,7 @@ export function required(err, field) {
       StudentService,
       CollectionService,
       FormService,
+      TeacherService,
       { provide: OwlDateTimeIntl, useClass: DefaultIntl },
       RequestCache,
       { provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true }

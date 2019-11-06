@@ -209,6 +209,11 @@ public class DataService {
 								filtersWhere += " && this.data." + name + " <= " + (String) entry.getValue();
 							}
 							break;
+						case "ne": // Number Equals than
+							if(!(entry.getValue().toString()).isEmpty()) {
+								filtersWhere += " && this.data." + name + " == " + entry.getValue().toString();
+							}
+							break;
 						default:
 							filtersWhere += " && true";
 							break;
@@ -255,8 +260,8 @@ public class DataService {
 		return data;
 	}
 
-	public Optional<FormData> getByFormAndCreator(String formId, String creator) {
-		return this.dataRepository.findByOriginAndCreator(formId, creator);
+	public Optional<FormData> getByFormAndCreator(String semester, String formId, String creator) {
+		return this.dataRepository.findByOriginAndCreator(formId, creator, semester);
 	}
 
 	public List<Object> findByCollection(String collection, String sortColumn, String sortOrder, int pageNumber,
