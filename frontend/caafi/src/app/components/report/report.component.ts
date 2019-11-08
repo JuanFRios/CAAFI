@@ -120,6 +120,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
         this.filterForm = $event.collection + '-filters';
         this.columns = columns.columnsMap[$event.collection];
         this.tableFilters['tc-ccosto'] = $event.dependencyId;
+        this.tableComponent.loadDataPage();
       } else {
         this.loadReport($event.formId);
       }
