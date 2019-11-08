@@ -50,6 +50,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   collection: string = null;
   columns: object = null;
   filterForm: string  = null;
+  tableFilters = {};
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -118,7 +119,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
         this.collection = $event.collection;
         this.filterForm = $event.collection + '-filters';
         this.columns = columns.columnsMap[$event.collection];
-        //this.loadReportFromCollection($event.collection);
+        this.tableFilters['tc-ccosto'] = $event.dependencyId;
       } else {
         this.loadReport($event.formId);
       }

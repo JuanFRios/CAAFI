@@ -19,12 +19,13 @@ export class TableComponent implements OnInit, AfterViewInit {
   @Input() collection: string;
   @Input() columns: object;
   @Input() export: boolean;
+  @Input() tableFilters: object;
 
   tableName = null;
   dataSource: ModelDataSource;
   columnsList: string[];
   displayedColumns: string[];
-  filters = {};
+  filters: object = {};
   dataCount = 1;
   btnExportOpts: MatProgressButtonOptions;
 
@@ -53,10 +54,8 @@ export class TableComponent implements OnInit, AfterViewInit {
 
     this.displayedColumns = Object.keys(this.columns);
     this.dataSource = new ModelDataSource(this.dataService);
-    this.dataSource.countData(this.collection).then(length => {
-      this.dataCount = +length;
-    });
-    this.dataSource.loadData(this.collection);
+    this.filters = this.tableFilters;
+    this.loadDataPage();
   }
 
   ngAfterViewInit() {
@@ -107,7 +106,7 @@ export class TableComponent implements OnInit, AfterViewInit {
 
   applyFilters(filters): Promise<any> {
     return new Promise(resolve => {
-      this.filters = filters;
+      this.filters = {...this.tableFilters, ...filters};
       this.loadDataPage();
       resolve();
     });

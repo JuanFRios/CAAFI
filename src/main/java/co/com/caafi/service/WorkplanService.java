@@ -81,6 +81,8 @@ public class WorkplanService {
 			return Criteria.where(name).gte(value);
 		case "tle": // Text Less or Equals than
 			return Criteria.where(name).lte(value);
+		case "tc": // Text Contains
+			return Criteria.where(name).regex(value);
 		default:
 			return null;
 		}
