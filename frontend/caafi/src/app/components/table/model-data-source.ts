@@ -38,6 +38,10 @@ export class ModelDataSource implements DataSource<any> {
     });
   }
 
+  setData(data) {
+    this.dataSubject.next(data);
+  }
+
   loadReport(collection: string, textFilter = '', sortColumn = 'id_plan', sortDirection = 'desc',
     pageIndex = 0, pageSize = 5, filters = {}) {
     this.loadingSubject.next(true);

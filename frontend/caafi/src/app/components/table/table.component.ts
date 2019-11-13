@@ -93,7 +93,9 @@ export class TableComponent implements OnInit, AfterViewInit {
       this.sort.active ? this.sort.direction : 'desc',
       this.paginator.pageIndex,
       this.paginator.pageSize,
-      this.filters);
+      this.filters).then(data => {
+        //this.dataSource.setData(this.formatData(data));
+      });
 
     this.dataSource.countData(
       this.collection,
@@ -137,8 +139,21 @@ export class TableComponent implements OnInit, AfterViewInit {
       this.paginator.pageIndex,
       -1,
       this.filters).then(data => {
-        csvExporter.generateCsv(data);
+        const dataFormated = this.formatData(data);
+        csvExporter.generateCsv(dataFormated);
       });
+  }
+
+  formatData(data) {
+    return data.map(element => {
+      const newElement = new Object();
+      Object.keys(this.columns).forEach(key => {
+        if (this.columns[key].visible) {
+          newElement[this.columns[key].name] = element[key];
+        }
+      });
+      return newElement;
+    });
   }
 
 }
