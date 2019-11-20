@@ -24,7 +24,7 @@ public class Workplan {
 	private String tipoEmpleado;
 	
 	@Field("dedicacion")
-	private int dedicacion;
+	private double dedicacion;
 	
 	@Field("docencia")
 	private int docencia;
@@ -111,11 +111,11 @@ public class Workplan {
 		this.tipoEmpleado = tipoEmpleado;
 	}
 
-	public int getDedicacion() {
+	public double getDedicacion() {
 		return dedicacion;
 	}
 
-	public void setDedicacion(int dedicacion) {
+	public void setDedicacion(double dedicacion) {
 		this.dedicacion = dedicacion;
 	}
 

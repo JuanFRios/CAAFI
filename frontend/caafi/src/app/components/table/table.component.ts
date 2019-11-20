@@ -94,7 +94,7 @@ export class TableComponent implements OnInit, AfterViewInit {
       this.paginator.pageIndex,
       this.paginator.pageSize,
       this.filters).then(data => {
-        //this.dataSource.setData(this.formatData(data));
+        this.dataSource.setData(this.formatData(data, false));
       });
 
     this.dataSource.countData(
@@ -139,17 +139,27 @@ export class TableComponent implements OnInit, AfterViewInit {
       this.paginator.pageIndex,
       -1,
       this.filters).then(data => {
-        const dataFormated = this.formatData(data);
+        const dataFormated = this.formatData(data, true);
         csvExporter.generateCsv(dataFormated);
       });
   }
 
-  formatData(data) {
+  formatData(data, isExport: boolean) {
     return data.map(element => {
       const newElement = new Object();
       Object.keys(this.columns).forEach(key => {
-        if (this.columns[key].visible) {
-          newElement[this.columns[key].name] = element[key];
+        if (isExport) {
+          if (this.columns[key].function) {
+            newElement[this.columns[key].name] = this.columns[key].function(element[key]);
+          } else {
+            newElement[this.columns[key].name] = element[key];
+          }
+        } else {
+          if (this.columns[key].function) {
+            newElement[key] = this.columns[key].function(element[key]);
+          } else {
+            newElement[key] = element[key];
+          }
         }
       });
       return newElement;
