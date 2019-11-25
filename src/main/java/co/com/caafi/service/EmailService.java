@@ -34,6 +34,7 @@ public class EmailService {
 			helper.setSubject(subject);
 			helper.setText("<html><body>" + text + "</body></html>", true);
 			emailSender.send(message);
+			logService.debug("Email enviado a: " + to, message);
 		} catch (MessagingException e) {
 			logger.error("Error enviando Email a: " + to + ", error: " + e.getMessage(), e);
 			logService.error("Error enviando Email a: " + to + ", error: " + e.getMessage() + ", thread: " 

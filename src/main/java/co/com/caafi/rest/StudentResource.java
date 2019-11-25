@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.com.caafi.model.Config;
@@ -18,6 +19,7 @@ import co.com.caafi.model.Matter;
 import co.com.caafi.model.Program;
 import co.com.caafi.model.Semester;
 import co.com.caafi.model.Student;
+import co.com.caafi.model.StudentStatistics;
 import co.com.caafi.model.User;
 import co.com.caafi.service.ConfigService;
 import co.com.caafi.service.StudentService;
@@ -103,5 +105,11 @@ public class StudentResource {
 	@RequestMapping(path = "/public/getGroupByProgramAndMatterAndGroup/{program}/{matter}/{group}", method = RequestMethod.GET)
 	public Optional<Student> getGroupByProgramAndMatterAndGroup(@PathVariable int program, @PathVariable int matter, @PathVariable int group) {
 		return this.studentService.getGroupByProgramAndMatterAndGroup(program, matter, group);
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(path = "/studentStatistics/{program}", method = RequestMethod.GET)
+	public List<StudentStatistics> getStudentsStatistics(@PathVariable String program, @RequestParam String filters) {
+		return this.studentService.getStudentStatistics(program, filters);
 	}
 }

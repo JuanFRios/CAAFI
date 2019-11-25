@@ -1,8 +1,16 @@
 package co.com.caafi.service;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -11,23 +19,36 @@ import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import co.com.caafi.model.Group;
 import co.com.caafi.model.Matter;
 import co.com.caafi.model.Program;
 import co.com.caafi.model.Semester;
 import co.com.caafi.model.Student;
+import co.com.caafi.model.StudentStatistics;
+import co.com.caafi.model.User;
 import co.com.caafi.repository.StudentRepository;
+import co.com.caafi.service.rest.RestService;
 
 @Service
-public class StudentService {
+public class StudentService extends RestService {
 	
 	@Autowired
     MongoTemplate mongoTemplate;
 	
 	@Autowired
 	StudentRepository studentRepository;
+	
+	@Autowired
+	ConfigService configService;
+	
+	Logger logger = LoggerFactory.getLogger(StudentService.class);
 	
 	public List<Student> getStudentsByProgram(String programa) {	
 		GroupOperation group = Aggregation.group("cedula", "email", "emailInstitucional");
@@ -158,6 +179,49 @@ public class StudentService {
 
 	public List<Student> findBySemester(int semester) {
 		return this.studentRepository.findBySemestre(semester);
+	}
+
+	public List<StudentStatistics> getStudentStatistics(String program, String filters) {
+		int timeout = (int) configService.findParamByName("STUDENT_STATISTICS_SERVICE_TIMEOUT").getValue();
+		ClientHttpRequestFactory requestFactory = getClientHttpRequestFactory(timeout);
+		RestTemplate restTemplate = new RestTemplate(requestFactory);
+		String endPoint = ((String) configService.findParamByName("STUDENT_STATISTICS_SERVICE_ENDPOINT").getValue()).replace("{programa}", program);
+		if (!"{}".equals(filters)) {
+			String semestre = getSemestreFromJsonFilter(filters);
+			if (semestre != null) {
+				endPoint = ((String) configService.findParamByName("STUDENT_STATISTICS_SERVICE_FILTER_ENDPOINT")
+						.getValue()).replace("{programa}", program).replace("{semestre}", semestre);
+			}
+		} 
+		String studentStatistics = restTemplate.getForObject(endPoint, String.class);
+		JSONObject json = null;
+		try {
+			json = new JSONObject(studentStatistics);
+		} catch (JSONException e) {
+			this.logger.error("Error al convertir a JSON el String de respuesta del endPoint: " + endPoint + ", error: " + e.getMessage(), e);
+		}
+		if (json == null) {
+			return null;
+		}
+		ObjectMapper mapper = new ObjectMapper();
+		List<StudentStatistics> studentsStatistics = null;
+		try {
+			studentsStatistics = Arrays.asList(mapper.readValue(json.get("enrollsCount").toString(), StudentStatistics[].class));
+		} catch (IOException | JSONException e) {
+			this.logger.error("Error al convertir a Lista el json String de estadisticas de estudiantes, error: " + e.getMessage(), e);
+		}
+		return studentsStatistics;
+	}
+
+	private String getSemestreFromJsonFilter(String filters) {
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, String> filtersMap = null;
+		try {
+			filtersMap = mapper.readValue(filters, Map.class);
+		} catch (IOException e) {
+			this.logger.error("Error al converir el json string en método getSemestreFromJsonFilter, error: " + e.getMessage(), e);
+		}
+		return filtersMap.get("semestre");
 	}
 
 }

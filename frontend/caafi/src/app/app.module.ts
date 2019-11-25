@@ -57,6 +57,9 @@ import { CachingInterceptor } from './services/caching-interceptor.interceptor';
 import { StudentService } from './services/student.service';
 import { SurveyComponent } from './components/survey/survey.component';
 import { TableComponent } from './components/table/table.component';
+import { CollectionService } from './services/collection.service';
+import { FormComponent } from './components/form/form.component';
+import { FormService } from './services/form.service';
 import { TeacherService } from './services/teacher.service';
 
 // here is the default text string
@@ -149,6 +152,7 @@ export function required(err, field) {
     MenuComponent,
     MenuItemComponent,
     FormlyComponent,
+    FormComponent,
     DataTableComponent,
     TemplatesComponent,
     SurveyConfigComponent,
@@ -221,6 +225,8 @@ export function required(err, field) {
       UtilService,
       ExcelService,
       StudentService,
+      CollectionService,
+      FormService,
       TeacherService,
       { provide: OwlDateTimeIntl, useClass: DefaultIntl },
       RequestCache,

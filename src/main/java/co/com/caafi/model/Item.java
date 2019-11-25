@@ -15,6 +15,9 @@ public class Item {
 	private boolean noReport;
 	private boolean adminReport;
 	private boolean export;
+	private String collection;
+	private String serviceName;
+	private String service;
 	
 	public String getName() {
 		return name;
@@ -81,5 +84,23 @@ public class Item {
 	}
 	public void setExport(boolean export) {
 		this.export = export;
+	}
+	public String getCollection() {
+		return collection;
+	}
+	public void setCollection(String collection) {
+		this.collection = collection;
+	}
+	public String getServiceName() {
+		return serviceName;
+	}
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+	public String getService() {
+		return service;
+	}
+	public void setService(String service) {
+		this.service = service;
 	}
 }

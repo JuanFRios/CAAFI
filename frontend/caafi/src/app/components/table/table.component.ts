@@ -1,247 +1,185 @@
-import { OnInit, Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { ModelSource } from './model-source';
-import { DataService } from '../../services/data.service';
-import { NotifierService } from 'angular-notifier';
-import { Data } from '../../common/data';
-import { MatSort, MatPaginator } from '@angular/material';
-import { Subscription ,  merge ,  fromEvent ,  BehaviorSubject } from 'rxjs';
+import { Component, OnInit, ViewChild, Input, AfterViewInit, ElementRef } from '@angular/core';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { ModelDataSource } from './model-data-source';
 import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { merge } from 'rxjs/internal/observable/merge';
+import { fromEvent } from 'rxjs';
+import { Router } from '@angular/router';
+import { DataService } from '../../services/data.service';
+import { MatProgressButtonOptions } from 'mat-progress-buttons';
 import { ExportToCsv } from 'export-to-csv';
-import { ExcelService } from '../../services/excel.service';
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css']
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, AfterViewInit {
 
-  @Input() collection = null;
-  @Input() columns = null;
-  @Input() export = false;
-  @Input() filters: string;
-  @ViewChild(MatSort) sort: MatSort;
+  @Input() collection: string;
+  @Input() columns: object;
+  @Input() export: boolean;
+  @Input() tableFilters: object;
+  @Input() service: string;
+
+  tableName = null;
+  dataSource: ModelDataSource;
+  columnsList: string[];
+  displayedColumns: string[];
+  filters: object = {};
+  dataCount = 1;
+  btnExportOpts: MatProgressButtonOptions = null;
+  disabledTextFilters = false;
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild('filter') filter: ElementRef;
-
-  @Input() exportCSVSpinnerButtonOptions: any = {
-    active: false,
-    text: 'Exportar',
-    spinnerSize: 18,
-    raised: true,
-    buttonColor: 'primary',
-    spinnerColor: 'primary',
-    disabled: false
-  };
-
-  private readonly notifier: NotifierService;
-  dataSource: ModelSource;
-  model: Data;
-  sortChange: Subscription;
-  tapPaginator: Subscription;
-  filterEvent: Subscription;
-  extFilter: string;
-  data = null;
-  displayedColumns: string[] = ['cedula'];
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('input') input: ElementRef;
 
   constructor(
     private dataService: DataService,
-    private excelService: ExcelService,
-  ) {}
+    private router: Router
+  ) { }
 
   ngOnInit() {
-    this.loadColumns();
-    this.loadDataTable();
+    this.btnExportOpts = {
+      active: false,
+      text: 'Exportar',
+      spinnerSize: 19,
+      raised: true,
+      stroked: false,
+      buttonColor: 'primary',
+      spinnerColor: 'primary',
+      fullWidth: false,
+      disabled: !this.export,
+      mode: 'indeterminate',
+    };
+    this.loadDataPage();
   }
 
-  loadColumns() {
+  ngAfterViewInit() {
 
-  }
-
-  loadDataTable() {
-    this.dataSource = new ModelSource(this.dataService);
-
-    this.dataSource.loadData(this.collection).then(result => {
-      this.data = result;
-      console.log(result);
-    });
-
-    /*
-    .then(loadResult => {
-          if (this.sortChange) {
-            this.sortChange.unsubscribe();
-          }
-          this.sortChange = this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-
-          if (this.tapPaginator) {
-            this.tapPaginator.unsubscribe();
-          }
-
+    // server-side search
+    fromEvent(this.input.nativeElement, 'keyup')
+      .pipe(
+        debounceTime(150),
+        distinctUntilChanged(),
+        tap(() => {
           this.paginator.pageIndex = 0;
-          this.tapPaginator = merge(this.sort.sortChange, this.paginator.page)
-            .pipe(
-              tap(() => this.loadDataPage())
-            )
-            .subscribe();
+          this.loadDataPage();
+        })
+      )
+      .subscribe();
 
-          // server-side search
-          if (this.filterEvent) {
-            this.filterEvent.unsubscribe();
-          }
-          this.filterEvent = fromEvent(this.filter.nativeElement, 'keyup')
-            .pipe(
-              debounceTime(150),
-              distinctUntilChanged(),
-              tap(() => {
-                this.paginator.pageIndex = 0;
-                this.loadDataPage();
-              })
-            )
-            .subscribe();
-        });
+    // reset the paginator after sorting
+    this.sort.sortChange.subscribe(() => {
+      this.paginator.pageIndex = 0;
     });
-    */
+
+    // on sort or paginate events, load a new page
+    merge(this.sort.sortChange, this.paginator.page)
+      .pipe(
+        tap(() => this.loadDataPage())
+      )
+      .subscribe();
   }
 
-  /*
-  countData(urlFilters) {
-    return new Promise(resolve => {
-      let filter = '';
-      if (this.extFilter != null) {
-        filter = this.extFilter;
-      }
-      this.dataService.count(this.formId, this.dependencyName, this.allDataAccess, filter, urlFilters)
-      .subscribe(countData => {
-        this.model = countData;
-        resolve();
-      },
-      error => {
-        this.notifier.notify( 'error', 'ERROR: Error al cargar los datos del formulario.' );
-      });
-    });
-  }
-  */
-
-  /*
   loadDataPage() {
+    this.displayedColumns = Object.keys(this.columns);
+    this.dataSource = new ModelDataSource(this.dataService);
+    this.filters = {...this.filters, ...this.tableFilters};
 
-    let filter = '';
-    if (this.extFilter != null && this.filter != null) {
-      filter = this.extFilter + ';' + this.filter.nativeElement.value;
-    } else if (this.extFilter != null) {
-      filter = this.extFilter;
-    } else if (this.filter != null) {
-      filter = this.filter.nativeElement.value;
-    } else {
-      filter = '';
-    }
+    if (this.collection) {
+      this.disabledTextFilters = false;
+      this.paginator.disabled = false;
+      this.dataSource.loadData(
+        this.collection,
+        this.input.nativeElement.value,
+        this.sort.active,
+        this.sort.active ? this.sort.direction : 'desc',
+        this.paginator.pageIndex,
+        this.paginator.pageSize,
+        this.filters).then(data => {
+          this.dataSource.setData(this.formatData(data, false));
+        });
 
-    this.dataService.count(this.formId, this.dependencyName, this.allDataAccess,
-      filter, this.filters)
-      .subscribe(countData => {
-        this.model = countData;
-      },
-      error => {
-        this.notifier.notify( 'error', 'ERROR: Error al cargar los datos del formulario.' );
+      this.dataSource.countData(
+        this.collection,
+        this.input.nativeElement.value,
+        this.filters
+      ).then(length => {
+        this.dataCount = +length;
       });
-
-    this.dataSource.loadData(this.formId, this.dependencyName, this.allDataAccess,
-    filter, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
-    this.paginator.pageSize, this.template.repeatSections, this.template.dates, this.template.booleans,
-    this.template.files, this.template.namesRepeats, this.filters);
-  }
-
-  getSortColumn() {
-    let sortColumn = 'savedDate';
-    if (this.sort.active != null && this.sort.active.length > 0
-      && this.sort.direction != null && this.sort.direction.length > 0) {
-      sortColumn = 'data.' + this.sort.active;
+    } else if (this.service) {
+      this.disabledTextFilters = true;
+      this.dataService.getByService(this.service, this.filters).subscribe(data => {
+        this.dataSource.setData(data);
+        this.dataCount = data.length;
+        this.paginator.disabled = true;
+      });
     }
-    return sortColumn;
   }
 
-  refresh($event) {
-    this.exportCSVSpinnerButtonOptions.active = true;
-    this.loadDataTable();
-    this.exportCSVSpinnerButtonOptions.active = false;
-  }
-
-  onCopyData(id) {
-    this.copyData.emit(id);
-  }
-
-  onEditData(id) {
-    this.editData.emit(id);
-  }
-
-  onDeleteData(id) {
-    this.deleteData.emit(id);
-  }
-
-  filterData(filterFormData) {
-    const urlFilters = encodeURIComponent(JSON.stringify(filterFormData));
-    this.filters = urlFilters;
-    this.dataService.count(this.formId, this.dependencyName, this.allDataAccess,
-      this.filter.nativeElement.value, urlFilters)
-    .subscribe(countData => {
-      this.model = countData;
-    },
-    error => {
-      this.notifier.notify( 'error', 'ERROR: Error al cargar los datos del formulario.' );
+  applyFilters(filters): Promise<any> {
+    return new Promise(resolve => {
+      this.filters = {...this.tableFilters, ...filters};
+      this.loadDataPage();
+      resolve();
     });
-
-    this.paginator.pageIndex = 0;
-    this.dataSource.loadData(this.formId, this.dependencyName, this.allDataAccess,
-      this.filter.nativeElement.value, this.getSortColumn(), this.sort.direction, this.paginator.pageIndex,
-      this.paginator.pageSize, this.template.repeatSections, this.template.dates, this.template.booleans,
-      this.template.files, this.template.namesRepeats, this.filters);
   }
 
   exportCSV() {
 
-    this.exportCSVSpinnerButtonOptions.active = true;
-    this.exportCSVSpinnerButtonOptions.text = 'Cargando Reporte...';
+    const options = {
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true,
+      showTitle: true,
+      title: this.collection ? this.collection : this.service,
+      useTextFile: false,
+      useBom: true,
+      useKeysAsHeaders: true
+    };
 
-    this.dataService.getAllByTemplateAndDependency(this.formId, this.dependencyName,
-      this.allDataAccess, this.filter.nativeElement.value, this.getSortColumn(),
-      this.sort.direction, 0, -1, this.filters)
-      .subscribe(data => {
-        const proccessedData: Object[] = [];
-        this.dataService.processDataReport(data, [], proccessedData, null, this.template.repeatSections,
-          this.template.dates, this.template.booleans, this.template.files, this.template.namesRepeats,
-          this.template.displayedColumnsNames);
-          this.excelService.exportAsExcelFile(proccessedData,
-            'reporte-' + this.dependencyName + '-' + this.formId, this.formId);
-          this.exportCSVSpinnerButtonOptions.active = false;
-          this.exportCSVSpinnerButtonOptions.text = 'Exportar';
-      });
-  }
+    const csvExporter = new ExportToCsv(options);
 
-  externalExportReport() {
-    return new Promise(resolve => {
-      const proccessedData: Object[] = [];
-      this.dataService.getAllByTemplateAndDependency(this.formId, this.dependencyName,
-        this.allDataAccess, this.extFilter, 'savedDate', '', 0, -1, this.filters)
-        .subscribe(data => {
-          this.dataService.processDataReport(data, [], proccessedData, null, this.template.repeatSections,
-            this.template.dates, this.template.booleans, this.template.files, this.template.namesRepeats,
-            this.template.displayedColumnsNames);
-            resolve(proccessedData);
+    if (this.collection) {
+      this.dataSource.loadReport(
+        this.collection,
+        this.input.nativeElement.value,
+        this.sort.active,
+        this.sort.active ? this.sort.direction : 'desc',
+        this.paginator.pageIndex,
+        -1,
+        this.filters).then(data => {
+          const dataFormated = this.formatData(data, true);
+          csvExporter.generateCsv(dataFormated);
         });
-    });
-  }
-
-  disableExportButon(numberData) {
-    if (numberData <= 0) {
-      this.exportCSVSpinnerButtonOptions.disabled = true;
-    } else {
-      this.exportCSVSpinnerButtonOptions.disabled = false;
+    } else if (this.service) {
+      csvExporter.generateCsv(this.formatData(this.dataSource.getData(), true));
     }
   }
 
-  ngOnDestroy() {
-    this._template.unsubscribe();
+  formatData(data, isExport: boolean) {
+    return data.map(element => {
+      const newElement = new Object();
+      Object.keys(this.columns).forEach(key => {
+        if (isExport) {
+          if (this.columns[key].function) {
+            newElement[this.columns[key].name] = this.columns[key].function(element[key]);
+          } else {
+            newElement[this.columns[key].name] = element[key];
+          }
+        } else {
+          if (this.columns[key].function) {
+            newElement[key] = this.columns[key].function(element[key]);
+          } else {
+            newElement[key] = element[key];
+          }
+        }
+      });
+      return newElement;
+    });
   }
-  */
 
 }

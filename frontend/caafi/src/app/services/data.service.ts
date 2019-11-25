@@ -5,13 +5,17 @@ import { Observable } from 'rxjs';
 import { RestangularModule, Restangular } from 'ngx-restangular';
 import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 import { baseURL } from '../common/baseurl';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { UtilService } from './util.service';
 
 @Injectable()
 export class DataService {
 
   constructor(
     private restangular: Restangular,
-    private _sanitizer: DomSanitizer
+    private _sanitizer: DomSanitizer,
+    private http: HttpClient,
+    private utilService: UtilService
   ) { }
 
   getAll(): Observable<Data[]> {
@@ -186,4 +190,28 @@ export class DataService {
   getDataByFormAndCreator(formId, creator, semester): Observable<Data> {
     return this.restangular.one('data/public/getByFormAndCreator/' + semester + '/' + formId + '/' + creator).get();
   }
+
+  countByCollection(collection, textFilter, filters): Observable<any[]> {
+    const params = new HttpParams().set('textFilter', textFilter).set('filters', JSON.stringify(filters));
+    const httpOptions = this.utilService.getRequestOptions();
+    httpOptions['params'] = params;
+    return this.http.get<any>(collection + '/count', httpOptions);
+  }
+
+  getByCollection(collection, textFilter, sortColumn, sortDirection, pageIndex, pageSize, filters): Observable<any[]> {
+    const params = new HttpParams().set('textFilter', textFilter).set('sortColumn', sortColumn)
+      .set('sortDirection', sortDirection).set('pageIndex', pageIndex).set('pageSize', pageSize)
+      .set('filters', JSON.stringify(filters));
+    const httpOptions = this.utilService.getRequestOptions();
+    httpOptions['params'] = params;
+    return this.http.get<any>(collection, httpOptions);
+  }
+
+  getByService(service, filters): Observable<any[]> {
+    const params = new HttpParams().set('filters', JSON.stringify(filters));
+    const httpOptions = this.utilService.getRequestOptions();
+    httpOptions['params'] = params;
+    return this.http.get<any>(service, httpOptions);
+  }
+
 }

@@ -12,6 +12,10 @@ import { MatTabChangeEvent } from '@angular/material';
 import { DataService } from '../../services/data.service';
 import { ExcelService } from '../../services/excel.service';
 import { FormControl } from '@angular/forms';
+import { CollectionService } from '../../services/collection.service';
+import * as columns from './table-columns';
+import { FormComponent } from '../form/form.component';
+import { TableComponent } from '../table/table.component';
 
 @Component({
   selector: 'app-report',
@@ -43,6 +47,11 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   subscribeContainers: Subscription;
   first = true;
   creating = false;
+  collection: string = null;
+  columns: object = null;
+  filterForm: string  = null;
+  tableFilters = {};
+  service: string = null;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -66,6 +75,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChildren(ContainerComponent) containers: QueryList<ContainerComponent>;
   @ViewChild(DataTableComponent) activeDataTable: DataTableComponent;
+  @ViewChild(FormComponent) formComponent: FormComponent;
+  @ViewChild(TableComponent) tableComponent: TableComponent;
 
   constructor(
     private templatesService: TemplatesService,
@@ -76,7 +87,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     private componentFactoryResolver: ComponentFactoryResolver,
     private resolver: ComponentFactoryResolver,
     private dataService: DataService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private collectionService: CollectionService
   ) {
     this.notifier = notifierService;
   }
@@ -103,8 +115,54 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
           this.dependenciesReport = dependencies;
         });
       }
-      this.loadReport($event.formId);
+      if ($event.collection) {
+        this.template = null;
+        this.filterForm = $event.collection + '-filters';
+        if (this.formComponent) {
+          this.formComponent.model = {};
+          this.formComponent.reset();
+          this.formComponent.loadForm(this.filterForm);
+        }
+        this.service = null;
+        this.collection = $event.collection;
+        this.columns = columns.columnsMap[$event.collection].tableColumns;
+        this.tableFilters['tc-ccosto'] = $event.dependencyId;
+        if (this.tableComponent) {
+          this.tableComponent.service = null;
+          this.tableComponent.collection = $event.collection;
+          this.tableComponent.columns = columns.columnsMap[$event.collection].tableColumns;
+          this.tableComponent.tableFilters['tc-ccosto'] = $event.dependencyId;
+          this.tableComponent.loadDataPage();
+        }
+      } else if ($event.serviceName && $event.service) {
+        this.template = null;
+        this.filterForm = $event.serviceName + '-filters';
+        if (this.formComponent) {
+          this.formComponent.model = {};
+          this.formComponent.reset();
+          this.formComponent.loadForm(this.filterForm);
+        }
+        this.collection = null;
+        this.service = $event.service;
+        this.columns = columns.columnsMap[$event.serviceName].tableColumns;
+        this.tableFilters = {};
+        if (this.tableComponent) {
+          this.tableComponent.collection = null;
+          this.tableComponent.service = $event.service;
+          this.tableComponent.columns = columns.columnsMap[$event.serviceName].tableColumns;
+          this.tableComponent.tableFilters = {};
+          this.tableComponent.loadDataPage();
+        }
+      } else {
+        this.loadReport($event.formId);
+      }
     }
+  }
+
+  filterDataCollection(filters) {
+    this.tableComponent.applyFilters(filters).then(response => {
+      this.formComponent.saved(false);
+    });
   }
 
   /**
@@ -131,6 +189,25 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
             resolve();
         });
     });
+  }
+
+  loadReportFromCollection(collection: string) {
+    /*
+    this.toggleLoading(true);
+    return new Promise(resolve => {
+      this.collectionService.getByName(collection)
+        .subscribe(data => {
+          console.log(data);
+          this.toggleLoading(false);
+          resolve();
+        },
+          error => {
+            this.toggleLoading(false);
+            this.notifier.notify( 'error', 'ERROR: Error al cargar los datos.' );
+            resolve();
+        });
+    });
+    */
   }
 
   loadReportTemplate(formId): Promise<any> {

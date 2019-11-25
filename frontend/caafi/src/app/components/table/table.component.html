@@ -1,53 +1,35 @@
-<div id="dataTable" class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column" fxLayoutAlign.gt-md="space-around center" fxLayoutGap="10px">
+<div class="table-wrapper">
+    <h3 *ngIf="tableName" class="title">{{ tableName }}</h3>
 
-    <mat-card fxFlex>
-        <mat-card-content class="contenedor-tabla">
+    <mat-form-field>
+        <input matInput placeholder="Buscar" #input [disabled]="disabledTextFilters">
+    </mat-form-field>
 
-            <ngx-loading [show]="dataSource.loading$ | async" [config]="{ fullScreenBackdrop: false }"></ngx-loading>
+    <div class="spinner-container" *ngIf="dataSource.loading$ | async">
+        <mat-spinner></mat-spinner>
+    </div>
 
-            <div class="mat-container mat-elevation-z8">
+    <div class="table mat-elevation-z1">
+        <div class="wrapper-table-content">
+            <mat-table [dataSource]="dataSource" matSort matSortDirection="asc" matSortDisableClear>
 
-                <div class="table-header">
-                    <mat-form-field>
-                        <input matInput placeholder="Filtro" #filter data-column="tituloArticulo">
-                    </mat-form-field>
-                </div>
+                <ng-container *ngFor="let column of displayedColumns; let i = index;" [matColumnDef]="column">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columns[column].name }}</mat-header-cell>
+                    <mat-cell *matCellDef="let data">{{ columns[column].type === 'date' ? (data[column] | date:'shortDate') : data[column] }}</mat-cell>
+                </ng-container>
+    
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    
+                <mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"></mat-row>                
+    
+            </mat-table>
+        </div>
 
-                <mat-table [dataSource]="dataSource" matSort>
+        <mat-paginator [length]="dataCount" [pageSize]="5" [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
 
-                    <!--
-                    <ng-container *ngFor="let col of data" matColumnDef="{{ col }}">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-header-cell">
-                            header
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let row" class="mat-cell" [innerHtml]="row['cedula']"></mat-cell>
-                    </ng-container>
-                    -->
-
-                    <ng-container matColumnDef="cedula">
-                        <th mat-header-cell *matHeaderCellDef> Cedula </th>
-                        <td mat-cell *matCellDef="let element"> {{element.cedula}} </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="cedula">
-                        <th mat-header-cell *matHeaderCellDef> Cedula </th>
-                        <td mat-cell *matCellDef="let element"> {{element.cedula}} </td>
-                    </ng-container>
-
-                    <mat-header-row *matHeaderRowDef="['cedula']"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: ['cedula']"></mat-row>
-
-                </mat-table>
-
-                <mat-paginator [length]="model?.countData" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
-
-                <div *ngIf="export" class="export">
-                    <mat-spinner-button [options]="exportCSVSpinnerButtonOptions" (click)="exportCSV()"></mat-spinner-button>
-                </div>
-
-            </div>
-
-        </mat-card-content>
-    </mat-card>
+        <div *ngIf="export" class="export">
+            <mat-spinner-button [options]="btnExportOpts" (click)="exportCSV()"></mat-spinner-button>
+        </div>
+    </div>
 
 </div>
