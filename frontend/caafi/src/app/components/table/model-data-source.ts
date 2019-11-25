@@ -42,6 +42,10 @@ export class ModelDataSource implements DataSource<any> {
     this.dataSubject.next(data);
   }
 
+  getData() {
+    return this.dataSubject.value;
+  }
+
   loadReport(collection: string, textFilter = '', sortColumn = 'id_plan', sortDirection = 'desc',
     pageIndex = 0, pageSize = 5, filters = {}) {
     this.loadingSubject.next(true);

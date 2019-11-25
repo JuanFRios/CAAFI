@@ -1,5 +1,7 @@
 import * as workplan from './workplan';
+import * as estadisticasestudiantes from './estadisticas-estudiantes';
 
 export const columnsMap = {
-    workplan: workplan
+    workplan,
+    'estadisticas-estudiantes': estadisticasestudiantes
 };

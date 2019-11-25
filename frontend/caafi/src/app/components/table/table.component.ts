@@ -20,6 +20,7 @@ export class TableComponent implements OnInit, AfterViewInit {
   @Input() columns: object;
   @Input() export: boolean;
   @Input() tableFilters: object;
+  @Input() service: string;
 
   tableName = null;
   dataSource: ModelDataSource;
@@ -27,7 +28,8 @@ export class TableComponent implements OnInit, AfterViewInit {
   displayedColumns: string[];
   filters: object = {};
   dataCount = 1;
-  btnExportOpts: MatProgressButtonOptions;
+  btnExportOpts: MatProgressButtonOptions = null;
+  disabledTextFilters = false;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -51,10 +53,6 @@ export class TableComponent implements OnInit, AfterViewInit {
       disabled: !this.export,
       mode: 'indeterminate',
     };
-
-    this.displayedColumns = Object.keys(this.columns);
-    this.dataSource = new ModelDataSource(this.dataService);
-    this.filters = this.tableFilters;
     this.loadDataPage();
   }
 
@@ -86,24 +84,39 @@ export class TableComponent implements OnInit, AfterViewInit {
   }
 
   loadDataPage() {
-    this.dataSource.loadData(
-      this.collection,
-      this.input.nativeElement.value,
-      this.sort.active,
-      this.sort.active ? this.sort.direction : 'desc',
-      this.paginator.pageIndex,
-      this.paginator.pageSize,
-      this.filters).then(data => {
-        this.dataSource.setData(this.formatData(data, false));
-      });
+    this.displayedColumns = Object.keys(this.columns);
+    this.dataSource = new ModelDataSource(this.dataService);
+    this.filters = {...this.filters, ...this.tableFilters};
 
-    this.dataSource.countData(
-      this.collection,
-      this.input.nativeElement.value,
-      this.filters
-    ).then(length => {
-      this.dataCount = +length;
-    });
+    if (this.collection) {
+      this.disabledTextFilters = false;
+      this.paginator.disabled = false;
+      this.dataSource.loadData(
+        this.collection,
+        this.input.nativeElement.value,
+        this.sort.active,
+        this.sort.active ? this.sort.direction : 'desc',
+        this.paginator.pageIndex,
+        this.paginator.pageSize,
+        this.filters).then(data => {
+          this.dataSource.setData(this.formatData(data, false));
+        });
+
+      this.dataSource.countData(
+        this.collection,
+        this.input.nativeElement.value,
+        this.filters
+      ).then(length => {
+        this.dataCount = +length;
+      });
+    } else if (this.service) {
+      this.disabledTextFilters = true;
+      this.dataService.getByService(this.service, this.filters).subscribe(data => {
+        this.dataSource.setData(data);
+        this.dataCount = data.length;
+        this.paginator.disabled = true;
+      });
+    }
   }
 
   applyFilters(filters): Promise<any> {
@@ -115,7 +128,6 @@ export class TableComponent implements OnInit, AfterViewInit {
   }
 
   exportCSV() {
-    console.log('export');
 
     const options = {
       fieldSeparator: ',',
@@ -123,7 +135,7 @@ export class TableComponent implements OnInit, AfterViewInit {
       decimalSeparator: '.',
       showLabels: true,
       showTitle: true,
-      title: this.collection,
+      title: this.collection ? this.collection : this.service,
       useTextFile: false,
       useBom: true,
       useKeysAsHeaders: true
@@ -131,17 +143,21 @@ export class TableComponent implements OnInit, AfterViewInit {
 
     const csvExporter = new ExportToCsv(options);
 
-    this.dataSource.loadReport(
-      this.collection,
-      this.input.nativeElement.value,
-      this.sort.active,
-      this.sort.active ? this.sort.direction : 'desc',
-      this.paginator.pageIndex,
-      -1,
-      this.filters).then(data => {
-        const dataFormated = this.formatData(data, true);
-        csvExporter.generateCsv(dataFormated);
-      });
+    if (this.collection) {
+      this.dataSource.loadReport(
+        this.collection,
+        this.input.nativeElement.value,
+        this.sort.active,
+        this.sort.active ? this.sort.direction : 'desc',
+        this.paginator.pageIndex,
+        -1,
+        this.filters).then(data => {
+          const dataFormated = this.formatData(data, true);
+          csvExporter.generateCsv(dataFormated);
+        });
+    } else if (this.service) {
+      csvExporter.generateCsv(this.formatData(this.dataSource.getData(), true));
+    }
   }
 
   formatData(data, isExport: boolean) {

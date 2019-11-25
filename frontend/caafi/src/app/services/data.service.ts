@@ -207,4 +207,11 @@ export class DataService {
     return this.http.get<any>(collection, httpOptions);
   }
 
+  getByService(service, filters): Observable<any[]> {
+    const params = new HttpParams().set('filters', JSON.stringify(filters));
+    const httpOptions = this.utilService.getRequestOptions();
+    httpOptions['params'] = params;
+    return this.http.get<any>(service, httpOptions);
+  }
+
 }

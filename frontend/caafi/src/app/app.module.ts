@@ -57,7 +57,7 @@ import { CachingInterceptor } from './services/caching-interceptor.interceptor';
 import { StudentService } from './services/student.service';
 import { SurveyComponent } from './components/survey/survey.component';
 import { TableComponent } from './components/table/table.component';
-import { CollectionService } from './services/collecton.service';
+import { CollectionService } from './services/collection.service';
 import { FormComponent } from './components/form/form.component';
 import { FormService } from './services/form.service';
 import { TeacherService } from './services/teacher.service';

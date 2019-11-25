@@ -12,7 +12,7 @@ import { MatTabChangeEvent } from '@angular/material';
 import { DataService } from '../../services/data.service';
 import { ExcelService } from '../../services/excel.service';
 import { FormControl } from '@angular/forms';
-import { CollectionService } from '../../services/collecton.service';
+import { CollectionService } from '../../services/collection.service';
 import * as columns from './table-columns';
 import { FormComponent } from '../form/form.component';
 import { TableComponent } from '../table/table.component';
@@ -51,6 +51,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   columns: object = null;
   filterForm: string  = null;
   tableFilters = {};
+  service: string = null;
 
   @Input() exportCSVSpinnerButtonOptions: any = {
     active: false,
@@ -116,11 +117,42 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if ($event.collection) {
         this.template = null;
-        this.collection = $event.collection;
         this.filterForm = $event.collection + '-filters';
+        if (this.formComponent) {
+          this.formComponent.model = {};
+          this.formComponent.reset();
+          this.formComponent.loadForm(this.filterForm);
+        }
+        this.service = null;
+        this.collection = $event.collection;
         this.columns = columns.columnsMap[$event.collection].tableColumns;
         this.tableFilters['tc-ccosto'] = $event.dependencyId;
-        this.tableComponent.loadDataPage();
+        if (this.tableComponent) {
+          this.tableComponent.service = null;
+          this.tableComponent.collection = $event.collection;
+          this.tableComponent.columns = columns.columnsMap[$event.collection].tableColumns;
+          this.tableComponent.tableFilters['tc-ccosto'] = $event.dependencyId;
+          this.tableComponent.loadDataPage();
+        }
+      } else if ($event.serviceName && $event.service) {
+        this.template = null;
+        this.filterForm = $event.serviceName + '-filters';
+        if (this.formComponent) {
+          this.formComponent.model = {};
+          this.formComponent.reset();
+          this.formComponent.loadForm(this.filterForm);
+        }
+        this.collection = null;
+        this.service = $event.service;
+        this.columns = columns.columnsMap[$event.serviceName].tableColumns;
+        this.tableFilters = {};
+        if (this.tableComponent) {
+          this.tableComponent.collection = null;
+          this.tableComponent.service = $event.service;
+          this.tableComponent.columns = columns.columnsMap[$event.serviceName].tableColumns;
+          this.tableComponent.tableFilters = {};
+          this.tableComponent.loadDataPage();
+        }
       } else {
         this.loadReport($event.formId);
       }
@@ -128,7 +160,6 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   filterDataCollection(filters) {
-    console.log(filters);
     this.tableComponent.applyFilters(filters).then(response => {
       this.formComponent.saved(false);
     });

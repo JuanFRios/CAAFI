@@ -2,7 +2,7 @@
     <h3 *ngIf="tableName" class="title">{{ tableName }}</h3>
 
     <mat-form-field>
-        <input matInput placeholder="Buscar" #input>
+        <input matInput placeholder="Buscar" #input [disabled]="disabledTextFilters">
     </mat-form-field>
 
     <div class="spinner-container" *ngIf="dataSource.loading$ | async">

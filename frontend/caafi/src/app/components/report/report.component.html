@@ -43,8 +43,8 @@
         -->
     </div>
 </div>
-<div *ngIf="template == null && collection != null && columns != null" class="container">
+<div *ngIf="template == null && (collection != null || service != null) && columns != null" class="container">
     <app-form [formName]="filterForm" buttonText="Filtrar" cleanButton="true"
         (submited)="filterDataCollection($event)"></app-form>
-    <app-table [collection]="collection" export="true" [columns]="columns" [tableFilters]="tableFilters"></app-table>
+    <app-table [collection]="collection" [service]="service" export="true" [columns]="columns" [tableFilters]="tableFilters"></app-table>
 </div>

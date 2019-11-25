@@ -111,7 +111,6 @@ export class FormComponent implements OnInit, OnDestroy {
 
   reset() {
     this.options.resetModel();
-    console.log(this.model);
   }
 
   ngOnDestroy() {
