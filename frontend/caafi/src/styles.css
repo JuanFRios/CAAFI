@@ -1966,6 +1966,21 @@ button.btn-agregar {
     flex: 50% 0;
 }
 
+.flex-50 {
+    flex: 50%;
+}
+.repeat-flex > .flex-1:nth-child(2n) {
+    flex-basis: 100%;
+}
+.flex-100 {
+    flex: 100%;
+}
+.flex-bassis-100 {
+    flex-basis: 100%;
+}
+.line-break {
+    width: 100%;
+}
 .flex-2 {
     flex: 2;
 }
@@ -2001,6 +2016,12 @@ button.btn-agregar {
 
 .w-100 {
     width: 100%;
+}
+.flex-column {
+    flex-direction: column;
+}
+.p-4 {
+    padding: 2.5rem !important;
 }
 
 

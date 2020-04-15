@@ -34,7 +34,17 @@ export class UtilService {
             template.displayedColumnsNames[fields[i]] = fields.sectionName;
             template.repeatSections.push(fields[i]);
             for (const j of fields['fieldArray']['fieldGroup']) {
-              template.namesRepeats[j.key] = j.templateOptions.label;
+              if (j.type === 'repeat') {
+                template.repeatSections.push(j.key);
+                for (const k of j['fieldArray']['fieldGroup']) {
+                  if (k.className !== 'line-break') {
+                    template.namesRepeats[k.key] = k.templateOptions.label;
+                  }
+                }
+              } else if (j.className !== 'line-break') {
+                template.namesRepeats[j.key] = j.templateOptions.label;
+              }
+              //template.namesRepeats[j.key] = j.templateOptions.label;
             }
           } else {
             template.displayedColumnsNames[fields[i]] = fields.templateOptions.label;

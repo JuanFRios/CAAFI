@@ -108,7 +108,19 @@ export class DataService {
                   '" download><span style="font-size: 20px; color: #0a351c">' +
                   '<i class="fas fa-download"></i></span></a>, ';
               } else {
-                if (typeof data[i][j][k] === 'object' && data[i][j][k] != null) {
+                if (data[i][j][k] != null && data[i][j][k] instanceof Array) {
+                  dataRepeat += ' { ';
+                  (data[i][j][k] as Array<any>).forEach((objRepeat, index) => {
+                    for (const l in objRepeat) {
+                      if (objRepeat[l] != null && typeof objRepeat[l] === 'object') {
+                        dataRepeat += namesRepeats[l] + ': ' + data[i][j][k][index][l].toString() + ', ';
+                      } else {
+                        dataRepeat += namesRepeats[l] + ': ' + data[i][j][k][index][l] + ', ';
+                      }
+                    }
+                    dataRepeat = dataRepeat.slice(0, -2) + ' }, ';
+                  });
+                } else if (typeof data[i][j][k] === 'object' && data[i][j][k] != null) {
                   dataRepeat += namesRepeats[k] + ': ' + data[i][j][k].toString() + ', ';
                 } else {
                   dataRepeat += namesRepeats[k] + ': ' + data[i][j][k] + ', ';
@@ -155,7 +167,19 @@ export class DataService {
           for (let j = 0; j < data[i].length; j++) {
             dataRepeat += '{ ';
             for (const k in data[i][j]) {
-              if (typeof data[i][j][k] === 'object' && data[i][j][k] != null) {
+              if (data[i][j][k] != null && data[i][j][k] instanceof Array) {
+                dataRepeat += ' { ';
+                (data[i][j][k] as Array<any>).forEach((objRepeat, index) => {
+                  for (const l in objRepeat) {
+                    if (objRepeat[l] != null && typeof objRepeat[l] === 'object') {
+                      dataRepeat += namesRepeats[l] + ': ' + data[i][j][k][index][l].toString() + ', ';
+                    } else {
+                      dataRepeat += namesRepeats[l] + ': ' + data[i][j][k][index][l] + ', ';
+                    }
+                  }
+                  dataRepeat = dataRepeat.slice(0, -2) + ' }, ';
+                });
+              } else if (typeof data[i][j][k] === 'object' && data[i][j][k] != null) {
                 dataRepeat += namesRepeats[k] + ': ' + data[i][j][k].toString() + ', ';
               } else {
                 dataRepeat += namesRepeats[k] + ': ' + data[i][j][k] + ', ';

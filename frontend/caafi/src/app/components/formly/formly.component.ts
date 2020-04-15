@@ -146,9 +146,16 @@ export class FormlyComponent implements OnInit, OnDestroy {
             }
             this.options['formState'][fields[i]] = 0;
           } else if (i === 'type' && fields[i] === 'repeat') {
+            if (fields['parent'] && this.formData[fields['parent']][0][fields['key']] == null) {
+              this.formData[fields['parent']][0][fields['key']] = [{}];
+            } else if (this.formData[fields['key']] == null) {
+              this.formData[fields['key']] = [{}];
+            }
+            /*
             if (this.formData[fields['key']] == null) {
               this.formData[fields['key']] = [{}];
             }
+            */
           } else {
             // tslint:disable-next-line:no-eval
             fields[i] = eval(fields[i]);
