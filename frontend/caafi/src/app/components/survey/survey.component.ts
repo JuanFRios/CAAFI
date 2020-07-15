@@ -147,7 +147,7 @@ export class SurveyComponent implements OnInit, OnDestroy {
           const endDate = (new Date(config.value['dateRange'][1])).getTime();
           const currDate = (new Date()).getTime();
           if (((this.formId === 'encuesta-de-materias' || this.formId === 'encuesta-de-materias-profesores')
-            && currDate >= initDate && currDate <= endDate && config.value['semester'] === this.semester) ||
+            && currDate >= initDate && currDate <= endDate && String(config.value['semester']) === this.semester) ||
             (this.formId !== 'encuesta-de-materias' && currDate >= initDate && currDate <= endDate)) {
             this.utilService.loadTemplateFeatures(template, false);
             this.template = template;
