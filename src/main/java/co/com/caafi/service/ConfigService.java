@@ -1,31 +1,18 @@
 package co.com.caafi.service;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
+import co.com.caafi.model.Config;
+import co.com.caafi.model.ConfigTemplate;
+import co.com.caafi.model.Item;
+import co.com.caafi.model.User;
+import co.com.caafi.repository.ConfigRepository;
+import co.com.caafi.repository.ConfigTemplateRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
-
-import com.mongodb.WriteResult;
-
-import co.com.caafi.model.Config;
-import co.com.caafi.model.ConfigTemplate;
-import co.com.caafi.model.Dependency;
-import co.com.caafi.model.Form;
-import co.com.caafi.model.Item;
-import co.com.caafi.model.StringResponse;
-import co.com.caafi.model.User;
-import co.com.caafi.model.template.Template;
-import co.com.caafi.repository.ConfigRepository;
-import co.com.caafi.repository.ConfigTemplateRepository;
 
 @Service
 public class ConfigService {

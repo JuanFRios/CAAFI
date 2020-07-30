@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import co.com.caafi.config.FileStorageProperties;
 
 @SpringBootApplication
-@EnableScheduling
 @EnableConfigurationProperties({
     FileStorageProperties.class
 })

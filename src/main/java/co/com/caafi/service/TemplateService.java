@@ -1,9 +1,9 @@
 package co.com.caafi.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import co.com.caafi.model.*;
+import co.com.caafi.model.template.Template;
+import co.com.caafi.repository.TemplateRepository;
+import com.mongodb.client.result.UpdateResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +12,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.mongodb.WriteResult;
-
-import co.com.caafi.model.Config;
-import co.com.caafi.model.StringResponse;
-import co.com.caafi.model.Student;
-import co.com.caafi.model.Teacher;
-import co.com.caafi.model.User;
-import co.com.caafi.model.template.Template;
-import co.com.caafi.repository.TemplateRepository;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class TemplateService {
@@ -227,8 +220,8 @@ public class TemplateService {
 		Update update = new Update();
 		data.getConfig().put("configCreator", user.getDocument());
 		update.set("config", data.getConfig());
-		WriteResult result = mongoTemplate.updateFirst(query, update, Template.class);
-		return new StringResponse(result == null ? "0" : result.getN() + "");
+		UpdateResult result = mongoTemplate.updateFirst(query, update, Template.class);
+		return new StringResponse(result == null ? "0" : result.getModifiedCount() + "");
     }
 	
 	public StringResponse updateConfig(Template template) {
@@ -236,17 +229,9 @@ public class TemplateService {
 		query.addCriteria(Criteria.where("name").is(template.getName()));
 		Update update = new Update();
 		update.set("config", template.getConfig());
-		WriteResult result = mongoTemplate.updateFirst(query, update, Template.class);
-		return new StringResponse(result == null ? "0" : result.getN() + "");
+		UpdateResult result = mongoTemplate.updateFirst(query, update, Template.class);
+		return new StringResponse(result == null ? "0" : result.getModifiedCount() + "");
     }
-	
-	@Scheduled(cron = "0 0 1 * * ?", zone="America/Bogota")
-	public void scheduleTaskSendPolls() {
-	  
-	    long now = System.currentTimeMillis() / 1000;
-	    System.out.println(
-	      "schedule tasks using cron jobs - " + now);
-	}
 	
 	public Map<String, Object> getSendingProgress(String template) {
 		return this.templateRepository.findConfigSendingProgressByName(template).getConfig();

@@ -1,12 +1,9 @@
 package co.com.caafi.service;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import co.com.caafi.model.*;
+import co.com.caafi.repository.StudentRepository;
+import co.com.caafi.service.rest.RestService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -19,22 +16,15 @@ import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import co.com.caafi.model.Group;
-import co.com.caafi.model.Matter;
-import co.com.caafi.model.Program;
-import co.com.caafi.model.Semester;
-import co.com.caafi.model.Student;
-import co.com.caafi.model.StudentStatistics;
-import co.com.caafi.model.User;
-import co.com.caafi.repository.StudentRepository;
-import co.com.caafi.service.rest.RestService;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class StudentService extends RestService {

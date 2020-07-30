@@ -1,11 +1,10 @@
 package co.com.caafi.service;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-
+import co.com.caafi.model.User;
+import co.com.caafi.model.template.FormData;
+import co.com.caafi.repository.DataRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.wnameless.json.flattener.JsonFlattener;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -24,15 +23,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.wnameless.json.flattener.JsonFlattener;
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.CommandResult;
-
-import co.com.caafi.model.User;
-import co.com.caafi.model.template.FormData;
-import co.com.caafi.repository.DataRepository;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 @Service
 public class DataService {
@@ -51,11 +46,11 @@ public class DataService {
     Logger logger = LoggerFactory.getLogger(DataService.class);
 
     public FormData findById(String id) {
-        return this.dataRepository.findById(id);
+        return this.dataRepository.findById(id).get();
     }
     
     public void deleteById(String id, User user) {
-    		FormData data = this.dataRepository.findById(id);
+    		FormData data = this.dataRepository.findById(id).get();
     		data.setDeleted(true);
     		data.setEliminator(user.getDocument());		
         this.dataRepository.save(data);
@@ -110,7 +105,7 @@ public class DataService {
 					filtersWhere, sort);
 		} else {
 			return this.dataRepository.findCustomByTemplate(template, dependencyFilter, filterWhere,
-					filtersWhere, new PageRequest(pageNumber, pageSize, sort));
+					filtersWhere, PageRequest.of(pageNumber, pageSize, sort));
 		}
 	}
 	
@@ -121,7 +116,7 @@ public class DataService {
 		String filterWhere = getGenericFilter(filter);
 		String filtersWhere = getFilters(filters);
 		
-		return this.dataRepository.findCustomByTemplate(template, filterWhere, filtersWhere, new PageRequest(pageNumber, pageSize, sort));
+		return this.dataRepository.findCustomByTemplate(template, filterWhere, filtersWhere, PageRequest.of(pageNumber, pageSize, sort));
 	}
 
 	private String getDependencyFilter(String dependency) {
@@ -247,7 +242,7 @@ public class DataService {
 		}
 		
 		Order order = new Order(direction, sortColumn);
-		return new Sort(order);
+		return Sort.by(order);
 	}
 
 	public FormData count(String template, String dependency, String filter, String filters) {
@@ -271,7 +266,7 @@ public class DataService {
 		Sort sort = getSort(sortColumn, sortOrder);
 		
 		// Pagination
-		Pageable pageable = new PageRequest(pageNumber, pageSize, sort);
+		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 		
 		// Query
 		Query query = new Query();

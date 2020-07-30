@@ -1,29 +1,21 @@
 package co.com.caafi.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
+import co.com.caafi.model.Workplan;
+import co.com.caafi.repository.WorkplanRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.CriteriaDefinition;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.util.JSON;
-
-import co.com.caafi.model.Workplan;
-import co.com.caafi.repository.WorkplanRepository;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class WorkplanService {
@@ -38,7 +30,7 @@ public class WorkplanService {
 			int pageIndex, int pageSize, String filters) {
 
 		Order order = new Order(Sort.Direction.valueOf(sortDirection.toUpperCase()), sortColumn);
-		Sort sort = new Sort(order);
+		Sort sort = Sort.by(order);
 
 		BasicQuery query = new BasicQuery("{ $where: '(JSON.stringify(this).toLowerCase().indexOf( \"" + 
 				textFilter + "\".toLowerCase() ) != -1);' }");
@@ -64,7 +56,7 @@ public class WorkplanService {
 		}
 		
 		if (pageSize != -1) { // if pageSize is -1 gets all data
-			query.with(new PageRequest(pageIndex, pageSize, sort));
+			query.with(PageRequest.of(pageIndex, pageSize, sort));
 		}
 		List<Workplan> result = mongoTemplate.find(query, Workplan.class, "workplan");
 		return result;

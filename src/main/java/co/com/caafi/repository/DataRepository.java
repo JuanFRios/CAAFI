@@ -12,7 +12,7 @@ import co.com.caafi.model.template.FormData;
 
 public interface DataRepository extends MongoRepository<FormData, String> {
 
-	public FormData findById(String id);
+	public Optional<FormData> findById(String id);
 
 	public List<FormData> findAll();
 
