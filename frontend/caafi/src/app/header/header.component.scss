@@ -1,0 +1,55 @@
+.cabecera {
+  padding: 16px;
+  background-color: #f3f3f3;
+
+  .logo-udea {
+    width: 300px;
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+  .nombre {
+    h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+    p {
+      font-weight: bold;
+      margin: 0;
+    }
+  }
+}
+
+.menu-button {
+  background: #0a351c;
+  color: #fff;
+  border-radius: unset;
+}
+
+mat-toolbar {
+  mat-toolbar-row {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+
+    .spacer {
+      flex: 1 1 auto;
+    }
+    .logo-caafi {
+      width: 150px;
+      max-width: 100%;
+    }
+    .username {
+      margin: 0 0.3rem 0 0;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .cabecera {  
+    .logo-udea {
+      margin-bottom: 0;
+      margin-right: 1rem;
+    }
+  }
+}

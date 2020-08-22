@@ -1,0 +1,112 @@
+.table-wrapper {
+  position: relative;
+
+  mat-table {
+    overflow: auto;
+
+    mat-row, mat-header-row, mat-footer-row {
+      border-bottom-width: 1;
+      display: inline-flex;
+      align-items: stretch;
+      min-width: 100%;
+    }
+    mat-row {
+      cursor: pointer;
+    }
+    mat-cell, mat-header-cell, mat-footer-cell {
+      flex: none;
+      padding: 0 0.5rem;
+      width: 220px; 
+      margin: 0 0.25rem;
+  
+      &.select {
+        width: 20px;
+        position: absolute;    
+        background: white;
+        left: 0;
+        z-index: 1;
+      }
+    }
+    mat-cell:first-of-type, mat-header-cell:first-of-type, mat-footer-cell:first-of-type {
+      padding-left: 0.75rem;
+      padding-right: 0.5rem;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    .mat-column-select {
+      overflow: initial;
+    }
+    mat-header-cell.mat-column-star, mat-cell.mat-column-star {
+      width: 20px;
+    }
+    .mat-table-sticky:first-child {
+      border-right: 1px solid #e0e0e0;
+    }
+    .mat-table-sticky:last-child {
+      border-left: 1px solid #e0e0e0;
+    }
+  }
+
+  .actions-toolbar {
+    padding: 0.2rem 0;
+  
+    mat-toolbar-row {
+      height: auto;
+  
+      mat-form-field {
+        font-size: 14px;
+    
+        .mat-form-field-wrapper {
+          padding: 0 !important;
+    
+          .mat-form-field-outline {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+
+  mat-spinner {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+
+    circle {
+      stroke: #ffffff;
+      stroke-width: 20% !important;
+    }
+  }
+}
+
+@media screen and (min-width: 960px) {
+  .table-wrapper {
+    mat-table {
+      overflow: visible;
+      padding-left: 0;
+    
+      mat-row, mat-header-row, mat-footer-row {
+        border-bottom-width: 1px;
+        display: flex;
+      }
+      mat-cell, mat-header-cell, mat-footer-cell {
+        flex: 1;
+        padding: 0;
+        width: auto; 
+        border-bottom: none;
+  
+        &.select {
+          width: 40px;
+          flex: none;
+          position: static;
+          background: none;
+        }
+      }
+      mat-cell:first-of-type, mat-header-cell:first-of-type, mat-footer-cell:first-of-type {
+        flex: none;
+        margin-right: 0.5rem;
+        padding: 0 0.7rem 0 1rem;
+      }
+    }
+  }
+}

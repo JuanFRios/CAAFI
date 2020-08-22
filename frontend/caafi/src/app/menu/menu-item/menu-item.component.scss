@@ -1,0 +1,21 @@
+.menu-item {
+  .menu-item-content {
+    width: 100%;
+
+    .menu-item-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+.subitems {
+  overflow: hidden;
+
+  &.collapsed {
+    height: 0;
+  }
+
+  &.expanded {
+    height: auto;
+  }
+}

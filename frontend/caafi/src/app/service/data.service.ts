@@ -1,0 +1,107 @@
+import { Injectable } from '@angular/core';
+import { CRUDInterface } from './crud.interface';
+import { HttpClient } from '@angular/common/http';
+import { Pageable } from '../model/resource/table/pageable';
+import { Observable } from 'rxjs';
+import { Page } from '../model/resource/table/page';
+import { environment } from 'src/environments/environment';
+import { Data } from '../model/template/data';
+import { map } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DataService implements CRUDInterface<any> {
+
+  public template: string;
+  public dependencia: string;
+
+  constructor(
+    public http: HttpClient
+  ) {}
+
+  /**
+   * Obtiene todos los elementos de la entidad paginados
+   *
+   * @param pagebale valores de número de página, tamaño de pagína y ordenamiento
+   */
+  public findAll(pageable: Pageable): Observable<Page<any>> {
+    return this.http.get<Page<any>>(environment.apiBaseUrl + '/data', 
+      { 
+        params: { 
+          page: pageable.page.toString(),
+          size: pageable.size.toString(),
+          sort: pageable.sort,
+          filter: pageable.filter,
+          filterFields: pageable.filterFields,
+          template: this.template,
+          dependencia: this.dependencia
+        }
+      }
+    ).pipe(
+      map(page => {
+        page.content = page.content.map(data => {
+          const newData = data.data;
+          newData.id = data.id;
+          return newData
+        });
+        return page;
+      })
+    );
+  }
+
+  /**
+   * Guarda una entidad
+   *
+   * @param model datos de la entidad
+   */
+  public save(model: any): Observable<any> {
+    const data: Data = {
+      template: this.template,
+      dependencia: this.dependencia,
+      data: model
+    }
+    return this.http.post<any>(environment.apiBaseUrl + '/data', data);
+  }
+
+  /**
+   * Actualiza una entidad
+   *
+   * @param model valores nuevos de la entidad
+   */
+  public update(model: any): Observable<any> {
+    const id = model.id;
+    delete model.id;
+    const data: Data = {
+      id,
+      template: this.template,
+      dependencia: this.dependencia,
+      data: model
+    }
+    return this.http.put<any>(environment.apiBaseUrl + '/data/' + id, data);
+  }
+
+  /**
+   * Obtiene una entidad por su identificador
+   *
+   * @param id identificador del registro
+   */
+  public findById(id: string): Observable<any> {
+    return this.http.get<any>(environment.apiBaseUrl + '/data/' + id, { params: { template: this.template } }).pipe(
+      map(data => {
+        const newData = data.data;
+        newData.id = data.id;
+        return newData;
+      })
+    );
+  }
+
+  /**
+   * Elimina una entidad
+   *
+   * @param id identificador del registro
+   */
+  public delete(id: string): Observable<number> {
+    return this.http.delete<number>(environment.apiBaseUrl + '/data/' + id, { params: { template: this.template } });
+  }
+}

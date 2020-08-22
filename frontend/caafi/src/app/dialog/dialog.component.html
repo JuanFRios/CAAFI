@@ -1,0 +1,6 @@
+<h2 mat-dialog-title><span *ngIf="dc.type === 'INFO'" class="title-icon material-icons">info</span>{{dc.title}}</h2>
+<mat-dialog-content class="mat-typography" [innerHtml]="dc.contentHtml"></mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>{{dc.okButtonText}}</button>
+  <button *ngIf="dc.cancelButtonText" mat-button color="primary" mat-dialog-close>{{dc.cancelButtonText}}</button>
+</mat-dialog-actions>

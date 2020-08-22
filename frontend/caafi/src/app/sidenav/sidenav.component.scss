@@ -1,0 +1,52 @@
+.sidenav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+
+  .sidenav-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba($color: #000000, $alpha: 0.3);
+  }
+
+  .sidenav-wrapper {
+    position: absolute;
+    width: 200px;
+    top: 0;
+    bottom: 0;
+    background-color: #fff;
+    overflow-y: auto;
+
+    .close {
+      position: absolute;
+      top: 0;
+      z-index: 1;
+    }
+
+    &.left {
+      left: 0;
+
+      .close {
+        right: 0;
+      }
+    }
+
+    &.right {
+      right: 0;
+
+      .close {
+        left: 0;
+      }
+    }
+  
+    .sidenav-content-wrapper {
+      padding: 40px 0 0.5rem;
+    }
+  }
+}

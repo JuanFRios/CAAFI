@@ -1,0 +1,11 @@
+<div *ngIf="opened" class="sidenav">
+  <div class="sidenav-back" (click)="close()"></div>
+  <div class="sidenav-wrapper" [ngClass]="position" [ngStyle]="{'width': size + 'px'}">
+    <button class="close" mat-icon-button aria-label="cerrar menú" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <div class="sidenav-content-wrapper">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

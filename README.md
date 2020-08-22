@@ -1,1 +1,0 @@
-Proyecto CAAFI v2, con base de datos en mongo y arquitectura autocontenida

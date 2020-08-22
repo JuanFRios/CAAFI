@@ -1,0 +1,41 @@
+.principal-wrapper {
+  height: 100%;
+
+  .router-outlet-wrapper {
+    max-width: 100%;
+    padding: 1rem;
+  }
+}
+
+.sidenav-menu {
+  .user-info {
+    .profile-image {
+      width: 70px;
+      height: 70px;
+      font-size: 70px;
+      margin: auto;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+    p {
+      text-align: center;
+    }
+  }
+
+  mat-nav-list {
+    .menu-title {
+      padding: 0 1rem;
+      margin: 0.5rem 0;
+      text-transform: uppercase;
+    }
+    .menu-item {
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+app-footer {
+  background-color: #f3f3f3;
+}
