@@ -1,5 +1,6 @@
 package co.edu.udea.caafi.model.facultad;
 
+import co.edu.udea.caafi.model.user.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,6 +8,8 @@ import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 /**
  * Clase para la gestión de dependencias de las facultades
@@ -31,4 +34,7 @@ public class Dependencia {
   /** Facultad a la que pertenece la dependencia */
   @DBRef
   private Facultad facultad;
+
+  @DBRef
+  private List<Role> roles;
 }

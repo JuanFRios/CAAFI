@@ -13,8 +13,8 @@ import { map } from 'rxjs/operators';
 })
 export class DataService implements CRUDInterface<any> {
 
-  public template: string;
-  public dependencia: string;
+  public templateId: string;
+  public unidadId: string;
 
   constructor(
     public http: HttpClient
@@ -29,13 +29,13 @@ export class DataService implements CRUDInterface<any> {
     return this.http.get<Page<any>>(environment.apiBaseUrl + '/data', 
       { 
         params: { 
+          templateId: this.templateId,
+          unidadId: this.unidadId,
           page: pageable.page.toString(),
           size: pageable.size.toString(),
           sort: pageable.sort,
           filter: pageable.filter,
           filterFields: pageable.filterFields,
-          template: this.template,
-          dependencia: this.dependencia
         }
       }
     ).pipe(
@@ -57,8 +57,8 @@ export class DataService implements CRUDInterface<any> {
    */
   public save(model: any): Observable<any> {
     const data: Data = {
-      template: this.template,
-      dependencia: this.dependencia,
+      templateId: this.templateId,
+      unidadId: this.unidadId,
       data: model
     }
     return this.http.post<any>(environment.apiBaseUrl + '/data', data);
@@ -74,8 +74,8 @@ export class DataService implements CRUDInterface<any> {
     delete model.id;
     const data: Data = {
       id,
-      template: this.template,
-      dependencia: this.dependencia,
+      templateId: this.templateId,
+      unidadId: this.unidadId,
       data: model
     }
     return this.http.put<any>(environment.apiBaseUrl + '/data/' + id, data);
@@ -87,7 +87,7 @@ export class DataService implements CRUDInterface<any> {
    * @param id identificador del registro
    */
   public findById(id: string): Observable<any> {
-    return this.http.get<any>(environment.apiBaseUrl + '/data/' + id, { params: { template: this.template } }).pipe(
+    return this.http.get<any>(environment.apiBaseUrl + '/data/' + id, { params: { templateId: this.templateId } }).pipe(
       map(data => {
         const newData = data.data;
         newData.id = data.id;
@@ -102,6 +102,6 @@ export class DataService implements CRUDInterface<any> {
    * @param id identificador del registro
    */
   public delete(id: string): Observable<number> {
-    return this.http.delete<number>(environment.apiBaseUrl + '/data/' + id, { params: { template: this.template } });
+    return this.http.delete<number>(environment.apiBaseUrl + '/data/' + id, { params: { templateId: this.templateId } });
   }
 }

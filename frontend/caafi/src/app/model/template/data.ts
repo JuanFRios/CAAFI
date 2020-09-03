@@ -1,6 +1,6 @@
 export interface Data {
   id?: string;
-  template: string;
-  dependencia: string;
+  templateId: string;
+  unidadId: string;
   data: any;
 }

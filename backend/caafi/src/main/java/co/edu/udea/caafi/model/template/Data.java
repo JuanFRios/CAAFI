@@ -1,6 +1,7 @@
 package co.edu.udea.caafi.model.template;
 
 import co.edu.udea.caafi.model.facultad.Dependencia;
+import co.edu.udea.caafi.model.facultad.Unidad;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,7 +31,7 @@ public class Data {
   private Template template;
 
   @DBRef
-  private Dependencia dependencia;
+  private Unidad unidad;
 
   @CreatedBy
   private String createdBy;

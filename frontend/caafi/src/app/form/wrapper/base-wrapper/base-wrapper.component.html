@@ -1,0 +1,8 @@
+<div class="mat-form-field mat-form-field-appearance-outline mat-form-field-wrapper">
+  <ng-container #fieldComponent></ng-container>
+  <div class="mat-form-field-subscript-wrapper">
+    <mat-error class="mat-error" [id]="null">
+      <formly-validation-message [field]="field" *ngIf="showError"></formly-validation-message>
+    </mat-error>
+  </div>
+</div>

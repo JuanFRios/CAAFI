@@ -29,8 +29,8 @@ export class TemplateTableComponent extends DataTableComponent<any> implements O
   }
 
   ngOnInit(): void {
-    this.dataService.template = this.tableConfig.template;
-    this.dataService.dependencia = this.tableConfig.dependencia;
+    this.dataService.templateId = this.tableConfig.templateId;
+    this.dataService.unidadId = this.tableConfig.unidadId;
     this.tableId = this.tableConfig.tableId;
     this.createFormId = this.tableConfig.createFormId;
     this.updateFormId = this.tableConfig.updateFormId;

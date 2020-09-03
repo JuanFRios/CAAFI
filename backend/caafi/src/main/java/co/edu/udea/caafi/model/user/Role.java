@@ -1,5 +1,6 @@
 package co.edu.udea.caafi.model.user;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
+@EqualsAndHashCode
 @Document(collection = "role")
 public class Role implements GrantedAuthority {
 

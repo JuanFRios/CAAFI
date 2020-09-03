@@ -37,8 +37,9 @@ export abstract class DataTableComponent<T extends TableItem> extends TableCompo
     const dialogRef = this.dialog.open(this.componentCreate, {
       id: 'createDialog',
       width: '1140px',
+      maxWidth: '90vw',
       height: 'auto',
-      panelClass: 'dialog-wrapper'
+      panelClass: 'dialog-wrapper',
     });
     dialogRef.componentInstance.service = this.service;
     dialogRef.componentInstance.formId = this.createFormId;
@@ -53,6 +54,7 @@ export abstract class DataTableComponent<T extends TableItem> extends TableCompo
     const dialogRef = this.dialog.open(this.componentUpdate, {
       id: 'editDialog',
       width: '1140px',
+      maxWidth: '90vw',
       height: 'auto',
       panelClass: 'dialog-wrapper'
     });

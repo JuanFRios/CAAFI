@@ -26,4 +26,7 @@ public class Template {
 
   /** Descripción de la plantilla */
   private String descripcion;
+
+  /** Nombre de la collección de datos del template */
+  private String dataCollectionName;
 }

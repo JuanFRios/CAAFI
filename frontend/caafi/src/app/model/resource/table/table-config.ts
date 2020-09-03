@@ -1,6 +1,6 @@
 export interface TableConfig {
-  template: string,
-  dependencia: string,
+  templateId: string,
+  unidadId: string,
   createFormId: string,
   updateFormId: string,
   tableId: string

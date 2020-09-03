@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-create',
   templateUrl: '../../../form/modal-form/modal-form.component.html',
-  styleUrls: ['./create.component.scss']
+  styleUrls: ['../../../form/modal-form/modal-form.component.scss']
 })
 export class CreateComponent extends ModalFormComponent implements OnInit {
 

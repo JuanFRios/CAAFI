@@ -9,7 +9,7 @@ import { CRUDInterface } from 'src/app/service/crud.interface';
 @Component({
   selector: 'app-update',
   templateUrl: '../../../form/modal-form/modal-form.component.html',
-  styleUrls: ['./update.component.scss']
+  styleUrls: ['../../../form/modal-form/modal-form.component.scss']
 })
 export class UpdateComponent extends ModalFormComponent implements OnInit {
 

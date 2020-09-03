@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormularioComponent } from './formulario/formulario.component';
@@ -18,7 +17,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MatInputModule } from '@angular/material/input';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { AuthInterceptor } from './auth.interceptor';
 import { ErrorInterceptor } from './error.interceptor';
 import { HomeComponent } from './home/home.component';
@@ -43,6 +43,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { CRUD_INTERFACE } from './service/crud.interface';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TemplateTableComponent } from './template-table/template-table.component';
+import { BaseWrapperComponent } from './form/wrapper/base-wrapper/base-wrapper.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { TemplateTableComponent } from './template-table/template-table.componen
     AutocompleteComponent,
     RepeatComponent,
     TemplateTableComponent,
+    BaseWrapperComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,6 +82,9 @@ import { TemplateTableComponent } from './template-table/template-table.componen
     MatListModule,
     MatDialogModule,
     FormlyModule.forRoot({
+      wrappers: [
+        { name: 'base', component: BaseWrapperComponent },
+      ],
       types: [
         {
           name: 'autocomplete',
@@ -101,7 +106,9 @@ import { TemplateTableComponent } from './template-table/template-table.componen
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatNativeDateModule,
+    FormlyMatDatepickerModule
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es-CO' },

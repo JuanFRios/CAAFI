@@ -3,8 +3,8 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ResourceInterface } from './resource.interface';
-import { ListItem } from '../model/resource/form/list-item';
 import { Form } from '../model/resource/form/form';
+import { List } from '../model/resource/form/list/list';
 
 @Injectable({
   providedIn: 'root'
@@ -29,11 +29,11 @@ export class FormService implements ResourceInterface<Form> {
     return this.http.get<Form>(environment.apiBaseUrl + '/forms/' + id);
   }
 
-  public findListByName(name: string): Observable<string[]> {
-    return this.http.get<string[]>(environment.apiBaseUrl + '/forms/lists/' + name);
+  public findListById(id: string): Observable<List> {
+    return this.http.get<List>(environment.apiBaseUrl + '/forms/lists/' + id);
   }
 
-  public findListByEntityName(entityName: string): Observable<ListItem[]> {
-    return this.http.get<ListItem[]>(environment.apiBaseUrl + '/' + entityName + '/formList');
+  public findListByEntityName(entityName: string): Observable<List> {
+    return this.http.get<List>(environment.apiBaseUrl + '/' + entityName + '/formList');
   }
 }

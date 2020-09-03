@@ -1,6 +1,7 @@
 package co.edu.udea.caafi.dto.template;
 
 import co.edu.udea.caafi.dto.facultad.DependenciaDto;
+import co.edu.udea.caafi.dto.facultad.UnidadDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -19,6 +20,8 @@ import lombok.experimental.Accessors;
 public class DataDto {
   private String id;
   private Object data;
+  private String templateId;
   private TemplateDto template;
-  private DependenciaDto dependencia;
+  private String unidadId;
+  private UnidadDto unidad;
 }

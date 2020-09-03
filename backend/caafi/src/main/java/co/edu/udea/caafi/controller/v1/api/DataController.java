@@ -1,16 +1,18 @@
 package co.edu.udea.caafi.controller.v1.api;
 
-import co.edu.udea.caafi.controller.v1.request.DataRequest;
-import co.edu.udea.caafi.dto.facultad.DependenciaDto;
+import co.edu.udea.caafi.dto.facultad.UnidadDto;
 import co.edu.udea.caafi.dto.template.DataDto;
 import co.edu.udea.caafi.dto.template.TemplateDto;
 import co.edu.udea.caafi.service.DataService;
+import co.edu.udea.caafi.service.TemplateService;
+import co.edu.udea.caafi.service.UnidadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/data")
@@ -18,9 +20,15 @@ public class DataController {
 
   private final DataService dataService;
 
+  private final TemplateService templateService;
+
+  private final UnidadService unidadService;
+
   @Autowired
-  public DataController(DataService dataService) {
+  public DataController(DataService dataService, TemplateService templateService, UnidadService unidadService) {
     this.dataService = dataService;
+    this.templateService = templateService;
+    this.unidadService = unidadService;
   }
 
   /**
@@ -32,24 +40,35 @@ public class DataController {
    * @return respuesta con página de usuarios encontradas
    */
   @GetMapping
-  public Page<DataDto> findAll(@RequestParam String filter, @RequestParam String[] filterFields, Pageable pageable,
-                               DataRequest template) {
-    return dataService.findAll(filter, Arrays.asList(filterFields), pageable, template.getTemplate(), template.getDependencia());
+  public Page<DataDto> findAll(@RequestParam String filter, @RequestParam String[] filterFields,
+                               Pageable pageable, @RequestParam String unidadId, @RequestParam String templateId) {
+    Optional<TemplateDto> template = templateService.findById(templateId);
+    if (template.isEmpty()) {
+      return Page.empty();
+    }
+    return dataService.findAll(filter, Arrays.asList(filterFields), pageable, unidadId, templateId,
+        template.get().getDataCollectionName());
   }
 
   /**
    * Guarda un dato
    *
-   * @param dataRequest request con los datos
+   * @param data request con los datos
    * @return response con el dato guardado
    */
   @PostMapping
-  public DataDto save(@RequestBody DataRequest dataRequest) {
-    DataDto dataDto = new DataDto()
-        .setData(dataRequest.getData())
-        .setDependencia(new DependenciaDto().setCodigo(dataRequest.getDependencia()))
-        .setTemplate(new TemplateDto().setId(dataRequest.getTemplate()));
-    return dataService.save(dataDto).orElse(null);
+  public DataDto save(@RequestBody DataDto data) {
+    Optional<TemplateDto> template = templateService.findById(data.getTemplateId());
+    if (template.isEmpty()) {
+      return null;
+    }
+    Optional<UnidadDto> unidad = unidadService.findById(data.getUnidadId());
+    if (unidad.isEmpty()) {
+      return null;
+    }
+    data.setUnidad(unidad.get());
+    data.setTemplate(template.get());
+    return dataService.save(data, template.get().getDataCollectionName()).orElse(null);
   }
 
   /**
@@ -59,8 +78,12 @@ public class DataController {
    * @return response con el dato si existe en otro caso retorna not found
    */
   @GetMapping("/{id}")
-  public DataDto findById(@PathVariable("id") String id, DataRequest template) {
-    return dataService.findById(id, template.getTemplate()).orElse(null);
+  public DataDto findById(@PathVariable("id") String id, @RequestParam String templateId) {
+    Optional<TemplateDto> template = templateService.findById(templateId);
+    if (template.isEmpty()) {
+      return null;
+    }
+    return dataService.findById(id, template.get().getDataCollectionName()).orElse(null);
   }
 
   /**
@@ -71,12 +94,12 @@ public class DataController {
    * @return response con ok si el dato fue actualizado y existe de lo contrario devuelve not found
    */
   @PutMapping("/{id}")
-  public DataDto update(@PathVariable("id") String id, @RequestBody DataRequest updateDataRequest) {
-    DataDto dataDto = new DataDto()
-        .setData(updateDataRequest.getData())
-        .setDependencia(new DependenciaDto().setCodigo(updateDataRequest.getDependencia()))
-        .setTemplate(new TemplateDto().setId(updateDataRequest.getTemplate()));
-    return dataService.update(id, dataDto).orElse(null);
+  public DataDto update(@PathVariable("id") String id, @RequestBody DataDto updateDataRequest) {
+    Optional<TemplateDto> template = templateService.findById(updateDataRequest.getTemplateId());
+    if (template.isEmpty()) {
+      return null;
+    }
+    return dataService.update(id, updateDataRequest, template.get().getDataCollectionName()).orElse(null);
   }
 
   /**
@@ -86,7 +109,11 @@ public class DataController {
    * @return response con ok si se elimina el dato satisfactoriamente
    */
   @DeleteMapping("/{id}")
-  public boolean delete(@PathVariable("id") String id, DataRequest template) {
-    return dataService.delete(id, template.getTemplate()) > 0;
+  public boolean delete(@PathVariable("id") String id, @RequestParam String templateId) {
+    Optional<TemplateDto> template = templateService.findById(templateId);
+    if (template.isEmpty()) {
+      return false;
+    }
+    return dataService.delete(id, template.get().getDataCollectionName()) > 0;
   }
 }

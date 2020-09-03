@@ -1,6 +1,6 @@
-package co.edu.udea.caafi.dto.facultad;
+package co.edu.udea.caafi.dto.resource.form.list;
 
-import co.edu.udea.caafi.dto.user.RoleDto;
+import co.edu.udea.caafi.dto.resource.ResourceDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -18,10 +18,6 @@ import java.util.List;
 @ToString
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DependenciaDto {
-  private String codigo;
-  private String nombre;
-  private String descripcion;
-  private FacultadDto facultad;
-  private List<RoleDto> roles;
+public class ListDto extends ResourceDto {
+  private List<Object> listItems;
 }

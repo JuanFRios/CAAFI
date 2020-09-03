@@ -2,6 +2,7 @@ package co.edu.udea.caafi.service;
 
 import co.edu.udea.caafi.config.security.JwtProvider;
 import co.edu.udea.caafi.dto.facultad.DependenciaDto;
+import co.edu.udea.caafi.dto.user.RoleDto;
 import co.edu.udea.caafi.dto.user.UserDto;
 import co.edu.udea.caafi.model.user.User;
 import co.edu.udea.caafi.model.user.sipe.DependenciaSIPE;
@@ -124,6 +125,13 @@ public class UserServiceImpl implements UserService {
           .stream()
           .map(dependencia -> new DependenciaDto().setCodigo(dependencia.getCodigoDependencia()))
           .collect(Collectors.toList()));
+      user.setRoles(user.getDependencias()
+          .stream()
+          .flatMap(dependencia -> dependencia.getRoles().stream())
+          .map(role -> new RoleDto().setCodigo(role.getCodigo()))
+          .distinct()
+          .collect(Collectors.toList())
+      );
 
     } catch (OrgSistemasSecurityException | Exception ex) {
       log.error("getUser OrgSistemasWebServiceClient exception, error: " + ex.getMessage());

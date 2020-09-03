@@ -24,12 +24,12 @@ export class FormularioComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const template: string = params.get('formulario');
-      this.formularioService.findById(template).subscribe(formulario => {
+      const templateId: string = params.get('formulario');
+      this.formularioService.findById(templateId).subscribe(formulario => {
         this.formulario = formulario;
         this.tableConfig = {
-          template,
-          dependencia: params.get('dependencia'),
+          templateId,
+          unidadId: params.get('unidadId'),
           tableId: formulario.tabla.id,
           createFormId: formulario.formulario.id,
           updateFormId: formulario.formulario.id

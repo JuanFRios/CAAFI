@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-@Document(collection = "dependencia")
+@Document(collection = "unidad")
 public class Unidad {
 
   /** Identificador de la unidad */

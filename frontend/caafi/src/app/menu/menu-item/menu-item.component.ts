@@ -21,13 +21,13 @@ export class MenuItemComponent implements OnInit {
 
   @Input() menuItem: MenuItem;
   @Input() padding: number;
+  @Input() parentRoute: string;
 
   public expanded: boolean;
 
-  constructor(
-    private router: Router
-  ) {
+  constructor() {
     this.expanded = false;
+    this.parentRoute = '';
   }
 
   ngOnInit(): void {

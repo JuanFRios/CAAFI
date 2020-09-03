@@ -116,6 +116,13 @@ body {
 .ml-3 {
   margin-left: 1rem !important;
 }
+.my-3 {
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+.mb-3 {
+  margin-bottom: 1rem !important;
+}
 
 /* Snack Bar */
 .style-succes {
@@ -148,6 +155,61 @@ body {
           }
         }
       }
+    }
+  }
+}
+
+/* Formularios */
+.mat-autocomplete-panel mat-option.mat-option,
+.mat-select-panel mat-option.mat-option {
+  height: unset;
+}
+
+.mat-autocomplete-panel .mat-option-text.mat-option-text,
+.mat-select-panel .mat-option-text.mat-option-text {
+  white-space: normal;
+  line-height: 1.5;
+  margin: 10px 0;
+}
+
+mat-checkbox {
+  .mat-checkbox-label {
+    white-space: normal;
+  }
+}
+
+mat-radio-button {
+  margin-right: 0.5rem;
+}
+
+formly-form {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.form-container {
+  mat-card {
+    mat-card-content {
+      form {
+        .submit-button {
+          margin-top: 1rem;
+        }
+      }
+    }
+  }
+}
+
+/* Media querys */
+@media screen and (min-width: 600px) {
+  /* Formularios */
+  formly-group {
+    display: flex;
+    flex-wrap: wrap;
+  
+    formly-field {
+      padding-left: 5px;
+      padding-right: 5px;
+      flex: 1;
     }
   }
 }

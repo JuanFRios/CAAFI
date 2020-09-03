@@ -33,17 +33,6 @@ public class DataServiceImpl implements DataService {
   }
 
   /**
-   * Guarda una nueva entidad en base de datos
-   *
-   * @param entityDto DTO de la entidad a guardar
-   * @return DTO de la entidad guardada
-   */
-  @Override
-  public Optional<DataDto> save(DataDto entityDto) {
-    return Optional.of(modelMapper.map(mongoTemplate.save(modelMapper.map(entityDto, Data.class), entityDto.getTemplate().getId()), DataDto.class));
-  }
-
-  /**
    * Obtiene todos los elementos de la entidad desde la base de datos con paginación (número página, tamaño página,
    * ordenamiento), un filtro de texto o palabra clave y los campos que se filtraran por palabra clave
    *
@@ -53,24 +42,39 @@ public class DataServiceImpl implements DataService {
    * @return página con los datos de la entidad
    */
   @Override
-  public Page<DataDto> findAll(String filter, List<String> filterFields, Pageable pageable, String template, String dependencia) {
+  public Page<DataDto> findAll(String filter, List<String> filterFields, Pageable pageable, String unidadId,
+                               String templateId, String collectionName) {
     Query query = new Query()
         .addCriteria(
           new Criteria().orOperator(
               filterFields.stream()
                   .map(filterField -> Criteria.where("data." + filterField).regex(filter, "i"))
                   .toArray(Criteria[]::new)
-          ).andOperator(
-              Criteria.where("dependencia.$id").is(dependencia)
-                  .and("template.$id").is(new ObjectId(template))
           )
+        ).addCriteria(
+            Criteria
+                .where("unidad.$id").is(new ObjectId(unidadId))
+                .and("template.$id").is(new ObjectId(templateId))
         ).with(pageable);
-    List<DataDto> listDto = mongoTemplate.find(query, DataDto.class, template);
+    List<DataDto> listDto = mongoTemplate.find(query, DataDto.class, collectionName);
     return PageableExecutionUtils.getPage(
         listDto,
         pageable,
-        () -> mongoTemplate.count(Query.of(query).limit(-1).skip(-1), Data.class, template)
+        () -> mongoTemplate.count(Query.of(query).limit(-1).skip(-1), Data.class, collectionName)
     );
+  }
+
+  /**
+   * Guarda una nueva entidad en base de datos
+   *
+   * @param dataDto DTO de la entidad a guardar
+   * @return DTO de la entidad guardada
+   */
+  @Override
+  public Optional<DataDto> save(DataDto dataDto, String collectionName) {
+    Data data = modelMapper.map(dataDto, Data.class);
+    Data savedData = mongoTemplate.save(data, collectionName);
+    return Optional.of(modelMapper.map(savedData, DataDto.class));
   }
 
   /**
@@ -80,23 +84,23 @@ public class DataServiceImpl implements DataService {
    * @return DTO de la entidad si existe en otro caso vacio
    */
   @Override
-  public Optional<DataDto> findById(String id, String template) {
-    return Optional.ofNullable(mongoTemplate.findById(id, DataDto.class, template));
+  public Optional<DataDto> findById(String id, String collectionName) {
+    return Optional.ofNullable(mongoTemplate.findById(id, DataDto.class, collectionName));
   }
 
   /**
    * Actualiza una entidad en la base de datos si esta existe
    *
    * @param id identificador de la entidad
-   * @param entityDto DTO con los datos a guardar
+   * @param dataDto DTO con los datos a guardar
    * @return DTO de la entidad guardada si existe de lo contrario retorna vacio
    */
   @Override
-  public Optional<DataDto> update(String id, DataDto entityDto) {
-    Data entity = mongoTemplate.findById(id, Data.class, entityDto.getTemplate().getId());
+  public Optional<DataDto> update(String id, DataDto dataDto, String collectionName) {
+    Data entity = mongoTemplate.findById(id, Data.class, collectionName);
     if (entity != null) {
-      modelMapper.map(entityDto, entity);
-      return Optional.of(modelMapper.map(mongoTemplate.save(entity, entityDto.getTemplate().getId()), DataDto.class));
+      entity.setData(dataDto.getData());
+      return Optional.of(modelMapper.map(mongoTemplate.save(entity, collectionName), DataDto.class));
     }
     return Optional.empty();
   }
@@ -108,14 +112,14 @@ public class DataServiceImpl implements DataService {
    * @return cantidad de documentos eliminados
    */
   @Override
-  public long delete(String id, String template) {
-    Data data = mongoTemplate.findById(id, Data.class, template);
+  public long delete(String id, String collectionName) {
+    Data data = mongoTemplate.findById(id, Data.class, collectionName);
     if (data != null) {
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
       data.setDeletedBy(authentication.getName());
       data.setDeletedDate(LocalDateTime.now());
       mongoTemplate.save(data, "deleteddata");
-      return mongoTemplate.remove(data, template).getDeletedCount();
+      return mongoTemplate.remove(data, collectionName).getDeletedCount();
     }
     return 0;
   }
