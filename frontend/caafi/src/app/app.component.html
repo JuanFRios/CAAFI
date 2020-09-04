@@ -1,3 +1,22 @@
-<app-header></app-header>
-<router-outlet></router-outlet>
-<app-footer></app-footer>
+<div class="principal-wrapper" fxLayout="column">
+  <app-header class="mat-elevation-z6" (toggleSidenav)="toggleSidenav()"></app-header>
+  <div fxFlex class="router-outlet-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+  <app-footer></app-footer>
+</div>
+
+<!-- Menu Sidenav -->
+<app-sidenav class="sidenav-menu" *ngIf="userLogged && menu" position="left" size="300" #sidenavMenu>
+  <div class="user-info">
+    <mat-icon class="profile-image" aria-hidden="false" aria-label="icon">person</mat-icon>
+    <p>{{user.nombre}}<br>{{user.email}}</p>
+  </div>
+  <mat-nav-list>
+    <p class="menu-title"><b>{{menu.label}}</b></p>
+    <div *ngFor="let menuItem of menu.menuItems">
+      <app-menu-item [menuItem]="menuItem" [padding]="0"></app-menu-item>
+      <mat-divider></mat-divider>
+    </div>
+  </mat-nav-list>
+</app-sidenav>

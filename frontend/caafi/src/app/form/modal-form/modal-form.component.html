@@ -1,0 +1,13 @@
+<mat-spinner *ngIf="loading; else loaded" diameter="20"></mat-spinner>
+<ng-template #loaded>
+  <h1 mat-dialog-title>{{title}}</h1>
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" #myForm="ngForm">
+      <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form"></formly-form>
+    </form>
+  </div>
+  <div mat-dialog-actions align="end">
+    <button mat-button color="primary" mat-dialog-close>Cancelar</button>
+    <button mat-raised-button color="primary" (click)="submit()" class="ml-2">Guardar</button>
+  </div>
+</ng-template>

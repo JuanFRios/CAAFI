@@ -1,0 +1,8 @@
+<ng-container *ngIf="!loading">
+  <h2>{{title}}</h2>
+  <form [formGroup]="form">
+    <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form"></formly-form>
+    <button (click)="submit()" mat-button color="primary" class="mr-1">Guardar</button>
+    <button *ngIf="showCancelButton" mat-button color="primary" mat-dialog-close>Cancelar</button>
+  </form>
+</ng-container>

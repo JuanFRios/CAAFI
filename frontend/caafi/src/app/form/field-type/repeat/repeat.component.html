@@ -1,0 +1,14 @@
+<div class="repeat-section-wrapper">
+  <h2>{{ to.label }}</h2>
+  <div *ngFor="let field of field.fieldGroup; let i = index;" class="mb-3 repeat-section">
+    <ng-container *ngFor="let fieldGroup of field.fieldGroup; let i = index;">
+      <formly-field [field]="fieldGroup"></formly-field>
+    </ng-container>
+    <div class="repeat-button">
+      <button mat-stroked-button color="warn" type="button" (click)="remove(i)">Eliminar</button>
+    </div>
+  </div>
+  <div>
+    <button mat-stroked-button color="primary" type="button" (click)="add()">{{ to.addText }}</button>
+  </div>
+</div>

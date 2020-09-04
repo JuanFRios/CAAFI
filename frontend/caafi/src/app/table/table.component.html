@@ -1,0 +1,68 @@
+<div class="container-full" *ngIf="!loading">
+
+  <div class="mat-elevation-z8 table-wrapper">
+    <!-- Toolbar -->
+    <mat-toolbar color="primary" class="actions-toolbar">
+      <mat-toolbar-row fxLayout="column" fxLayoutAlign="center stretch" fxLayout.gt-xs="row wrap" fxLayoutAlign.gt-xs="space-between center">
+        <mat-form-field color="primary">
+          <mat-label>Buscar</mat-label>
+          <input matInput placeholder="Texto a buscar" #filterInput>
+        </mat-form-field>
+
+        <!-- Actions -->
+        <div class="actions" fxLayout="row wrap" fxLayoutAlign="end center">
+          <ng-container *ngFor="let action of table.actions">
+            <button *ngIf="actionVisible(action.visibility)" mat-icon-button [matTooltip]="action.tooltip" (click)="this[action.function]()">
+              <mat-icon class="toolbar-icon" aria-hidden="false" aria-label="">{{action.icon}}</mat-icon>
+            </button>
+          </ng-container>
+          <button mat-icon-button matTooltip="Actualizar" (click)="refresh()">
+            <mat-icon class="toolbar-icon" aria-hidden="false" aria-label="">refresh</mat-icon>
+          </button>
+        </div>
+      </mat-toolbar-row>
+    </mat-toolbar>
+
+    <!-- Table -->
+    <mat-table [dataSource]="tableDataSource" matSort>
+      <!-- Checkbox column -->
+      <ng-container matColumnDef="select" sticky>
+        <mat-header-cell *matHeaderCellDef class="mat-column-star">
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" class="mat-column-star">
+          <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? selection.toggle(row) : null"
+                        [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Columns -->
+      <ng-container *ngFor="let column of table.columns" [matColumnDef]="column.key">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.header }} </mat-header-cell>
+        <ng-container *ngIf="column.type === 'string'">
+          <mat-cell *matCellDef="let element"> {{ element[column.key] }} </mat-cell>
+        </ng-container>
+        <ng-container *ngIf="column.type === 'object'">
+          <mat-cell *matCellDef="let element"> {{ element[column.key][column.objectField] }} </mat-cell>
+        </ng-container>
+        <ng-container *ngIf="column.type === 'objectArray'">
+          <mat-cell *matCellDef="let element"> {{ element[column.key] | pluck:column.objectField }} </mat-cell>
+        </ng-container>
+        <ng-container *ngIf="column.type === 'boolean'">
+          <mat-cell *matCellDef="let element"> {{ element[column.key] ? column.trueValue : column.falseValue }} </mat-cell>
+        </ng-container>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)"></mat-row>
+    </mat-table>
+    <ng-container *ngIf="tableDataSource.data.length === 0"><span class="ml-3">{{emptyMessage}}</span></ng-container>
+    <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="10"></mat-paginator>
+    <mat-spinner *ngIf="tableDataSource.loading" [diameter]="12"></mat-spinner>
+  </div>
+</div>

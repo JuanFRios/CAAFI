@@ -1,0 +1,20 @@
+<div class="cabecera" fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="space-between">
+  <img class="logo-udea" src="./assets/images/logo-udea.png" alt="Logo Universidad de Antioquia">
+  <div class="nombre" fxLayout="column" fxLayoutAlign="center">
+    <h1>CAAFI</h1>
+    <p>Comité de Autoevaluación y Acreditación de la Facultad de Ingeniería</p>
+  </div>
+</div>
+<div fxLayout>
+  <button *ngIf="userLogged" (click)="openSidenav()" mat-button class="menu-button"><mat-icon>menu</mat-icon></button>
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <a routerLink="/"><img class="logo-caafi" src="./assets/images/logo-caafi.png" alt="Logo CAAFI"></a>
+      <span class="spacer"></span>
+      <p *ngIf="userLogged" class="username">{{ username }}</p>
+      <button *ngIf="userLogged" mat-icon-button matTooltip="Cerrar sesión" aria-label="Cerrar sesión" (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</div>

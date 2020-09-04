@@ -1,0 +1,20 @@
+<a *ngIf="!menuItem.subitems" class="menu-item" mat-list-item [routerLink]="parentRoute + menuItem.route">
+  <div class="menu-item-content" [style.padding-left.px]="padding" fxLayout fxLayoutAlign="space-between center">
+    <div fxLayout fxLayoutAlign="start center">
+      <mat-icon *ngIf="menuItem.icon" class="menu-item-icon" fontSet="material-icons-outlined" aria-hidden="false" aria-label="icon">{{menuItem.icon}}</mat-icon>
+      <span>{{menuItem.label}}</span>
+    </div>
+  </div>
+</a>
+<a *ngIf="menuItem.subitems" class="menu-item" mat-list-item [routerLink]="" (click)="toggleSubitems()">
+  <div class="menu-item-content" [style.padding-left.px]="padding" fxLayout fxLayoutAlign="space-between center">
+    <div fxLayout fxLayoutAlign="start center">
+      <mat-icon *ngIf="menuItem.icon" class="menu-item-icon" fontSet="material-icons-outlined" aria-hidden="false" aria-label="icon">{{menuItem.icon}}</mat-icon>
+      <span>{{menuItem.label}}</span>
+    </div>
+    <mat-icon [@indicatorRotate]="expanded ? 'expanded': 'collapsed'" aria-hidden="false" aria-label="icon">expand_more</mat-icon>
+  </div>
+</a>
+<div class="subitems" [ngClass]="expanded ? 'expanded': 'collapsed'">
+  <app-menu-item *ngFor="let subitem of menuItem.subitems" [parentRoute]="parentRoute + menuItem.route" [menuItem]="subitem" [padding]="padding + 8"></app-menu-item>
+</div>
