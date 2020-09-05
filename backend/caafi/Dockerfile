@@ -1,0 +1,4 @@
+FROM openjdk:14
+ADD target/caafi-0.0.1-SNAPSHOT.jar caafi-0.0.1-SNAPSHOT.jar
+EXPOSE 8091
+ENTRYPOINT ["java","-Dspring.profiles.active=pdn", "-jar", "caafi-0.0.1-SNAPSHOT.jar"]
