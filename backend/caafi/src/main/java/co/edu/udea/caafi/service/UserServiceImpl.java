@@ -41,7 +41,8 @@ public class UserServiceImpl implements UserService {
   @Value("${udea.sipe.dependencias}")
   private String servicioDependencias;
 
-  private final AuthenticationManager authenticationManager;
+  @Autowired
+  private AuthenticationManager authenticationManager;
 
   private final ModelMapper modelMapper;
 
@@ -50,9 +51,7 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
 
   @Autowired
-  public UserServiceImpl(AuthenticationManager authenticationManager, ModelMapper modelMapper, JwtProvider jwtProvider,
-                         UserRepository userRepository) {
-    this.authenticationManager = authenticationManager;
+  public UserServiceImpl(ModelMapper modelMapper, JwtProvider jwtProvider, UserRepository userRepository) {
     this.modelMapper = modelMapper;
     this.jwtProvider = jwtProvider;
     this.userRepository = userRepository;
