@@ -56,6 +56,13 @@
         <ng-container *ngIf="column.type === 'boolean'">
           <mat-cell *matCellDef="let element"> {{ element[column.key] ? column.trueValue : column.falseValue }} </mat-cell>
         </ng-container>
+        <ng-container *ngIf="column.type === 'repeat'">
+          <mat-cell *matCellDef="let element" fxLayout="column" fxLayoutAlign="start">
+            <span *ngFor="let repeatItem of element[column.key]; last as isLastRepeatItem" [ngClass]="{'repeat-item-border': !isLastRepeatItem}">
+              <ng-container *ngFor="let repeatItemColumn of column.subColumns; last as isLastRepeatItemColumn"> {{ repeatItemColumn.header + ': ' + repeatItem[repeatItemColumn.key] }}<ng-container *ngIf="!isLastRepeatItemColumn">{{','}}</ng-container> </ng-container> 
+            </span>
+          </mat-cell>
+        </ng-container>
       </ng-container>
   
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

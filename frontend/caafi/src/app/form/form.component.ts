@@ -3,8 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import { FormService } from '../service/form.service';
 import { Form } from '../model/resource/form/form';
-import { of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Component({
   template: `EMPTY`
@@ -49,18 +48,25 @@ export abstract class FormComponent implements OnInit {
     return new Promise<void>(resolve => {
       this.formService.findById(this.formId).subscribe((formResponse: Form) => {
         this.title = formResponse.title;
-        this.fields = formResponse.fields.map(f => this.processField(f));
+        const modelObj: any = {};
+        this.fields = formResponse.fields.map(f => this.processField(f, modelObj));
+        this.model = modelObj;
         resolve();
       });
     });
   }
 
-  private processField(field: FormlyFieldConfig) {
+  private processField(field: FormlyFieldConfig, model: any) {
+    // Si es de tipo repeat se inicializa el modelo para que muestre un objeto embebido vacio 
+    if (field.type === 'repeat') {
+      model[field.key as string] = [{}];
+      model = model[field.key as string][0];
+    }
     if (field.fieldGroup) {
-      field.fieldGroup = field.fieldGroup.map(subField => this.processField(subField));
+      field.fieldGroup = field.fieldGroup.map(subField => this.processField(subField, model));
     }
     if (field.fieldArray) {
-      field.fieldArray = this.processField(field.fieldArray);
+      field.fieldArray = this.processField(field.fieldArray, model);
     }
     switch(field.type) {
       case 'select': {

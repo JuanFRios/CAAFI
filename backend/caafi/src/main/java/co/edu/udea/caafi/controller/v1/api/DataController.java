@@ -7,8 +7,13 @@ import co.edu.udea.caafi.service.DataService;
 import co.edu.udea.caafi.service.TemplateService;
 import co.edu.udea.caafi.service.UnidadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -115,5 +120,29 @@ public class DataController {
       return false;
     }
     return dataService.delete(id, template.get().getDataCollectionName()) > 0;
+  }
+
+  /**
+   * Descarga de archivo con datos de la plantilla buscada
+   *
+   * @return file
+   */
+  @GetMapping("/download")
+  public ResponseEntity<Resource> getFile(@RequestParam String filter, @RequestParam String[] filterFields,
+                                          Pageable pageable, @RequestParam String unidadId, @RequestParam String templateId) {
+    Optional<TemplateDto> template = templateService.findById(templateId);
+    if (template.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    String filename = template.get().getNombre() + ".xlsx";
+    InputStreamResource file = new InputStreamResource(
+        dataService.load(filter, Arrays.asList(filterFields), pageable, unidadId, templateId, template.get().getDataCollectionName())
+    );
+
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+        .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+        .body(file);
   }
 }

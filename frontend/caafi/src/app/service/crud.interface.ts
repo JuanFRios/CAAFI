@@ -1,19 +1,11 @@
-import { Pageable } from '../model/resource/table/pageable';
 import { Observable } from 'rxjs';
-import { Page } from '../model/resource/table/page';
 import { InjectionToken } from '@angular/core';
+import { TableInterface } from './table.interface';
 
 /**
  * Interface con los métodos CRUD para los servicios
  */
-export interface CRUDInterface<T> {
-
-  /**
-   * Obtiene todos los elementos de la entidad paginados
-   *
-   * @param pagebale valores de número de página, tamaño de pagína y ordenamiento
-   */
-  findAll(pagebale: Pageable): Observable<Page<T>>;
+export interface CRUDInterface<T> extends TableInterface<T> {
 
   /**
    * Guarda una entidad

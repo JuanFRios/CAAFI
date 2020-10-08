@@ -1,7 +1,12 @@
 package co.edu.udea.caafi.service;
 
 import co.edu.udea.caafi.dto.template.DataDto;
+import co.edu.udea.caafi.model.resource.Resource;
+import co.edu.udea.caafi.model.resource.table.Table;
 import co.edu.udea.caafi.model.template.Data;
+import co.edu.udea.caafi.model.template.Template;
+import co.edu.udea.caafi.model.template.formulario.Formulario;
+import co.edu.udea.caafi.utils.ExcelHelper;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +20,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DataServiceImpl implements DataService {
@@ -122,5 +130,44 @@ public class DataServiceImpl implements DataService {
       return mongoTemplate.remove(data, collectionName).getDeletedCount();
     }
     return 0;
+  }
+
+  public ByteArrayInputStream load(String filter, List<String> filterFields, Pageable pageable, String unidadId,
+                                   String templateId, String collectionName) {
+    Query query = new Query()
+        .addCriteria(
+            new Criteria().orOperator(
+                filterFields.stream()
+                    .map(filterField -> Criteria.where("data." + filterField).regex(filter, "i"))
+                    .toArray(Criteria[]::new)
+            )
+        ).addCriteria(
+            Criteria
+                .where("unidad.$id").is(new ObjectId(unidadId))
+                .and("template.$id").is(new ObjectId(templateId))
+        ).with(pageable);
+    List<Data> data = mongoTemplate.find(query, Data.class, collectionName);
+
+    // Se obtiene la plantilla y según el tipo de plantilla se obtiene el recurso tabla con los campos para crear la
+    // estructura del archivo
+    Table table = null;
+    Optional<Data> firstData = data.stream().findFirst();
+    if (firstData.isPresent()) {
+      Template template = firstData.get().getTemplate();
+      if (template instanceof Formulario) {
+        table = (Table) ((Formulario) template).getTabla();
+      }
+    }
+    // Esto sucede debido a que no hay configuración de la plantilla para obtener la tabla
+    if (table == null) {
+      return null;
+    }
+
+    // Se obtiene la lista de objetos data
+    List<Object> objects = data.stream()
+        .map(Data::getData)
+        .collect(Collectors.toList());
+
+    return ExcelHelper.objectsToExcel(table.getTitle(), table.getColumns(), objects);
   }
 }

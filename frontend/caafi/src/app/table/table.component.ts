@@ -7,7 +7,7 @@ import { fromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { Table } from '../model/resource/table/table';
 import { TableItem } from '../model/resource/table/table-item';
-import { CRUDInterface, CRUD_INTERFACE } from '../service/crud.interface';
+import { TableInterface, TABLE_INTERFACE } from '../service/table.interface';
 import { TableService } from '../service/table.service';
 
 @Component({
@@ -29,7 +29,7 @@ export abstract class TableComponent<T extends TableItem> implements OnInit {
 
   constructor(
     public tableService: TableService,
-    @Inject(CRUD_INTERFACE) public service: CRUDInterface<T>
+    @Inject(TABLE_INTERFACE) public service: TableInterface<T>
   ) {
     this.loading = true;
     this.initialSelection = [];

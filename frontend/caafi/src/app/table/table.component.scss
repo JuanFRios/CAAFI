@@ -45,6 +45,11 @@
     .mat-table-sticky:last-child {
       border-left: 1px solid #e0e0e0;
     }
+    .repeat-item-border {
+      padding-bottom: 0.3rem;
+      border-bottom: 1px dashed #00000030;
+      margin-bottom: 0.3rem;
+    }
   }
 
   .actions-toolbar {

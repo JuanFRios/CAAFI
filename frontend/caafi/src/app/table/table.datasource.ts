@@ -4,8 +4,8 @@ import { Observable, BehaviorSubject, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { Page } from '../model/resource/table/page';
 import { TableItem } from '../model/resource/table/table-item';
-import { CRUDInterface, CRUD_INTERFACE } from '../service/crud.interface';
 import { Inject } from '@angular/core';
+import { TABLE_INTERFACE, TableInterface } from '../service/table.interface';
 
 export class TableDataSource<T extends TableItem> implements DataSource<T> {
 
@@ -16,7 +16,7 @@ export class TableDataSource<T extends TableItem> implements DataSource<T> {
   public filterFields: string[];
 
   constructor(
-    @Inject(CRUD_INTERFACE) public service: CRUDInterface<T>
+    @Inject(TABLE_INTERFACE) public service: TableInterface<T>
   ) {
     this.dataBehaviorSubject = new BehaviorSubject<T[]>([]);
     this.loadingBehaviorSubject = new BehaviorSubject<boolean>(false);

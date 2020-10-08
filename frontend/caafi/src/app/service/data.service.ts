@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { CRUDInterface } from './crud.interface';
 import { HttpClient } from '@angular/common/http';
 import { Pageable } from '../model/resource/table/pageable';
 import { Observable } from 'rxjs';
@@ -7,11 +6,12 @@ import { Page } from '../model/resource/table/page';
 import { environment } from 'src/environments/environment';
 import { Data } from '../model/template/data';
 import { map } from 'rxjs/operators';
+import { DataInterface } from './data.interface';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DataService implements CRUDInterface<any> {
+export class DataService implements DataInterface<any> {
 
   public templateId: string;
   public unidadId: string;
@@ -103,5 +103,20 @@ export class DataService implements CRUDInterface<any> {
    */
   public delete(id: string): Observable<number> {
     return this.http.delete<number>(environment.apiBaseUrl + '/data/' + id, { params: { templateId: this.templateId } });
+  }
+
+  /**
+   * Descarga el archivo de datos
+   */
+  public download(activeColumn = 'lastModifiedDate', direction = 'desc', filter?: string, filterFields?: string[]): Observable<Blob> {
+    return this.http.get(environment.apiBaseUrl + '/data/download', { params: { 
+      templateId: this.templateId,
+      unidadId: this.unidadId,
+      page: '0',
+      size: '-1',
+      sort: direction !== '' ? [activeColumn + ',' + direction] : ['lastModifiedDate,desc'],
+      filter: filter && filter.trim() !== '' ? filter : '',
+      filterFields
+    }, responseType: 'blob' });
   }
 }
