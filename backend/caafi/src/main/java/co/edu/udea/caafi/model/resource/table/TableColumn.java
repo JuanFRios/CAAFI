@@ -22,6 +22,7 @@ public class TableColumn {
   private boolean filter;
   private String trueValue;
   private String falseValue;
+  private List<TableColumn> subColumns;
   @DBRef
   private List<Role> roles;
 }

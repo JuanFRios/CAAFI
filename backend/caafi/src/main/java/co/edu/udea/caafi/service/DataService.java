@@ -4,6 +4,7 @@ import co.edu.udea.caafi.dto.template.DataDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +20,7 @@ public interface DataService {
   Optional<DataDto> update(String id, DataDto entityDto, String collectionName);
 
   long delete(String id, String collectionName);
+
+  ByteArrayInputStream load(String filter, List<String> filterFields, Pageable pageable, String unidadId, String templateId,
+                            String collectionName);
 }

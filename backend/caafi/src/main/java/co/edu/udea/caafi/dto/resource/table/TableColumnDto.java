@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -24,4 +26,5 @@ public class TableColumnDto {
   private boolean filter;
   private String trueValue;
   private String falseValue;
+  private List<TableColumnDto> subColumns;
 }

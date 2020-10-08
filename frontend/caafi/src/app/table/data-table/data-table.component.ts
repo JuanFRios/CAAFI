@@ -4,11 +4,12 @@ import { CreateComponent } from './create/create.component';
 import { UpdateComponent } from './update/update.component';
 import { TableItem } from 'src/app/model/resource/table/table-item';
 import { TableComponent } from '../table.component';
-import { CRUD_INTERFACE, CRUDInterface } from 'src/app/service/crud.interface';
+import { DATA_INTERFACE, DataInterface } from 'src/app/service/data.interface';
 import { TableService } from 'src/app/service/table.service';
 import { SnackbarComponent } from 'src/app/snackbar/snackbar.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/dialog/dialog.component';
+import { saveAs } from 'file-saver';
 
 @Component({
   template: `EMPTY`
@@ -19,7 +20,7 @@ export abstract class DataTableComponent<T extends TableItem> extends TableCompo
   public componentUpdate: ComponentType<any>;
 
   constructor(
-    @Inject(CRUD_INTERFACE) public service: CRUDInterface<T>,
+    @Inject(DATA_INTERFACE) public service: DataInterface<T>,
     public tableService: TableService,
     public snackBar: SnackbarComponent,
     public dialog: MatDialog
@@ -86,6 +87,21 @@ export abstract class DataTableComponent<T extends TableItem> extends TableCompo
           this.snackBar.snackbarError('Ocurrio un error por favor intentelo nuevamente');
         });
       }
+    });
+  }
+
+  public descargar() {
+    this.service.download(
+      this.sort.active,
+      this.sort.direction,
+      this.filterInput.nativeElement.value,
+      this.tableDataSource.filterFields
+    ).subscribe(data => {
+      const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
+      const file = new File([blob], 'objects.xlsx', { type: 'application/vnd.ms-excel' });
+      saveAs(file);
+    }, () => {
+      this.snackBar.snackbarError("Error descargando el archivo");
     });
   }
 

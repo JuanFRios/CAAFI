@@ -1,6 +1,5 @@
 package co.edu.udea.caafi.model.template;
 
-import co.edu.udea.caafi.model.facultad.Dependencia;
 import co.edu.udea.caafi.model.facultad.Unidad;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
