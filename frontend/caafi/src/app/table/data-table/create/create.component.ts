@@ -37,7 +37,7 @@ export class CreateComponent extends ModalFormComponent implements OnInit {
         this.form.reset();
         (this.myForm as any).submitted = false;
         this.form.clearValidators();
-        this.snackBar.snackbarSuccess('Resgitro creado satisfactoriamente');
+        this.snackBar.snackbarSuccess('Resgistro creado satisfactoriamente');
         this.dialog.getDialogById('createDialog').close(true);
       }, error => {
         this.snackBar.snackbarError('Ocurrio un error por favor intentelo nuevamente');

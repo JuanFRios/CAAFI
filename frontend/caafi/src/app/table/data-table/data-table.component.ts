@@ -80,7 +80,7 @@ export abstract class DataTableComponent<T extends TableItem> extends TableCompo
       if (result) {
         this.service.delete(this.selection.selected[0].id).subscribe(response => {
           if (response) {
-            this.snackBar.snackbarSuccess('Regsitro eliminado satisfactoriamente');
+            this.snackBar.snackbarSuccess('Registro eliminado satisfactoriamente');
             this.refresh();
           }
         }, () => {

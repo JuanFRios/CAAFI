@@ -13,10 +13,4 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Accessors(chain = true)
 @Document(collection = "arituculoacademico")
 public class ArticuloAcademico {
-  ...
-  ...
-  ...
-
-  @DBRef
-  private List<Autor> autores
 }
