@@ -13,10 +13,4 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Accessors(chain = true)
 @Document(collection = "autor")
 public class Autor {
-  ..
-  ..
-  ..
-
-  @DBRef
-  private List<Unidad> unidades;
 }
