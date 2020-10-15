@@ -3,7 +3,6 @@
 
   mat-table {
     overflow: auto;
-
     mat-row, mat-header-row, mat-footer-row {
       border-bottom-width: 1;
       display: inline-flex;
@@ -17,8 +16,9 @@
       flex: none;
       padding: 0 0.5rem;
       width: 220px; 
-      margin: 0 0.25rem;
-  
+      margin: 15px 0.25rem;
+      text-align: justify;
+
       &.select {
         width: 20px;
         position: absolute;    
@@ -71,6 +71,9 @@
       }
     }
   }
+  [class*="column-1"]{
+    padding: 50px;
+  }
 
   mat-spinner {
     position: absolute;
@@ -80,38 +83,6 @@
     circle {
       stroke: #ffffff;
       stroke-width: 20% !important;
-    }
-  }
-}
-
-@media screen and (min-width: 960px) {
-  .table-wrapper {
-    mat-table {
-      overflow: visible;
-      padding-left: 0;
-    
-      mat-row, mat-header-row, mat-footer-row {
-        border-bottom-width: 1px;
-        display: flex;
-      }
-      mat-cell, mat-header-cell, mat-footer-cell {
-        flex: 1;
-        padding: 0;
-        width: auto; 
-        border-bottom: none;
-  
-        &.select {
-          width: 40px;
-          flex: none;
-          position: static;
-          background: none;
-        }
-      }
-      mat-cell:first-of-type, mat-header-cell:first-of-type, mat-footer-cell:first-of-type {
-        flex: none;
-        margin-right: 0.5rem;
-        padding: 0 0.7rem 0 1rem;
-      }
     }
   }
 }
