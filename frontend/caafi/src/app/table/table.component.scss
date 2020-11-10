@@ -6,7 +6,7 @@
     mat-row, mat-header-row, mat-footer-row {
       border-bottom-width: 1;
       display: inline-flex;
-      align-items: stretch;
+      align-items: center;
       min-width: 100%;
     }
     mat-row {
@@ -15,9 +15,14 @@
     mat-cell, mat-header-cell, mat-footer-cell {
       flex: none;
       padding: 0 0.5rem;
-      width: 220px; 
       margin: 15px 0.25rem;
       text-align: justify;
+      max-width: 100%;
+      width: 320px;
+      height: max-content;
+      max-height: 250px;
+      min-height: inherit;
+      overflow: auto;
 
       &.select {
         width: 20px;
@@ -49,6 +54,11 @@
       padding-bottom: 0.3rem;
       border-bottom: 1px dashed #00000030;
       margin-bottom: 0.3rem;
+   
+    }
+
+    mat-cell.column-1 {
+      padding: 20em;
     }
   }
 
