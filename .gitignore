@@ -1,52 +1,46 @@
-/target/
-.classpath
-.project
-.settings/org.eclipse.core.resources.prefs
-.settings/org.eclipse.jdt.core.prefs
-.settings/org.eclipse.m2e.core.prefs
-
-# for frontend
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-frontend/caafi/dist
-frontend/caafi/tmp
-frontend/caafi/out-tsc
+/dist
+/tmp
+/out-tsc
+# Only exists if Bazel was run
+/bazel-out
 
 # dependencies
-frontend/caafi/node_modules
-frontend/caafi/package-lock.json
+/node_modules
+
+# profiling files
+chrome-profiler-events*.json
+speed-measure-plugin*.json
 
 # IDEs and editors
-frontend/caafi/.idea
-frontend/caafi/.project
-frontend/caafi/.classpath
-frontend/caafi/.c9/
-frontend/caafi/*.launch
-frontend/caafi/.settings/
-frontend/caafi/*.sublime-workspace
-frontend/caafi/.editorconfig
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
 # IDE - VSCode
-frontend/caafi/.vscode/*
+.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+.history/*
 
 # misc
-frontend/caafi/.sass-cache
-frontend/caafi/connect.lock
-frontend/caafi/coverage
-frontend/caafi/libpeerconnection.log
-frontend/caafi/npm-debug.log
-frontend/caafi/testem.log
-frontend/caafi/typings
-
-# e2e
-frontend/caafi/e2e/*.js
-frontend/caafi/e2e/*.map
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
 
 # System Files
 .DS_Store
 Thumbs.db
-sh.exe.stackdump
