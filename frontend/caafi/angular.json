@@ -123,6 +123,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "caafi"
+    }
+  },
+  "defaultProject": "caafi",
+  "cli": {
+    "analytics": false
+  }
 }
